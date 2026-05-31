@@ -1,0 +1,80 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { ComponentType, SVGProps } from 'react'
+import { SvgIconComponent } from '@mui/icons-material'
+import ReportProblemIcon from '@mui/icons-material/ReportProblem';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import SettingsIcon from '@mui/icons-material/Settings';
+import DevicesIcon from '@mui/icons-material/Devices';
+import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications'
+import SupervisedUserCircleRoundedIcon from '@mui/icons-material/SupervisedUserCircleRounded'
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt'
+
+export type DataType = {
+   name: string
+   value: string
+   link?: string
+   icon: ComponentType<SVGProps<SVGSVGElement>> | SvgIconComponent | string | any
+   accessID?: number | number[]   // ✅ پشتیبانی از عدد یا آرایه (OR condition)
+}
+
+export const LAYOUT_SIDEBAR_DATA: (DataType & { children?: DataType[] })[] = [
+   {
+      name: 'لیست خطا ها',
+      value: 'errorsList',
+      link: '/errorsList',
+      icon: ReportProblemIcon,
+      accessID: 105,
+      children: [],
+   },
+   {
+      name: 'تنظیمات',
+      value: 'devicesList',
+      link: '/devicesList',
+      icon: SettingsIcon,
+      accessID: [104, 103],   
+      children: [
+         {
+            name: 'لیست قطعات مرتبط',
+            value: 'devicesList',
+            link: '/devicesList',
+            icon: DevicesIcon,
+            accessID: 104,
+         },
+         {
+            name: 'لیست مدل قطعات مرتبط',
+            value: 'deviceModelsList',
+            link: '/deviceModelsList',
+            icon: DevicesIcon,
+            accessID: 104,
+         },
+         {
+            name: 'لیست بانک های مرتبط',
+            value: 'banksList',
+            link: '/banksList',
+            icon: AccountBalanceIcon,
+            accessID: 103,
+         }
+      ],
+   },
+   {
+      name: 'تنظیمات سیستم',
+      value: 'systemSettings',
+      icon: SettingsApplicationsIcon,
+      children: [
+         {
+            name: 'کاربران',
+            value: 'users',
+            link: '/users',
+            icon: PeopleAltIcon,
+            accessID: 101,
+         },
+         {
+            name: 'نقش کاربران',
+            value: 'permissions',
+            link: '/permissions',
+            icon: SupervisedUserCircleRoundedIcon,
+            accessID: 102,
+         },
+      ],
+   },
+]

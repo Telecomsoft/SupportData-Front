@@ -1,0 +1,117 @@
+import TypoGeneral from '@components/general/TypoGeneral'
+import { Config } from '../type/infoOptionsType'
+
+export const configOptions: Config = [
+    {
+        value: 'pictureURL',
+        name: '',
+        size: 12,
+        type: 'string',
+    },
+    {
+        value: 'kioskName',
+        name: 'نام کیوسک',
+        component: TypoGeneral,
+        size: 12,
+        type: 'string',
+    },
+    {
+        value: 'kioskSerial',
+        name: 'سریال کیوسک',
+        component: TypoGeneral,
+        size: 12,
+        type: 'string',
+    },
+    {
+        value: 'hardwareSerial',
+        name: 'سریال سخت افزار',
+        component: TypoGeneral,
+        size: 12,
+        type: 'string',
+    },
+    // {
+    //     value: 'version',
+    //     name: 'نسخه',
+    //     component: TypoGeneral,
+    //     size: 5.7,
+    //     type: 'string',
+    // },
+    {
+        value: 'model',
+        name: 'مدل',
+        component: TypoGeneral,
+        size: 5.7,
+        type: 'string',
+    },
+    {
+        value: 'region',
+        name: 'استان',
+        component: TypoGeneral,
+        size: 5.7,
+        type: 'string',
+    },
+    {
+        value: 'city',
+        name: 'شهر',
+        component: TypoGeneral,
+        size: 5.7,
+        type: 'string',
+    },
+    {
+        value: 'branchCode',
+        name: 'کد شعبه',
+        component: TypoGeneral,
+        size: 5.7,
+        type: 'string',
+    },
+    {
+        value: 'branchName',
+        name: 'نام شعبه',
+        component: TypoGeneral,
+        size: 5.7,
+        type: 'string',
+    },
+
+    {
+        value: 'supportName',
+        name: 'نام پشتیبان',
+        component: TypoGeneral,
+        size: 5.7,
+        type: 'string',
+    },
+    {
+        value: 'supportTel',
+        name: '  شماره پشتیبان ',
+        component: TypoGeneral,
+        size: 5.7,
+        type: 'string',
+    },
+    {
+        value: 'installationDate',
+        name: ' تاریخ نصب',
+        component: TypoGeneral,
+        size: 5.7,
+        type: 'date',
+    },
+    {
+        value: 'managingName',
+        name: 'نام مدیریت',
+        component: TypoGeneral,
+        size: 12,
+        type: 'string',
+    },
+    {
+        value: 'address',
+        name: 'آدرس',
+        component: TypoGeneral,
+        size: 12,
+        type: 'string',
+    },
+    {
+        value: 'explanation',
+        name: 'توضیحات',
+        component: TypoGeneral,
+        size: 12,
+        type: 'string',
+    },
+]
