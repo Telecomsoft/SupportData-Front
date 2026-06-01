@@ -153,6 +153,7 @@ console.log('autoCompleteOption',autoCompleteOption)
                 render={({ field: { onChange, value: controllerValue }, fieldState: { error } }) => {
                     return <StyledAutoComplete
                         disabled={disabled}
+                         autocompleteType={autocompleteType}
                         options={autocompleteType === 'freeSolo' ? [] : config.options}
                         {...(!!config.isMultiple && { multiple: config?.isMultiple })}
                         {...(!!config.isFreeSolo && { freeSolo: config?.isFreeSolo })}

@@ -16,7 +16,8 @@ export const CustomErrorListDialog = ({
             label: 'مدل قطعه',
             value: 'deviceModelID',
             kind: 'combo',
-            size: 3.9,
+            size: 5.9,
+            type: 'multiple',
             disabled: !deviceId?.id,
             component: AutoCompleteComp,
         },
@@ -25,7 +26,7 @@ export const CustomErrorListDialog = ({
     const filterDeviceModel = conditionValue?.deviceModels?.filter(i => i.deviceID == deviceId?.id)
 
     return (
-        <Grid container size={3.9} columnSpacing={sizeConverter(8, 'spaceX')}>
+        <Grid container size={5.9} columnSpacing={sizeConverter(8, 'spaceX')}>
 
             {Custom.map((item) => {
 

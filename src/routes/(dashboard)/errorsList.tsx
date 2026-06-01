@@ -43,6 +43,9 @@ import { useDevice } from '@src/hooks/useDevice'
 
 export const Route = createFileRoute('/(dashboard)/errorsList')({
   component: withSnackbar(kioskErrors),
+  staticData: {
+    breadcrumb: 'لیست خطاها',
+  },
 })
 
 function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
@@ -85,14 +88,14 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
       label: 'کد خطا',
       value: 'code',
       kind: 'textField',
-      size: 3.9,
+      size: 5.9,
       component: TextFieldComp,
     },
     {
       label: 'عنوان خطا',
       value: 'title',
       kind: 'textField',
-      size: 3.9,
+      size: 5.9,
       component: TextFieldComp,
       validators: { ...REQUIRED_VALIDATOR },
     },
@@ -101,7 +104,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
       label: 'گروه',
       value: 'groupID',
       kind: 'combo',
-      size: 3.9,
+      size: 5.9,
       component: AutoCompleteComp,
       validators: { ...REQUIRED_VALIDATOR },
     },
@@ -109,7 +112,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
       label: 'قطعه',
       value: 'deviceID',
       kind: 'combo',
-      size: 3.9,
+      size: 5.9,
       component: AutoCompleteComp,
     },
     {
@@ -121,7 +124,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
       autocompleteType: 'multiple',
       type: 'multiple',
       kind: 'combo',
-      size: 3.9,
+      size: 5.9,
       component: AutoCompleteComp,
     },
     {
@@ -251,72 +254,75 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
   return (
     <Grid container size={12}>
       {isMobile ? (
-        <Grid2
-          container
-          spacing={2}
+        <Box
           sx={{
-            p: 2,
-            pb: 10,
+            height: 'calc(100vh - 180px)',          // یا 'calc(100vh - 64px)' اگر هدر ثابت دارید
+            display: 'flex',
+            flexDirection: 'column',
+            pb: 8,
           }}
         >
-          <Grid2 size={12}>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'flex-start',
-                mb: 1,
-              }}
-            >
-              {accessCheck({
-                accessInfoId: 105,
-                KindAccessInfo: 'writeAccess',
-              }) && (
-                  <IconButton
-                    onClick={() => setOpenDialog('add')}
-                    sx={{
-                      width: 56,
-                      height: 56,
-                      borderRadius: 3,
-                      bgcolor: theme.palette.primary.main,
-                      color: '#fff',
-                    }}
-                  >
-                    <AddIcon />
-                  </IconButton>
-                )}
-            </Box>
-          </Grid2>
+          {/* بخش دکمه افزودن - ثابت می‌ماند */}
+          <Box sx={{ flexShrink: 0, mb: 2 }}>
+            {accessCheck({ accessInfoId: 105, KindAccessInfo: 'writeAccess' }) && (
+              <IconButton
+                onClick={() => setOpenDialog('add')}
+                sx={{
+                  width: sizeConverter(120),
+                  height: sizeConverter(120),
+                  borderRadius: 3,
+                  bgcolor: theme.palette.primary.main,
+                  color: '#fff',
+                }}
+              >
+                <AddIcon />
+              </IconButton>
+            )}
+          </Box>
 
-          {listErrors?.data?.value?.map((item) => (
-            <Grid2
-              size={12}
-              key={item.id}
-            >
-              <MobileErrorCard
-                title={item?.title}
-                device={item?.deviceName}
-                errorCode={item?.code}
-                subtitle={item?.banks}
-                onInfo={() => {
-                  handleShowInfo(item?.solution)
-                }}
-                onEdit={() => {
-                  setSelectedValue(item?.id)
-                  setOpenDialog('edit')
-                }}
-                onDelete={() => {
-                  setSelectedValue(item?.id)
-                  setOpenDialog('delete')
-                }}
-                onFiles={() => {
-                  item?.attachedDocuments?.forEach((file) =>
-                    downloadHandler(file),
-                  )
-                }}
-              />
+          {/* لیست کارت‌ها - اسکرول می‌شود */}
+          <Box
+            sx={{
+              flexGrow: 1,
+              overflowY: 'auto',
+              '&::-webkit-scrollbar': {
+                width: '4px',
+              },
+              '&::-webkit-scrollbar-track': {
+                background: theme.palette.grey[200],
+              },
+              '&::-webkit-scrollbar-thumb': {
+                background: theme.palette.primary.main,
+                borderRadius: '4px',
+              },
+            }}
+          >
+            <Grid2 container spacing={2}>
+              {listErrors?.data?.value?.map((item) => (
+                <Grid2 size={12} key={item.id}>
+                  <MobileErrorCard
+                    title={item?.title}
+                    device={item?.deviceName}
+                    errorCode={item?.code}
+                    subtitle={item?.banks}
+                    onInfo={() => handleShowInfo(item?.solution)}
+                    onEdit={() => {
+                      setSelectedValue(item?.id);
+                      setOpenDialog('edit');
+                    }}
+                    onDelete={() => {
+                      setSelectedValue(item?.id);
+                      setOpenDialog('delete');
+                    }}
+                    onFiles={() => {
+                      item?.attachedDocuments?.forEach((file) => downloadHandler(file));
+                    }}
+                  />
+                </Grid2>
+              ))}
             </Grid2>
-          ))}
-        </Grid2>
+          </Box>
+        </Box>
       ) : (
         <TelecomDataGrid
           data={listErrors?.data?.value}

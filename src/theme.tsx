@@ -583,6 +583,71 @@ const theme = createTheme({
                                 },
                             }),
                         },
+                        {
+                            props: { variant: 'confirmMobile' },
+                            style: ({ theme }: { theme: Theme }) => ({
+                                backgroundColor: theme.palette.dataGrid.main,
+                                borderRadius: 50,
+                                height: 22,
+                                minWidth: 100,
+                                overflow: 'hidden',
+                                boxShadow:
+                                    '0 0 1px 0 rgba(0, 0, 0, 0.04), 0 2px 6px 0 rgba(0, 0, 0, 0.04), 0 16px 24px 0 rgba(0, 0, 0, 0.06)',
+                                padding: 50,
+                                fontSize: 13,
+                                fontWeight: 'bold',
+                                fontFamily: 'yekanNormal',
+                                lineHeight: 1,
+                                letterSpacing: 'normal',
+                                textTransform: 'capitalize',
+                                color: theme.palette.white[0],
+                                '&:hover': {
+                                    backgroundColor: theme.palette.dataGrid.bgHeaderColor,
+                                },
+                                '&:active': {
+                                    backgroundColor: '#131313',
+                                },
+                                '&:disabled': {
+                                    opacity: 0.5,
+                                    color: theme.palette.white[0],
+                                },
+
+                                '@media (max-width:900px)': {
+                                    padding: 14,
+                                },
+                            }),
+                        },
+                        {
+                            props: { variant: 'cancelMobile' },
+                            style: ({ theme }: { theme: Theme }) => ({
+                                backgroundColor: theme.palette.black['6'],
+                                borderRadius: 50,
+                                height: 22,
+                                minWidth: 100,
+                                overflow: 'hidden',
+                                boxShadow:
+                                    '0 0 1px 0 rgba(0, 0, 0, 0.04), 0 2px 6px 0 rgba(0, 0, 0, 0.04), 0 16px 24px 0 rgba(0, 0, 0, 0.06)',
+                                padding: 50,
+                                fontSize: 13,
+                                fontWeight: 'bold',
+                                fontFamily: 'yekanNormal',
+                                lineHeight: 1,
+                                letterSpacing: 'normal',
+                                textTransform: 'capitalize',
+                                color: theme.palette.black['0'],
+                                '&:hover': {
+                                    backgroundColor: theme.palette.dataGrid.bgHeaderColor,
+                                },
+                                '&:active': {
+                                    backgroundColor: '#131313',
+                                },
+
+
+                                '@media (max-width:900px)': {
+                                    padding: 14,
+                                },
+                            }),
+                        },
                     ],
                 },
             },

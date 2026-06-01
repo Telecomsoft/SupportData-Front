@@ -15,8 +15,13 @@ export function MobileLayout({ children }: Props) {
     const [drawerOpen, setDrawerOpen] = useState(false);
 
     return (
-        <Box sx={{ minHeight: '100dvh', bgcolor: '#f8f9fa' }}>
-            {/* AppBar */}
+        <Box sx={{ 
+            minHeight: '100dvh', 
+            bgcolor: '#f8f9fa',
+            display: 'flex',
+            flexDirection: 'column'
+        }}>
+            {/* AppBar ثابت */}
             <AppBar position="fixed" color="primary" elevation={3}>
                 <Toolbar>
                     <IconButton 
@@ -33,18 +38,39 @@ export function MobileLayout({ children }: Props) {
                 </Toolbar>
             </AppBar>
 
-            {/* Breadcrumbs */}
-            <Box sx={{ mt: 7 }}>
+            {/* MobileBreadcrumbs ثابت (کادر قرمز) */}
+            <Box sx={{ 
+                position: 'fixed',
+                top: '56px',           // ارتفاع AppBar (معمولاً 56px)
+                left: 0,
+                right: 0,
+                zIndex: 1100,
+                bgcolor: 'primary.main',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            }}>
                 <MobileBreadcrumbs />
             </Box>
 
-            {/* Mobile Drawer - منوی ساده و مناسب موبایل */}
+            {/* Main Content - اسکرول فقط اینجا */}
+            <Box sx={{ 
+                flex: 1,
+                mt: 'calc(56px + 80px)',   // AppBar + ارتفاع تقریبی MobileBreadcrumbs
+                pb: 10,                     // فضای پایین برای BottomNav
+                p: 2,
+                // overflowY: 'auto',
+                // WebkitOverflowScrolling: 'touch' // اسکرول روان در iOS
+            }}>
+                {children}
+            </Box>
+
+            {/* Drawer */}
             <Drawer
                 anchor="right"
                 open={drawerOpen}
                 onClose={() => setDrawerOpen(false)}
                 PaperProps={{ sx: { width: '80%', maxWidth: 320 } }}
             >
+                {/* ... محتوای Drawer بدون تغییر ... */}
                 <Box sx={{ p: 2, bgcolor: 'primary.main', color: 'white' }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                         <Typography variant="h6">منو</Typography>
@@ -55,7 +81,6 @@ export function MobileLayout({ children }: Props) {
                 </Box>
 
                 <List sx={{ pt: 0 }}>
-                    {/* اینجا منوی موبایل خودت رو بذار - فعلاً نمونه */}
                     <ListItemButton>
                         <ListItemIcon><MenuIcon sx={{ color: 'primary.main' }} /></ListItemIcon>
                         <ListItemText primary="داشبورد" />
@@ -73,11 +98,6 @@ export function MobileLayout({ children }: Props) {
                     </ListItemButton>
                 </List>
             </Drawer>
-
-            {/* Main Content */}
-            <Box sx={{ p: 2, pb: 10, mt: 2 }}>
-                {children}
-            </Box>
 
             {/* Bottom Navigation */}
             <MobileBottomNav />

@@ -11,7 +11,7 @@ import PlusIcon from '@public/icons/Add.svg'
 import EditIcon from '@public/icons/Edit.svg'
 import Typography from '@mui/material/Typography'
 import HighlightOffOutlinedIcon from '@mui/icons-material/HighlightOffOutlined'
-import { Theme, useTheme } from '@mui/system'
+import { Box, Theme, useTheme } from '@mui/system'
 import Button from '@mui/material/Button'
 import { useForm } from 'react-hook-form'
 import { Dispatch, SetStateAction, useEffect, useMemo } from 'react'
@@ -24,7 +24,8 @@ import CustomCircularProgress from '@components/general/CustomCircularProgress'
 import { ResType } from '@type/resType.ts'
 import { formatDateString } from '@src/utility/dateConverter'
 import usePaymentListStore from '@src/store/paymentListStore'
-
+import { useDevice } from '@src/hooks/useDevice'
+import { Divider } from '@mui/material'
 type ConditionItem = {
    value: string
    kind: 'combo' | 'textField' | 'checkbox' | 'uploadFile'
@@ -91,6 +92,9 @@ const GeneralDialog = ({
    const conditionArray: any = useMemo(() => {
       return serverArray ? serverArray : array
    }, [array, serverArray])
+   const { isMobile } = useDevice()
+
+
 
    const { addItem, editItem: editPyament } = usePaymentListStore()
    const {
@@ -289,27 +293,139 @@ const GeneralDialog = ({
 
    return (
       <Dialog
+         fullScreen={isMobile}
          PaperProps={{
-            style: {
-               minWidth: width ? width : sizeConverter(600, 'width'),
-               borderRadius: sizeConverter(12, 'radius'),
-            },
+            sx: {
+               minWidth: width
+                  ? width
+                  : sizeConverter(600, 'width'),
+               borderRadius: isMobile ? 0 : sizeConverter(12, 'radius'),
+            }
          }}
          disableRestoreFocus
          open={!!open}
       >
          <form onSubmit={handleSubmit(submitButton)} style={{ height: '100%', width: '100%' }}>
+            {
+               isMobile && (
+                  <Box
+                     sx={{
+                        width: '100%',
+                        position: 'sticky',
+                        top: 0,
+                        zIndex: 100,
+                        background:
+                           'linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(250,250,250,0.92) 100%)',
+                        backdropFilter: 'blur(12px)',
+                     }}
+                  >
+                     <Box
+                        sx={{
+                           px: 2,
+                           pt: 1,
+                           pb: 1.5,
+                        }}
+                     >
+                        <Box
+                           sx={{
+                              display: 'flex',
+                              justifyContent: 'center',
+                              mb: 1,
+                           }}
+                        >
+                           <Box
+                              sx={{
+                                 width: 32,
+                                 height: 4,
+                                 borderRadius: 99,
+                                 bgcolor: 'rgba(0,0,0,.15)',
+                              }}
+                           />
+                        </Box>
+
+                        <Box
+                           sx={{
+                              display: 'grid',
+                              gridTemplateColumns: '44px 1fr 44px',
+                              alignItems: 'center',
+                              gap: 1,
+                           }}
+                        >
+                           <Box
+                              sx={{
+                                 width: 44,
+                                 height: 44,
+                                 borderRadius: 3,
+                                 bgcolor: theme.palette.primary.main,
+                                 display: 'flex',
+                                 alignItems: 'center',
+                                 justifyContent: 'center',
+                              }}
+                           >
+                              <SvgComponent
+                                 width={20}
+                                 height={20}
+                                 icon={open === 'add' ? PlusIcon : EditIcon}
+                                 color="#fff"
+                              />
+                           </Box>
+
+                           <Box textAlign="center">
+                              <Typography
+                                 sx={{
+                                    fontSize: 10,
+                                    fontWeight: 700,
+                                    color: '#888',
+                                    textTransform: 'uppercase',
+                                    mb: 0.5,
+                                 }}
+                              >
+                                 {open === 'add' ? 'ADD' : 'EDIT'}
+                              </Typography>
+
+                              <Typography
+                                 sx={{
+                                    fontSize: 18,
+                                    fontWeight: 700,
+                                    color: '#111',
+                                 }}
+                              >
+                                 {title}
+                              </Typography>
+                           </Box>
+
+                           <Box
+                              onClick={close}
+                              sx={{
+                                 width: 36,
+                                 height: 36,
+                                 borderRadius: 2,
+                                 bgcolor: 'rgba(0,0,0,.05)',
+                                 display: 'flex',
+                                 alignItems: 'center',
+                                 justifyContent: 'center',
+                                 cursor: 'pointer',
+                              }}
+                           >
+                              <HighlightOffOutlinedIcon />
+                           </Box>
+                        </Box>
+                     </Box>
+
+                     <Divider />
+                  </Box>
+               )
+            }
             <Grid
                container
-               size={12}
-               justifyContent={'center'}
-               alignItems={'center'}
+               direction="column"
                sx={{
-                  maxWidth: width ? width : sizeConverter(600, 'width'),
+                  height: '100%',
+                  maxHeight: '100%',
                   p: sizeConverter(10, 'space'),
                }}
             >
-               <Grid
+               {!isMobile && <Grid
                   container
                   size={12}
                   direction="row"
@@ -349,100 +465,141 @@ const GeneralDialog = ({
                      }}
                      onClick={() => close()}
                   />
-               </Grid>
-
+               </Grid>}
                <Grid
-                  container
                   size={12}
-                  justifyContent={'center'}
-                  alignItems={'center'}
-                  direction="row"
                   sx={{
-                     my: sizeConverter(15, 'spaceY'),
-                     bgcolor: !bgOff ? 'background.2' : 'transparent',
-                     borderRadius: sizeConverter(12, 'radius'),
+                     flex: 1,
+                     overflowY: 'auto',
+                     overflowX: 'hidden',
+                     py: 1,
                   }}
                >
                   <Grid
                      container
                      size={12}
-                     justifyContent={'space-between'}
-                     alignItems={'end'}
-                     rowGap={sizeConverter(15, 'space')}
-                     columnGap={sizeConverter(5, 'space')}
+                     justifyContent={'center'}
+                     alignItems={'center'}
+                     direction="row"
+                     sx={{
+                        my: sizeConverter(15, 'spaceY'),
+                        bgcolor: !bgOff ? 'background.2' : 'transparent',
+                        borderRadius: sizeConverter(12, 'radius'),
+                     }}
                   >
-                     {array.map((item, index) => {
-                        const Component = item.component
-                        return (
-                           <Component
-                              key={index}
-                              item={item}
-                              label={item?.label}
-                              placeholder={item?.placeholder}
-                              type={item?.type}
-                              value={item?.value}
-                              size={item?.size}
-                              multiline={item?.multiline}
-                              rows={item?.rows}
-                              maxRows={item?.maxRows}
-                              ltr={item?.ltr}
-                              searchEndPoint={item?.searchEndPoint}
-                              searchBy={item?.searchBy}
-                              register={register}
-                              validators={item?.validators}
-                              helperText={errors?.[item?.value]?.message ? String(errors[item?.value]?.message) : item?.helperText}
-                              error={!!errors?.[item?.value]?.message}
-                              getValues={getValues}
-                              control={control}
-                              watch={watch}
-                              unregister={unregister}
-                              autoCompleteOption={autoCompleteOption?.[item?.value]}
-                              autocompleteType={item?.autocompleteType}
-                              conditionValue={conditionValue}
-                              open={open}
-                              disabled={open === 'edit' && item?.editDisabled}
-                              setValue={setValue}
-                              trigger={trigger}
-                              clearErrors={clearErrors}
-                              setError={setError}
-                              snackbarOpen={snackbarOpen}
-                              errors={errors}
-                           />
-                        )
-                     })}
+                     <Grid
+                        container
+                        size={12}
+                        justifyContent={'space-between'}
+                        alignItems={'end'}
+                        rowGap={sizeConverter(15, 'space')}
+                        columnGap={sizeConverter(5, 'space')}
+                     >
+                        {array.map((item, index) => {
+                           const Component = item.component
+                           return (
+                              <Component
+                                 key={index}
+                                 item={item}
+                                 label={item?.label}
+                                 placeholder={item?.placeholder}
+                                 type={item?.type}
+                                 value={item?.value}
+                                 size={item?.size}
+                                 multiline={item?.multiline}
+                                 rows={item?.rows}
+                                 maxRows={item?.maxRows}
+                                 ltr={item?.ltr}
+                                 searchEndPoint={item?.searchEndPoint}
+                                 searchBy={item?.searchBy}
+                                 register={register}
+                                 validators={item?.validators}
+                                 helperText={errors?.[item?.value]?.message ? String(errors[item?.value]?.message) : item?.helperText}
+                                 error={!!errors?.[item?.value]?.message}
+                                 getValues={getValues}
+                                 control={control}
+                                 watch={watch}
+                                 unregister={unregister}
+                                 autoCompleteOption={autoCompleteOption?.[item?.value]}
+                                 autocompleteType={item?.autocompleteType}
+                                 conditionValue={conditionValue}
+                                 open={open}
+                                 disabled={open === 'edit' && item?.editDisabled}
+                                 setValue={setValue}
+                                 trigger={trigger}
+                                 clearErrors={clearErrors}
+                                 setError={setError}
+                                 snackbarOpen={snackbarOpen}
+                                 errors={errors}
+                              />
+                           )
+                        })}
+                     </Grid>
                   </Grid>
                </Grid>
 
                <Grid
                   container
-                  size={12}
                   justifyContent={'flex-end'}
                   alignItems={'center'}
-                  sx={{ mt: sizeConverter(5, 'spaceY') }}
+                  sx={{
+                     mt: 2,
+
+                     ...(isMobile && {
+                        position: 'sticky',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        bgcolor: '#fff',
+                        borderTop: '1px solid #e0e0e0',
+                        p: 2,
+                        zIndex: 10,
+                     }),
+                  }}
                   columnGap={sizeConverter(5, 'spaceX')}
                >
                   <Button
                      onClick={() => close()}
-                     variant="main"
+                     variant={isMobile ? 'cancelMobile' : "main"}
                      sx={{
+                        ...(isMobile && {
+                           flex: 1,
+                           minHeight: 48,
+                        }),
                         bgcolor: '#e1e1e1',
                         color: '#000',
-                        '&:hover': { bgcolor: '#c4c4c4' },
+                        '&:hover': {
+                           bgcolor: '#c4c4c4',
+                        },
                      }}
                   >
                      انصراف
                   </Button>
-                  <Button type={'submit'} variant="main" onClick={() => handleSubmit(submitButton)}>
+
+                  <Button
+                     type="submit"
+                     variant={isMobile ? 'confirmMobile' : "main"}
+                     sx={{
+                        ...(isMobile && {
+                           flex: 1,
+                           minHeight: 48,
+                        }),
+                     }}
+                  >
                      {createItem?.isPending || editItem?.isPending ? (
-                        <CustomCircularProgress noPadding color={'white.0'} size={sizeConverter(16)} />
+                        <CustomCircularProgress
+                           noPadding
+                           color={'white.0'}
+                           size={sizeConverter(16)}
+                        />
                      ) : (
-                        <>{'ثبت'}</>
+                        'ثبت'
                      )}
                   </Button>
                </Grid>
             </Grid>
          </form>
-      </Dialog>
+      </Dialog >
    )
 }
 

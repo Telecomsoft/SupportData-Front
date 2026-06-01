@@ -6,8 +6,8 @@ import {
     Box,
     IconButton,
     Divider,
-    Grid2,
 } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -44,7 +44,7 @@ export default function MobileErrorCard({
                 position: 'relative',
                 overflow: 'hidden',
                 borderRadius: '20px',
-                mb: 2,
+                mb: sizeConverter(2, 'spaceY'),
                 border: '1px solid #EAEAEA',
                 boxShadow: '0 4px 12px rgba(0,0,0,.08)',
                 backgroundColor: '#fff',
@@ -61,75 +61,89 @@ export default function MobileErrorCard({
                 <Box
                     sx={{
                         flex: 1,
-                        py: 2,
-                        px: 2,
+                        pt: sizeConverter(12, 'spaceY'),
+                        pb: sizeConverter(3, 'spaceY'),
+                        px: sizeConverter(36, 'spaceX'),
                     }}
                 >
-                    <Grid2 container justifyContent={'space-between'} alignContent={'flex-start'}>
-
+                    <Grid
+                        container
+                        wrap="nowrap"
+                        alignItems="center"
+                    // columnGap={1}
+                    >
+                        {/* Error Code */}
                         <Box
                             sx={{
-                                width: sizeConverter(170, 'width'),
-                                height: sizeConverter(20, 'height'),
-                                borderRadius: '18px',
+                                flexShrink: 0,
+                                width: 'fit-content',
+                                maxWidth: '40%',
+                                px: 1.5,
+                                py: 0.5,
+                                borderRadius: sizeConverter(60, 'radius'),
                                 background:
                                     'linear-gradient(180deg,#980027 0%,#B1002D 100%)',
                                 color: '#fff',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                flexShrink: 0,
+
                             }}
                         >
-
                             <Typography
                                 sx={{
                                     fontSize: sizeConverter(30),
                                     fontWeight: 700,
-                                    mt: 0.5,
+                                    whiteSpace: 'nowrap',
+                                    pt: sizeConverter(2, 'spaceY'),
                                 }}
                             >
                                 {errorCode}
                             </Typography>
-
                         </Box>
-                        <Typography
+
+                        {/* Title */}
+                        <Box
+
                             sx={{
-                                fontSize: sizeConverter(46),
-                                fontWeight: 'bold',
-                                color: '#111',
-                                mb: 1,
-                                lineHeight: 1.4,
+                                flex: 1,
+                                minWidth: 0,
+                                display: 'flex',
+                                direction: 'ltr'
                             }}
                         >
-                            {title}
-                        </Typography>
-                    </Grid2>
+                            <Typography
+                                sx={{
+                                    fontSize: sizeConverter(46),
+                                    fontWeight: 'bold',
+                                    color: '#111',
+                                    lineHeight: 1.5,
+                                    // textAlign: 'right',
+                                    whiteSpace: 'normal',
+                                    overflowWrap: 'break-word',
+                                    wordBreak: 'break-word',
+                                }}
+                            >
+                                {title}
+                            </Typography>
+                        </Box>
+                    </Grid>
                     <Box
                         sx={{
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
-                            gap: 1,
                         }}
                     >
-
-                        {/* متن */}
                         <Box
                             sx={{
                                 flex: 1,
                                 textAlign: 'center',
                             }}
                         >
-
-                            {/* {device && ( */}
-                            <Grid2 container justifyContent={'flex-end'}>
+                            <Grid container justifyContent={'flex-end'}>
 
                                 <Typography
                                     sx={{
                                         color: '#6E6E6E',
-                                       
+
                                         fontSize: sizeConverter(38),
                                     }}
                                 >
@@ -144,21 +158,20 @@ export default function MobileErrorCard({
                                 >
                                     : دستگاه
                                 </Typography>
-                            </Grid2>
+                            </Grid>
+                            <Grid container justifyContent={'flex-end'}>
+                                <Grid container size={10.8}>
+                                    <Typography
+                                        sx={{
+                                            color: '#6E6E6E',
 
-                            {/* )} */}
+                                            fontSize: sizeConverter(38),
+                                        }}
+                                    >
+                                        {subtitle ?? '-'}
+                                    </Typography>
+                                </Grid>
 
-                            {/* {subtitle && ( */}
-                            <Grid2 container justifyContent={'flex-end'}>
-                                <Typography
-                                    sx={{
-                                        color: '#6E6E6E',
-                                       
-                                        fontSize: sizeConverter(38),
-                                    }}
-                                >
-                                    {subtitle ?? '-'}
-                                </Typography>
                                 <Typography
                                     sx={{
                                         color: '#6E6E6E',
@@ -168,14 +181,12 @@ export default function MobileErrorCard({
                                 >
                                     : بانک
                                 </Typography>
-                            </Grid2>
-                            {/* )} */}
+                            </Grid>
                         </Box>
                     </Box>
 
                     <Divider sx={{ my: sizeConverter(2, 'spaceY') }} />
 
-                    {/* عملیات */}
                     <Box
                         sx={{
                             display: 'flex',
