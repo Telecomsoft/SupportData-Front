@@ -8,6 +8,8 @@ import DevicesIcon from '@mui/icons-material/Devices';
 import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications'
 import SupervisedUserCircleRoundedIcon from '@mui/icons-material/SupervisedUserCircleRounded'
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt'
+import MemoryIcon from '@mui/icons-material/Memory';
+import ComputerIcon from '@mui/icons-material/Computer';
 
 export type DataType = {
    name: string
@@ -31,20 +33,20 @@ export const LAYOUT_SIDEBAR_DATA: (DataType & { children?: DataType[] })[] = [
       value: 'devicesList',
       link: '/devicesList',
       icon: SettingsIcon,
-      accessID: [104, 103],   
+      accessID: [104, 103],
       children: [
          {
             name: 'لیست قطعات مرتبط',
             value: 'devicesList',
             link: '/devicesList',
-            icon: DevicesIcon,
+            icon: ComputerIcon,
             accessID: 104,
          },
          {
             name: 'لیست مدل قطعات مرتبط',
             value: 'deviceModelsList',
             link: '/deviceModelsList',
-            icon: DevicesIcon,
+            icon: MemoryIcon,
             accessID: 104,
          },
          {

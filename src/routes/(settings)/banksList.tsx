@@ -178,6 +178,7 @@ import { useAccessCheck } from '@src/utility/accessCheck'
 
 // کامپوننت کارت موبایل را ایمپورت کنید (مسیر را در صورت نیاز اصلاح کنید)
 import MobileErrorCard from '@components/mobile/MobileErrorCard'
+import SettingsCard from '@components/mobile/SettingsCard'
 
 export const Route = createFileRoute('/(settings)/banksList')({
     component: withSnackbar(devicesList),
@@ -240,12 +241,10 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 // ---------------- حالت موبایل ----------------
                 <Box sx={{ width: '100%', p: 2, pb: 10, overflowY: 'auto' }}>
                     {listBanks?.data?.value?.map((bank: any) => (
-                        <MobileErrorCard
+                        <SettingsCard
                             key={bank.id}
-                            title={bank.name}
-                            subtitle={bank.description}
-                            errorCode={bank.id} // آیدی به عنوان کد نمایش داده می‌شود
-                            device="-" // چون دستگاه برای بانک معنی ندارد
+                            name={bank.name}
+                            description={bank.description}
                             onEdit={() => {
                                 setSelectedValue(bank.id);
                                 setOpenDialog('edit');
@@ -254,6 +253,7 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                                 setSelectedValue(bank.id);
                                 setOpenDialog('delete');
                             }}
+                            hasAccess={hasWriteAccess}
                         />
                     ))}
 
@@ -261,7 +261,7 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                     {hasWriteAccess && (
                         <Fab
                             color="primary"
-                            sx={{ position: 'fixed', bottom: 80, left: 16, zIndex: 10 }}
+                            sx={{ position: 'fixed', bottom: 70, right: 16, zIndex: 10 }}
                             onClick={() => setOpenDialog('add')}
                         >
                             <AddIcon />

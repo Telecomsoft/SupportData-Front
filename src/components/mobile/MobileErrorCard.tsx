@@ -21,7 +21,7 @@ type MobileErrorCardProps = {
     subtitle?: string;
     device?: string;
     errorCode: string | number;
-
+    hasAccess: boolean
     onDelete?: () => void;
     onEdit?: () => void;
     onFiles?: () => void;
@@ -37,6 +37,7 @@ export default function MobileErrorCard({
     onEdit,
     onFiles,
     onInfo,
+    hasAccess,
 }: MobileErrorCardProps) {
     return (
         <Card
@@ -206,30 +207,25 @@ export default function MobileErrorCard({
                             onClick={onFiles}
                         />
 
-                        <ActionButton
-                            icon={<EditOutlinedIcon />}
-                            label="ویرایش"
-                            onClick={onEdit}
-                        />
+                        {hasAccess &&
+                            <>
+                                <ActionButton
+                                    icon={<EditOutlinedIcon />}
+                                    label="ویرایش"
+                                    onClick={onEdit}
+                                />
 
-                        <ActionButton
-                            icon={<DeleteOutlineIcon />}
-                            label="حذف"
-                            onClick={onDelete}
-                        />
+                                <ActionButton
+                                    icon={<DeleteOutlineIcon />}
+                                    label="حذف"
+                                    onClick={onDelete}
+                                />
+                            </>
+                        }
                     </Box>
                 </Box>
 
-                {/* نوار قرمز سمت چپ */}
-                {/* <Box
-                    sx={{
-                        width: 12,
-                        background:
-                            'linear-gradient(180deg,#980027 0%,#B1002D 100%)',
-                        borderTopLeftRadius: 20,
-                        borderBottomLeftRadius: 20,
-                    }}
-                /> */}
+
             </Box>
         </Card >
     );

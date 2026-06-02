@@ -169,6 +169,7 @@ import { REQUIRED_VALIDATOR } from '@src/data/validators/validators'
 import TextFieldComp from '@components/general/hookFromInputs/TextFieldComp'
 import { useAccessCheck } from '@src/utility/accessCheck'
 import MobileErrorCard from '@components/mobile/MobileErrorCard'
+import SettingsCard from '@components/mobile/SettingsCard'
 
 export const Route = createFileRoute('/(settings)/devicesList')({
   component: withSnackbar(devicesList),
@@ -228,9 +229,9 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
         // === نمای موبایل ===
         <Grid container size={12} spacing={2} sx={{ pb: 10, px: 2 }}>
           {ListDevices?.data?.value?.map((item) => (
-            <MobileErrorCard
+            <SettingsCard
               key={item.id}
-              title={item.name}
+              name={item.name}
               description={item.description}
               onEdit={() => {
                 setSelectedValue(item.id)
@@ -240,17 +241,16 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 setSelectedValue(item.id)
                 setOpenDialog('delete')
               }}
-              hasEditAccess={canWrite}
-              hasDeleteAccess={canWrite}
+              hasAccess={canWrite}
             />
           ))}
 
           {/* دکمه شناور افزودن در موبایل */}
+
           {canWrite && (
             <Fab
               color="primary"
-              aria-label="add"
-              sx={{ position: 'fixed', bottom: 70, right: 16, zIndex: 1000 }}
+              sx={{ position: 'fixed', bottom: 70, right: 16, zIndex: 10 }}
               onClick={() => {
                 setSelectedValue(undefined)
                 setOpenDialog('add')
@@ -290,39 +290,44 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
           disableRowSelection={false}
           columns={KIOSKS_COLUMNS}
         />
-      )}
+      )
+      }
 
       {/* دیالوگ‌های افزودن، ویرایش و حذف (مشترک برای موبایل و دسکتاپ) */}
-      {(openDialog === 'add' || openDialog === 'edit') && (
-        <GeneralDialog
-          open={openDialog}
-          title={'قطعه'}
-          close={() => setOpenDialog(null)}
-          array={KIOSKS_ARRAY}
-          editEndpoint={'api/Error/UpdateDevice'}
-          createEndpoint={'api/Error/AddDevice'}
-          staticServerData={openDialog === 'edit' ? { id: selectedValue } : {}}
-          defaultValue={{ ...ListDevices?.data?.value?.find((i) => i?.id === selectedValue) }}
-          wrapperFunc={() => ListDevices.refetch()}
-          snackbarOpen={snackbarOpen}
-        />
-      )}
+      {
+        (openDialog === 'add' || openDialog === 'edit') && (
+          <GeneralDialog
+            open={openDialog}
+            title={'قطعه'}
+            close={() => setOpenDialog(null)}
+            array={KIOSKS_ARRAY}
+            editEndpoint={'api/Error/UpdateDevice'}
+            createEndpoint={'api/Error/AddDevice'}
+            staticServerData={openDialog === 'edit' ? { id: selectedValue } : {}}
+            defaultValue={{ ...ListDevices?.data?.value?.find((i) => i?.id === selectedValue) }}
+            wrapperFunc={() => ListDevices.refetch()}
+            snackbarOpen={snackbarOpen}
+          />
+        )
+      }
 
-      {openDialog === 'delete' && (
-        <GeneralDeleteDialog
-          dialogTitle={'قطعه'}
-          deleteID={selectedValue}
-          deleteDescription={`آیا از حذف  ${ListDevices?.data?.value?.find(item => item?.id === selectedValue)?.name} اطمینان دارید؟`}
-          snackbarOpen={snackbarOpen}
-          deleteEndPoint={'api/Error/DeleteDevice/'}
-          isDialogOpen={openDialog}
-          customFunAfterSuccess={() => {
-            ListDevices?.refetch()
-            setSelectedValue(undefined)
-          }}
-          dialogCloseFun={() => setOpenDialog(null)}
-        />
-      )}
-    </Grid>
+      {
+        openDialog === 'delete' && (
+          <GeneralDeleteDialog
+            dialogTitle={'قطعه'}
+            deleteID={selectedValue}
+            deleteDescription={`آیا از حذف  ${ListDevices?.data?.value?.find(item => item?.id === selectedValue)?.name} اطمینان دارید؟`}
+            snackbarOpen={snackbarOpen}
+            deleteEndPoint={'api/Error/DeleteDevice/'}
+            isDialogOpen={openDialog}
+            customFunAfterSuccess={() => {
+              ListDevices?.refetch()
+              setSelectedValue(undefined)
+            }}
+            dialogCloseFun={() => setOpenDialog(null)}
+          />
+        )
+      }
+    </Grid >
   )
 }

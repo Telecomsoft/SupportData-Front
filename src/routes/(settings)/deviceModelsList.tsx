@@ -210,6 +210,7 @@ import { useForm } from 'react-hook-form'
 import AutoCompleteComp from '@components/general/hookFromInputs/AutoComplete'
 import { useAccessCheck } from '@src/utility/accessCheck'
 import MobileErrorCard from '@components/mobile/MobileErrorCard'
+import SettingsCard from '@components/mobile/SettingsCard'
 
 export const Route = createFileRoute('/(settings)/DeviceModelsList ')({
   component: withSnackbar(DeviceModelsList),
@@ -296,12 +297,11 @@ function DeviceModelsList({
             const deviceName = ListDevices?.data?.value?.find(i => i.id === item.deviceID)?.name || '-';
 
             return (
-              <MobileErrorCard
+              <SettingsCard
                 key={item.id}
-                title={item.name}
+                name={item.name}
                 description={item.description}
                 device={deviceName} // پاس دادن نام قطعه
-                errorCode={item.id}
                 onEdit={() => {
                   setSelectedValue(item.id)
                   setOpenDialog('edit')
@@ -310,8 +310,7 @@ function DeviceModelsList({
                   setSelectedValue(item.id)
                   setOpenDialog('delete')
                 }}
-                hasEditAccess={canWrite}
-                hasDeleteAccess={canWrite}
+                hasAccess={canWrite}
               />
             )
           })}
@@ -320,7 +319,7 @@ function DeviceModelsList({
             <Fab
               color="primary"
               aria-label="add"
-              sx={{ position: 'fixed', bottom: 70, right: 16, zIndex: 1000 }}
+              sx={{ position: 'fixed', bottom: 70, right: 16, zIndex: 10 }}
               onClick={() => {
                 setSelectedValue(undefined)
                 setOpenDialog('add')

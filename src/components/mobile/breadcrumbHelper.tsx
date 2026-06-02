@@ -5,16 +5,8 @@ export const getBreadcrumbs = (
    items: typeof LAYOUT_SIDEBAR_DATA
 ) => {
    for (const item of items) {
-      if (item.link === pathname) {
-         return [
-            {
-               label: item.name,
-               path: item.link,
-            },
-         ]
-      }
-
-      if (item.children?.length) {
+      // ۱. اول بررسی می‌کنیم که آیا این مسیر متعلق به یکی از فرزندان است؟
+      if (item.children && item.children.length > 0) {
          const child = item.children.find(
             c => c.link === pathname
          )
@@ -31,6 +23,16 @@ export const getBreadcrumbs = (
                },
             ]
          }
+      }
+
+      // ۲. اگر در فرزندان نبود (یا اصلاً فرزندی نداشت)، بررسی می‌کنیم آیا مسیر خود والد است؟
+      if (item.link === pathname) {
+         return [
+            {
+               label: item.name,
+               path: item.link,
+            },
+         ]
       }
    }
 

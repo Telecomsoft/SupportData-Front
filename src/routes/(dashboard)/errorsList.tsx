@@ -18,7 +18,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import GeneralConfirmDialog from '@components/general/GeneralConfirmDialog'
 
 import GeneralDeleteDialog from '@components/general/GeneralDeleteDialog.tsx'
-import { Box, Grid2, Typography, useTheme } from '@mui/material'
+import { Box, Fab, Grid2, Typography, useTheme } from '@mui/material'
 import SuspendDialog from '@components/general/SuspendDialog'
 import ArticleDataGridToolbar from '@components/section/main/ArticleDataGridToolbar'
 import { REQUIRED_VALIDATOR } from '@src/data/validators/validators'
@@ -247,40 +247,23 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
   ]
   const { isMobile } = useDevice()
 
-
-
-
+  const hasWriteAccess = accessCheck({
+    accessInfoId: 103,
+    KindAccessInfo: 'writeAccess',
+  })
 
   return (
     <Grid container size={12}>
       {isMobile ? (
         <Box
           sx={{
-            height: 'calc(100vh - 180px)',          // یا 'calc(100vh - 64px)' اگر هدر ثابت دارید
+            height: '100dvh',
             display: 'flex',
             flexDirection: 'column',
             pb: 8,
           }}
         >
-          {/* بخش دکمه افزودن - ثابت می‌ماند */}
-          <Box sx={{ flexShrink: 0, mb: 2 }}>
-            {accessCheck({ accessInfoId: 105, KindAccessInfo: 'writeAccess' }) && (
-              <IconButton
-                onClick={() => setOpenDialog('add')}
-                sx={{
-                  width: sizeConverter(120),
-                  height: sizeConverter(120),
-                  borderRadius: 3,
-                  bgcolor: theme.palette.primary.main,
-                  color: '#fff',
-                }}
-              >
-                <AddIcon />
-              </IconButton>
-            )}
-          </Box>
 
-          {/* لیست کارت‌ها - اسکرول می‌شود */}
           <Box
             sx={{
               flexGrow: 1,
@@ -321,6 +304,15 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 </Grid2>
               ))}
             </Grid2>
+            {hasWriteAccess && (
+              <Fab
+                color="primary"
+                sx={{ position: 'fixed', bottom: 70, right: 16, zIndex: 10 }}
+                onClick={() => setOpenDialog('add')}
+              >
+                <AddIcon />
+              </Fab>
+            )}
           </Box>
         </Box>
       ) : (

@@ -17,7 +17,6 @@ import { LAYOUT_SIDEBAR_DATA } from '@src/data/layout-sidebar-data'
 export default function MobileBreadcrumbs() {
     const location = useLocation()
     const navigate = useNavigate()
-    console.log(location)
     const breadcrumbs = getBreadcrumbs(
         location.pathname,
         LAYOUT_SIDEBAR_DATA

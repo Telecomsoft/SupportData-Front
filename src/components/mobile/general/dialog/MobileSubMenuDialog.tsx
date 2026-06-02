@@ -19,7 +19,9 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-
+import CloseIcon from '@mui/icons-material/Close';
+import HighlightOffOutlinedIcon from '@mui/icons-material/HighlightOffOutlined'
+import { sizeConverter } from '@src/utility/sizeConverter';
 // انیمیشن باز شدن دیالوگ از پایین به بالا
 const Transition = forwardRef(function Transition(
     props: TransitionProps & { children: React.ReactElement },
@@ -63,48 +65,54 @@ export default function MobileSubMenuDialog({ open, onClose, pageTitle, items }:
                 }
             }}
         >
-            {/* بخش Breadcrumb */}
-            <Box sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'flex-end', 
-                p: 2, 
-                bgcolor: '#fff',
-                borderBottom: '1px solid #eee'
-            }}>
-                <Typography variant="body1" sx={{ fontWeight: 'bold', mr: 1, color: '#333' }}>
-                    {pageTitle}
-                </Typography>
-                <ChevronLeftIcon sx={{ color: '#666', mx: 0.5 }} />
-                <HomeOutlinedIcon sx={{ color: '#666' }} />
-            </Box>
+
+            <IconButton sx={{ display: 'flex', justifyContent: 'flex-end', color: '#666', p: 0.5, }}>
+                <HighlightOffOutlinedIcon sx={{
+                    color: '#CCCCCC',
+                    width: 30,
+                    height: 30,
+                    cursor: 'pointer',
+                    transition: '0.2s ease-in-out',
+                    '&:hover': {
+                        color: '#000',
+                    },
+                }}
+                    onClick={onClose} />
+            </IconButton>
+
 
             <Box sx={{ p: 2 }}>
 
                 {/* لیست آیتم‌ها (کارت‌ها) */}
                 {items.map((item, index) => (
-                    <Card 
-                        key={index} 
-                        sx={{ 
-                            mb: 2, 
-                            borderRadius: '12px', 
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.05)' 
+                    <Card
+                        key={index}
+                        sx={{
+                            mb: 2,
+                            borderRadius: '12px',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
                         }}
                     >
-                        <CardActionArea 
+                        <CardActionArea
                             onClick={() => handleNavigation(item.route)}
-                            sx={{ 
-                                display: 'flex', 
-                                alignItems: 'center', 
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
                                 p: 2,
                                 justifyContent: 'space-between'
                             }}
                         >
                             {/* آیکون فلش سمت چپ */}
-                            <ArrowBackIosNewIcon sx={{ color: '#7b001c', fontSize: '1.2rem' }} />
-
+                            <Box sx={{
+                                bgcolor: '#fce4e4',
+                                p: 1.5,
+                                borderRadius: '10px',
+                                display: 'flex'
+                            }}>
+                                {item.icon}
+                            </Box>
                             {/* متن‌ها */}
-                            <Box sx={{ flexGrow: 1, textAlign: 'right', pr: 2 }}>
+                            <Box sx={{ flexGrow: 1, pl: 2 }}>
                                 <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#333' }}>
                                     {item.title}
                                 </Typography>
@@ -112,16 +120,10 @@ export default function MobileSubMenuDialog({ open, onClose, pageTitle, items }:
                                     {item.subtitle}
                                 </Typography>
                             </Box>
+                            <ArrowBackIosNewIcon sx={{ color: '#7b001c', fontSize: '1.2rem' }} />
 
                             {/* آیکون اصلی سمت راست */}
-                            <Box sx={{ 
-                                bgcolor: '#fce4e4', 
-                                p: 1.5, 
-                                borderRadius: '10px',
-                                display: 'flex'
-                            }}>
-                                {item.icon}
-                            </Box>
+
                         </CardActionArea>
                     </Card>
                 ))}

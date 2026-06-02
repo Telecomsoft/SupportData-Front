@@ -286,7 +286,7 @@ const GeneralDeleteDialog = ({
                 }}
                 PaperProps={{
                     sx: {
-                        marginBottom: 9,
+                        marginBottom: 7,
                         borderTopLeftRadius: 24,
                         borderTopRightRadius: 24,
                         maxHeight: '93vh',
