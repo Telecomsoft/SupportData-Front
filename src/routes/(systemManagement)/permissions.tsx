@@ -18,6 +18,11 @@ import { ResType } from '@src/data/type/resType'
 import { addOrUpdateQueryParam } from '@utility/updateQuery.ts'
 import { useAccessCheck } from '@src/utility/accessCheck'
 
+import { useDevice } from '@src/hooks/useDevice'
+import MobilePermissionDialog from '@components/mobile/MobilePermissionDialog'
+import MobileRoleList from '@components/mobile/MobileRoleList'
+
+
 const GeneralConfirmDialog = lazy(
   () => import('@components/general/GeneralConfirmDialog.tsx'),
 )
@@ -49,7 +54,7 @@ function Permissions({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
 
   const [openDialog, setOpenDialog] = useState<
     Record<string, 'add' | 'edit' | null>
-  >({ confirm: null, roleAdd: null, roleDelete: null })
+  >({ confirm: null, roleAdd: null, roleDelete: null, roleMobile: null })
 
   const [selectedItem, setSelectedItem] = useState<PermissionRole | null>(null)
 
@@ -163,6 +168,62 @@ function Permissions({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     accessInfoId: 102,
     KindAccessInfo: 'writeAccess',
   })
+  const isMobile = useDevice()
+  // 1. کامپوننت لیست نقش‌ها (نمای موبایل)
+
+
+  console.log('isMobile', isMobile)
+  // 2. کامپوننت دسترسی‌های نقش (نمای موبایل)
+
+  const renderMobile = () => {
+    return (
+      <MobileRoleList
+        permissionRoles={permissionRoles}
+        setSelectedItem={setSelectedItem}
+        setOpenDialog={setOpenDialog}
+        isAcceess={isAcceess}
+      />
+    );
+  }
+  console.log('openDialog', openDialog)
+  const renderDesktop = () => {
+    return (
+      <>
+        <Sidebar
+          {...(isAcceess && { toolbarArray: ['add', 'edit', 'delete'] })}
+          data={permissionRoles.data?.value}
+          title={'لیست نقش ها'}
+          treeStyle={'none'}
+          showPictureUrlOrIcon={false}
+          engTitle={'role'}
+          size={2.5}
+          isSearchParams
+          searchKey={searchKeyInSidebar}
+          selectedItem={selectedItem}
+          setSelectedItem={setSelectedItem}
+          setOpenDialog={setOpenDialog}
+        />
+
+        <Grid container size={9.4}>
+          <TelecomDataGrid
+            loading={permissionRoles?.isLoading}
+            title={'تخصیص دسترسی ها'}
+            columns={getPermissionColumns({ control, handleAccessChange })}
+            isShadowMount={!selectedItem}
+            disableRowSelection
+            data={selectedItem?.permissions}
+            toolbarProps={{
+              openDialog: () =>
+                setOpenDialog((prev) => ({ ...prev, confirm: 'add' })),
+              selectAll: () => selectAll(true),
+              deselectAll: () => selectAll(false),
+            }}
+            {...(isAcceess && { CustomToolBar: CustomBar })}
+          />
+        </Grid>
+      </>
+    )
+  }
 
   const searchKeyInSidebar = 'permissionID'
   return (
@@ -172,41 +233,9 @@ function Permissions({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
       justifyContent={'flex-start'}
       columnGap={sizeConverter(6, 'spaceX')}
     >
-      <Sidebar
-        // toolbarArray={['add', 'edit', 'delete']}
-        {...(isAcceess && { toolbarArray: ['add', 'edit', 'delete'] })}
-        data={permissionRoles.data?.value}
-        title={'لیست نقش ها'}
-        treeStyle={'none'}
-        showPictureUrlOrIcon={false}
-        engTitle={'role'}
-        size={2.5}
-        // loading={permissionList.isLoading}
-        isSearchParams={true}
-        searchKey={searchKeyInSidebar}
-        selectedItem={selectedItem}
-        setSelectedItem={setSelectedItem}
-        setOpenDialog={setOpenDialog}
-      />
-      <Grid container size={9.4}>
-        <TelecomDataGrid
-          loading={permissionRoles?.isLoading}
-          title={'تخصیص دسترسی ها'}
-          columns={getPermissionColumns({ control, handleAccessChange })}
-          isShadowMount={!selectedItem}
-          disableRowSelection
-          data={selectedItem?.permissions}
-          toolbarProps={{
-            openDialog: () =>
-              setOpenDialog((prev) => ({ ...prev, confirm: 'add' })),
+      {isMobile ? renderMobile() : renderDesktop()}
 
-            selectAll: () => selectAll(true),
-            deselectAll: () => selectAll(false),
-          }}
-          // CustomToolBar={CustomBar}
-        {...(isAcceess && { CustomToolBar: CustomBar })}
-        />
-      </Grid>
+
       <Suspense fallback={<SuspendDialog />}>
         {openDialog?.confirm && (
           <GeneralConfirmDialog
@@ -224,6 +253,7 @@ function Permissions({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             noApiRequestFunc={handleSubmit(onSubmit)}
           />
         )}
+
         {openDialog.roleAdd && (
           <GeneralDialog
             width={sizeConverter(350, 'width')}
@@ -244,6 +274,7 @@ function Permissions({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             close={() => handleClickCloseDialog('roleAdd')}
           />
         )}
+
         {openDialog.roleDelete && (
           <GeneralDeleteDialog
             dialogTitle={'نقش'}
@@ -259,7 +290,19 @@ function Permissions({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             dialogCloseFun={() => handleClickCloseDialog('roleDelete')}
           />
         )}
+        {
+          isMobile && !!openDialog.roleMobile &&
+          <MobilePermissionDialog
+            open={!!openDialog.roleMobile} // اگر آیتم انتخاب شده بود باز شود
+            selectedRole={selectedItem}
+            permissions={updatedPermissions} // استفاده از استیت لوکال برای تغییرات لحظه‌ای تیک‌ها
+            onClose={() => { setSelectedItem(null); handleClickCloseDialog('roleMobile') }}
+            onSave={handleSubmit(onSubmit)}
+            onPermissionChange={handleAccessChange}
+          />
+        }
       </Suspense>
     </Grid>
   )
+
 }

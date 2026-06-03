@@ -123,8 +123,6 @@ export default function SettingsCard({
                         : توضیحات
                     </Typography>
                 </Grid>
-
-
                 {hasAccess && (
                     <>
                         <Divider

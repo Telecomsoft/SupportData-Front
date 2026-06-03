@@ -1,3 +1,4 @@
+// src/components/systemManagement/users/Users.tsx
 import { createFileRoute } from '@tanstack/react-router'
 import Grid from '@mui/material/Grid2'
 import { lazy, Suspense, useState } from 'react'
@@ -22,6 +23,8 @@ import PasswordRoundedIcon from '@mui/icons-material/PasswordRounded'
 import GeneralConfirmDialog from '@components/general/GeneralConfirmDialog'
 import CircleIcon from '@mui/icons-material/Circle'
 import { useAccessCheck } from '@src/utility/accessCheck'
+import { useDevice } from '@hooks/useDevice' // <-- ایمپورت هوک تشخیص دستگاه
+import { MobileUserList } from '@components/mobile/MobileUserList'
 
 const GeneralDeleteDialog = lazy(
     () => import('@components/general/GeneralDeleteDialog.tsx'),
@@ -51,6 +54,7 @@ type AddKindState = 'user' | 'password' | 'capacity' | null;
 
 function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     const { accessCheck } = useAccessCheck()
+    const { isMobile } = useDevice() // <-- بررسی موبایل بودن
 
     const users = useGetData<any>('api/User/List', 'get-users')
     const permissionRoles = useGetData<PermissionRole[]>('api/Role/List', 'get-roles-user')
@@ -59,14 +63,21 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     const [addKind, setAddKind] = useState(null)
     const [openDialog, setOpenDialog] = useState<DialogState>(null);
 
+    const hasWriteAccess = accessCheck({ accessInfoId: 101, KindAccessInfo: 'writeAccess' });
+
     const handleDialog = (value: string) => {
         const parts = value?.split('/');
-        const dialog = parts?.[0] as DialogState; // 'add', 'edit', یا 'delete'
-        const kind = parts?.[1] as AddKindState;   // 'user', 'password', 'capacity'
+        const dialog = parts?.[0] as DialogState;
+        const kind = parts?.[1] as AddKindState;
         setOpenDialog(dialog);
         setAddKind(kind ?? null);
     };
 
+    // هندلر برای اکشن‌های موبایل (ابتدا کاربر انتخاب می‌شود سپس دیالوگ باز می‌شود)
+    const handleMobileAction = (actionType: string, user: any) => {
+        setSelectedItem([user.id] as any); // شبیه‌سازی انتخاب گرید که آرایه‌ای از ID ها برمی‌گرداند
+        handleDialog(actionType);
+    };
 
     const defultValue = users?.data?.value?.find((i: Record<string, any>) => i.id == selectedItem?.[0])
 
@@ -79,21 +90,63 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
         {
             field: 'disabled', headerName: 'وضعیت', width: sizeConverter(120, 'width'), align: 'center',
             renderCell: (param) => <CircleIcon sx={{ color: !param?.value ? 'primary.main' : 'gray' }} />
-
         },
-        ...(accessCheck({ accessInfoId: 101, KindAccessInfo: 'writeAccess' }) ? [{
+        ...(hasWriteAccess ? [{
             field: 'password', headerName: 'تغییر رمز عبور', width: sizeConverter(120, 'width'), align: 'center',
             renderCell: () => <PasswordRoundedIcon onClick={() => handleDialog('add/password')} />
         }] : []),
-
-        ...(accessCheck({ accessInfoId: 101, KindAccessInfo: 'writeAccess' }) ? [{
+        ...(hasWriteAccess ? [{
             field: 'reset', headerName: 'باز نشانی رمز عبور', width: sizeConverter(120, 'width'), align: 'center',
             renderCell: () => <LockResetIcon onClick={() => handleDialog('add/reset')} />
         }] : [])
     ]
 
-    return (
+    const renderDesktop = () => (
+        <TelecomDataGrid
+            title='لیست کاربران'
+            data={users?.data?.value}
+            loading={users?.isLoading}
+            CustomToolBar={() => (
+                hasWriteAccess &&
+                <>
+                    <DataGridIconProvider
+                        toolTipText={'اضافه'}
+                        Icon={AddIcon}
+                        clickFunc={() => handleDialog('add/user')}
+                    />
+                    <DataGridIconProvider
+                        toolTipText={'ویرایش'}
+                        Icon={EditIcon}
+                        disable={!selectedItem}
+                        clickFunc={() => handleDialog('edit/user')}
+                    />
+                    <DataGridIconProvider
+                        toolTipText={'حذف'}
+                        Icon={DeleteIcon}
+                        disable={!selectedItem}
+                        clickFunc={() => handleDialog('delete')}
+                    />
+                </>
+            )}
+            //@ts-ignore
+            setRows={setSelectedItem}
+            multiSelect={false}
+            disableRowSelection={false}
+            columns={USERS_COL}
+        />
+    );
 
+    const renderMobile = () => (
+        <MobileUserList
+            users={users?.data?.value || []}
+            roles={permissionRoles?.data?.value || []}
+            hasAccess={hasWriteAccess}
+            onAction={handleMobileAction}
+            onAddClick={() => handleDialog('add/user')}
+        />
+    );
+
+    return (
         <Grid
             container
             size={12}
@@ -101,43 +154,8 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             sx={{ overflowX: 'auto' }}
             columnGap={sizeConverter(6, 'spaceX')}
         >
-            <TelecomDataGrid
-                title='لیست کاربران'
-                data={users?.data?.value}
-                loading={users?.isLoading}
-                CustomToolBar={() => (
-                    accessCheck({
-                        accessInfoId: 101,
-                        KindAccessInfo: 'writeAccess',
-                    }) &&
-                    <>
+            {true ? renderMobile() : renderDesktop()}
 
-                        <DataGridIconProvider
-                            toolTipText={'اضافه'}
-                            Icon={AddIcon}
-                            clickFunc={() => handleDialog('add/user')}
-                        />
-                        <DataGridIconProvider
-                            toolTipText={'ویرایش'}
-                            Icon={EditIcon}
-                            disable={!selectedItem}
-                            clickFunc={() => handleDialog('edit/user')}
-                        />
-                        <DataGridIconProvider
-                            toolTipText={'حذف'}
-                            Icon={DeleteIcon}
-                            disable={!selectedItem}
-                            clickFunc={() => handleDialog('delete')}
-                        />
-                    </>
-                )}
-
-                //@ts-ignore
-                setRows={setSelectedItem}
-                multiSelect={false}
-                disableRowSelection={false}
-                columns={USERS_COL}
-            />
             <Suspense fallback={<SuspendDialog />}>
                 {(openDialog === 'add' || openDialog === 'edit') && addKind === 'user' && (
                     <GeneralDialog
@@ -152,11 +170,11 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                         open={openDialog}
                         wrapperFunc={(res: User) => {
                             users?.refetch();
-                            // اگر نیاز به آپدیت selectedItem دارید
                         }}
                         close={() => {
                             setOpenDialog(null);
                             setAddKind(null);
+                            setSelectedItem(null); // پاک کردن انتخاب بعد از بسته شدن
                         }}
                     />
                 )}
@@ -166,7 +184,7 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                     <GeneralDeleteDialog
                         dialogTitle={'کاربر'}
                         deleteID={selectedItem?.[0]}
-                        deleteDescription={`آیا میخواهید کاربر ${users?.data?.value?.find(i => i.id == selectedItem?.[0])?.userName} را حذف کنید؟`}
+                        deleteDescription={`آیا میخواهید کاربر ${users?.data?.value?.find((i: any) => i.id == selectedItem?.[0])?.userName} را حذف کنید؟`}
                         snackbarOpen={snackbarOpen}
                         deleteEndPoint={'api/User/Delete/'}
                         isDialogOpen={openDialog === 'delete'}
@@ -177,6 +195,7 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                         dialogCloseFun={() => {
                             setOpenDialog(null);
                             setAddKind(null);
+                            setSelectedItem(null);
                         }}
                     />
                 )}
@@ -190,14 +209,17 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                         apiValueGetter={(data) => ({ ...data, userID: selectedItem?.[0] })}
                         editEndpoint={'api/User/SetPassword'}
                         snackbarOpen={snackbarOpen}
-                        open={!!addKind}  // یا open={true}
+                        open={!!addKind}
                         wrapperFunc={() => users?.refetch()}
                         close={() => {
                             setAddKind(null);
                             setOpenDialog(null);
+                            setSelectedItem(null);
                         }}
                     />
                 )}
+
+                {/* دیالوگ بازنشانی رمز عبور */}
                 {addKind === 'reset' && (
                     <GeneralConfirmDialog
                         dialogWidth={sizeConverter(400, 'width')}
@@ -205,6 +227,7 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                         dialogCloseFun={() => {
                             setAddKind(null);
                             setOpenDialog(null);
+                            setSelectedItem(null);
                         }}
                         dialogTitle={'بازنشانی رمز عبور'}
                         isDialogOpen={addKind}
@@ -217,7 +240,6 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 )}
             </Suspense>
         </Grid>
-
     )
 }
 
