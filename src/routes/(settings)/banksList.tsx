@@ -179,6 +179,7 @@ import { useAccessCheck } from '@src/utility/accessCheck'
 // کامپوننت کارت موبایل را ایمپورت کنید (مسیر را در صورت نیاز اصلاح کنید)
 import MobileErrorCard from '@components/mobile/MobileErrorCard'
 import SettingsCard from '@components/mobile/SettingsCard'
+import CustomCircularProgress from '@components/general/CustomCircularProgress'
 
 export const Route = createFileRoute('/(settings)/banksList')({
     component: withSnackbar(devicesList),
@@ -202,7 +203,7 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             label: 'نام بانک',
             value: 'name',
             kind: 'textField',
-            size: 2.9,
+            size: isMobile ? 12 : 2.9,
             component: TextFieldComp,
             validators: { ...REQUIRED_VALIDATOR },
         },
@@ -210,7 +211,7 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             label: 'توضیحات',
             value: 'description',
             kind: 'textField',
-            size: 8.9,
+            size: isMobile ? 12 : 8.9,
             component: TextFieldComp,
             validators: { ...REQUIRED_VALIDATOR },
         },
@@ -237,68 +238,72 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     return (
         <Grid container size={12} sx={{ position: 'relative', height: '100%' }}>
 
-            {isMobile ? (
-                // ---------------- حالت موبایل ----------------
-                <Box sx={{ width: '100%', p: 2, pb: 10, overflowY: 'auto' }}>
-                    {listBanks?.data?.value?.map((bank: any) => (
-                        <SettingsCard
-                            key={bank.id}
-                            name={bank.name}
-                            description={bank.description}
-                            onEdit={() => {
-                                setSelectedValue(bank.id);
-                                setOpenDialog('edit');
-                            }}
-                            onDelete={() => {
-                                setSelectedValue(bank.id);
-                                setOpenDialog('delete');
-                            }}
-                            hasAccess={hasWriteAccess}
-                        />
-                    ))}
+            {listBanks?.isLoading ?
+                <Grid sx={{ m: 'auto', mt: '50%' }}>
+                    <CustomCircularProgress thickness={2} size={60} />
+                </Grid>
+                : isMobile ? (
+                    // ---------------- حالت موبایل ----------------
+                    <Box sx={{ width: '100%', p: 2, pb: 10, overflowY: 'auto' }}>
+                        {listBanks?.data?.value?.map((bank: any) => (
+                            <SettingsCard
+                                key={bank.id}
+                                name={bank.name}
+                                description={bank.description}
+                                onEdit={() => {
+                                    setSelectedValue(bank.id);
+                                    setOpenDialog('edit');
+                                }}
+                                onDelete={() => {
+                                    setSelectedValue(bank.id);
+                                    setOpenDialog('delete');
+                                }}
+                                hasAccess={hasWriteAccess}
+                            />
+                        ))}
 
-                    {/* دکمه افزودن شناور (FAB) برای موبایل */}
-                    {hasWriteAccess && (
-                        <Fab
-                            color="primary"
-                            sx={{ position: 'fixed', bottom: 70, right: 16, zIndex: 10 }}
-                            onClick={() => setOpenDialog('add')}
-                        >
-                            <AddIcon />
-                        </Fab>
-                    )}
-                </Box>
-            ) : (
-                // ---------------- حالت دسکتاپ ----------------
-                <TelecomDataGrid
-                    data={listBanks?.data?.value}
-                    loading={listBanks?.isLoading}
-                    CustomToolBar={() => {
-                        return hasWriteAccess && (
-                            <Grid container size={'auto'} spacing={sizeConverter(4, 'spaceX')}>
-                                <DataGridIconProvider toolTipText={'اضافه'} Icon={AddIcon} disable={false} clickFunc={() => setOpenDialog('add')} />
-                                <DataGridIconProvider
-                                    toolTipText={'ویرایش'}
-                                    Icon={EditIcon}
-                                    disable={!selectedValue}
-                                    clickFunc={() => setOpenDialog('edit')}
-                                />
-                                <DataGridIconProvider
-                                    toolTipText={'حذف'}
-                                    Icon={DeleteIcon}
-                                    disable={!selectedValue}
-                                    clickFunc={() => setOpenDialog('delete')}
-                                />
-                            </Grid>
-                        )
-                    }}
-                    //@ts-ignore
-                    setRows={(data) => data && setSelectedValue(data?.[0])}
-                    multiSelect={false}
-                    disableRowSelection={false}
-                    columns={KIOSKS_COLUMNS}
-                />
-            )}
+                        {/* دکمه افزودن شناور (FAB) برای موبایل */}
+                        {hasWriteAccess && (
+                            <Fab
+                                color="primary"
+                                sx={{ position: 'fixed', bottom: 70, right: 16, zIndex: 10 }}
+                                onClick={() => setOpenDialog('add')}
+                            >
+                                <AddIcon />
+                            </Fab>
+                        )}
+                    </Box>
+                ) : (
+                    // ---------------- حالت دسکتاپ ----------------
+                    <TelecomDataGrid
+                        data={listBanks?.data?.value}
+                        loading={listBanks?.isLoading}
+                        CustomToolBar={() => {
+                            return hasWriteAccess && (
+                                <Grid container size={'auto'} spacing={sizeConverter(4, 'spaceX')}>
+                                    <DataGridIconProvider toolTipText={'اضافه'} Icon={AddIcon} disable={false} clickFunc={() => setOpenDialog('add')} />
+                                    <DataGridIconProvider
+                                        toolTipText={'ویرایش'}
+                                        Icon={EditIcon}
+                                        disable={!selectedValue}
+                                        clickFunc={() => setOpenDialog('edit')}
+                                    />
+                                    <DataGridIconProvider
+                                        toolTipText={'حذف'}
+                                        Icon={DeleteIcon}
+                                        disable={!selectedValue}
+                                        clickFunc={() => setOpenDialog('delete')}
+                                    />
+                                </Grid>
+                            )
+                        }}
+                        //@ts-ignore
+                        setRows={(data) => data && setSelectedValue(data?.[0])}
+                        multiSelect={false}
+                        disableRowSelection={false}
+                        columns={KIOSKS_COLUMNS}
+                    />
+                )}
 
             {/* دیالوگ‌ها (مشترک بین دسکتاپ و موبایل) */}
             {(openDialog === 'add' || openDialog === 'edit') && (

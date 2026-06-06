@@ -69,9 +69,9 @@ export default function MobilePermissionDialog({
           <Typography sx={{ ml: 2, flex: 1, fontWeight: 'bold' }} variant="h6" component="div">
              تنظیم دسترسی: {selectedRole.name}
           </Typography>
-          <Button autoFocus color="inherit" onClick={onSave} sx={{ fontWeight: 'bold' }}>
+          {/* <Button autoFocus color="inherit" onClick={onSave} sx={{ fontWeight: 'bold' }}>
             ذخیره
-          </Button>
+          </Button> */}
         </Toolbar>
       </AppBar>
 
@@ -143,7 +143,7 @@ export default function MobilePermissionDialog({
       {/* دکمه ذخیره چسبان در پایین (Floating Bottom Bar) */}
       <Box sx={{ 
         position: 'fixed', 
-        bottom: 0, 
+        bottom: 50, 
         left: 0, 
         right: 0, 
         p: 2, 

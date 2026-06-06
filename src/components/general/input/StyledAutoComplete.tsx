@@ -233,6 +233,5 @@ export const StyledAutoComplete = styled(Autocomplete)<StyledAutoCompleteProps>(
         }),
     };
 
-    // ترکیب نهایی
     return isMobile ? mobileStyles : desktopStyles;
 });

@@ -39,6 +39,7 @@ import downloadIcon from 'public/icons/Download.svg'
 import { LightTooltip } from '@components/general/StyledTooltip'
 import MobileErrorCard from '@components/mobile/MobileErrorCard'
 import { useDevice } from '@src/hooks/useDevice'
+import CustomCircularProgress from '@components/general/CustomCircularProgress'
 
 
 export const Route = createFileRoute('/(dashboard)/errorsList')({
@@ -50,6 +51,8 @@ export const Route = createFileRoute('/(dashboard)/errorsList')({
 
 function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
   const { accessCheck } = useAccessCheck()
+  const { isMobile } = useDevice()
+
   const theme = useTheme()
   const listErrors = useGetData<any>('api/Error/ListErrors', 'list-errors')
   const listErrorGroups = useGetData<any>('api/Base/ErrorGroups', 'list-error-groups')
@@ -104,7 +107,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
       label: 'گروه',
       value: 'groupID',
       kind: 'combo',
-      size: 5.9,
+      size: isMobile ? 12 : 5.9,
       component: AutoCompleteComp,
       validators: { ...REQUIRED_VALIDATOR },
     },
@@ -112,7 +115,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
       label: 'قطعه',
       value: 'deviceID',
       kind: 'combo',
-      size: 5.9,
+      size: isMobile ? 12 : 5.9,
       component: AutoCompleteComp,
     },
     {
@@ -124,7 +127,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
       autocompleteType: 'multiple',
       type: 'multiple',
       kind: 'combo',
-      size: 5.9,
+      size: isMobile ? 12 : 5.9,
       component: AutoCompleteComp,
     },
     {
@@ -245,123 +248,130 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
       ),
     },
   ]
-  const { isMobile } = useDevice()
 
   const hasWriteAccess = accessCheck({
     accessInfoId: 103,
     KindAccessInfo: 'writeAccess',
   })
 
+
+
+
   return (
     <Grid container size={12}>
-      {isMobile ? (
-        <Box
-          sx={{
-            height: '100dvh',
-            display: 'flex',
-            flexDirection: 'column',
-            pb: 8,
-          }}
-        >
-
+      {listErrors?.isLoading ?
+        <Grid sx={{ m: 'auto', mt: '50%' }}>
+          <CustomCircularProgress thickness={2} size={60} />
+        </Grid>
+        : isMobile ? (
           <Box
             sx={{
-              flexGrow: 1,
-              overflowY: 'auto',
-              '&::-webkit-scrollbar': {
-                width: '4px',
-              },
-              '&::-webkit-scrollbar-track': {
-                background: theme.palette.grey[200],
-              },
-              '&::-webkit-scrollbar-thumb': {
-                background: theme.palette.primary.main,
-                borderRadius: '4px',
-              },
+              height: '100dvh',
+              display: 'flex',
+              flexDirection: 'column',
+              pb: 8,
             }}
           >
-            <Grid2 container spacing={2}>
-              {listErrors?.data?.value?.map((item) => (
-                <Grid2 size={12} key={item.id}>
-                  <MobileErrorCard
-                    title={item?.title}
-                    device={item?.deviceName}
-                    errorCode={item?.code}
-                    subtitle={item?.banks}
-                    onInfo={() => handleShowInfo(item?.solution)}
-                    onEdit={() => {
-                      setSelectedValue(item?.id);
-                      setOpenDialog('edit');
-                    }}
-                    onDelete={() => {
-                      setSelectedValue(item?.id);
-                      setOpenDialog('delete');
-                    }}
-                    onFiles={() => {
-                      item?.attachedDocuments?.forEach((file) => downloadHandler(file));
-                    }}
-                  />
-                </Grid2>
-              ))}
-            </Grid2>
-            {hasWriteAccess && (
-              <Fab
-                color="primary"
-                sx={{ position: 'fixed', bottom: 70, right: 16, zIndex: 10 }}
-                onClick={() => setOpenDialog('add')}
-              >
-                <AddIcon />
-              </Fab>
-            )}
-          </Box>
-        </Box>
-      ) : (
-        <TelecomDataGrid
-          data={listErrors?.data?.value}
-          loading={listErrors?.isLoading}
-          doubleClickFunc={(data) => handleShowInfo(data?.solution)}
-          defaultSortColumns={{ code: 'asc' }}
-          CustomToolBar={() => {
-            return (
-              accessCheck({
-                accessInfoId: 105,
-                KindAccessInfo: 'writeAccess',
-              }) && (
-                <Grid
-                  container
-                  size={'auto'}
-                  spacing={sizeConverter(4, 'spaceX')}
+
+            <Box
+              sx={{
+                flexGrow: 1,
+                overflowY: 'auto',
+                '&::-webkit-scrollbar': {
+                  width: '4px',
+                },
+                '&::-webkit-scrollbar-track': {
+                  background: theme.palette.grey[200],
+                },
+                '&::-webkit-scrollbar-thumb': {
+                  background: theme.palette.primary.main,
+                  borderRadius: '4px',
+                },
+              }}
+            >
+              <Grid2 container spacing={2}>
+                {listErrors?.data?.value?.map((item) => (
+                  <Grid2 size={12} key={item.id}>
+                    <MobileErrorCard
+                      hasAccess={hasWriteAccess}
+                      title={item?.title}
+                      device={item?.deviceName}
+                      errorCode={item?.code}
+                      subtitle={item?.banks}
+                      onInfo={() => handleShowInfo(item?.solution)}
+                      onEdit={() => {
+                        setSelectedValue(item?.id);
+                        setOpenDialog('edit');
+                      }}
+                      onDelete={() => {
+                        setSelectedValue(item?.id);
+                        setOpenDialog('delete');
+                      }}
+                      onFiles={() => {
+                        item?.attachedDocuments?.forEach((file) => downloadHandler(file));
+                      }}
+                    />
+                  </Grid2>
+                ))}
+              </Grid2>
+              {hasWriteAccess && (
+                <Fab
+                  color="primary"
+                  sx={{ position: 'fixed', bottom: 70, right: 16, zIndex: 10 }}
+                  onClick={() => setOpenDialog('add')}
                 >
-                  <DataGridIconProvider
-                    toolTipText={'اضافه'}
-                    Icon={AddIcon}
-                    disable={false}
-                    clickFunc={() => setOpenDialog('add')}
-                  />
+                  <AddIcon />
+                </Fab>
+              )}
+            </Box>
+          </Box>
+        ) : (
+          <TelecomDataGrid
+            data={listErrors?.data?.value}
+            loading={listErrors?.isLoading}
+            doubleClickFunc={(data) => handleShowInfo(data?.solution)}
+            defaultSortColumns={{ code: 'asc' }}
+            CustomToolBar={() => {
+              return (
+                accessCheck({
+                  accessInfoId: 105,
+                  KindAccessInfo: 'writeAccess',
+                }) && (
+                  <Grid
+                    container
+                    size={'auto'}
+                    spacing={sizeConverter(4, 'spaceX')}
+                  >
+                    <DataGridIconProvider
+                      toolTipText={'اضافه'}
+                      Icon={AddIcon}
+                      disable={false}
+                      clickFunc={() => setOpenDialog('add')}
+                    />
 
-                  <DataGridIconProvider
-                    toolTipText={'ویرایش'}
-                    Icon={EditIcon}
-                    disable={!selectedValue}
-                    clickFunc={() => setOpenDialog('edit')}
-                  />
+                    <DataGridIconProvider
+                      toolTipText={'ویرایش'}
+                      Icon={EditIcon}
+                      disable={!selectedValue}
+                      clickFunc={() => setOpenDialog('edit')}
+                    />
 
-                  <DataGridIconProvider
-                    toolTipText={'حذف'}
-                    Icon={DeleteIcon}
-                    disable={!selectedValue}
-                    clickFunc={() => setOpenDialog('delete')}
-                  />
-                </Grid>
+                    <DataGridIconProvider
+                      toolTipText={'حذف'}
+                      Icon={DeleteIcon}
+                      disable={!selectedValue}
+                      clickFunc={() => setOpenDialog('delete')}
+                    />
+                  </Grid>
+                )
               )
-            )
-          }}
-          setRows={(data) => data && setSelectedValue(data?.[0])}
-          multiSelect={false}
-          disableRowSelection={false}
-          columns={KIOSKS_COLUMNS}
-        />
-      )}
+            }}
+            setRows={(data) => data && setSelectedValue(data?.[0])}
+            multiSelect={false}
+            disableRowSelection={false}
+            columns={KIOSKS_COLUMNS}
+          />
+        )}
 
       {
         (openDialog === 'add' || openDialog === 'edit') && (

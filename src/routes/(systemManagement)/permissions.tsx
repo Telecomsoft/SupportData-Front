@@ -18,9 +18,10 @@ import { ResType } from '@src/data/type/resType'
 import { addOrUpdateQueryParam } from '@utility/updateQuery.ts'
 import { useAccessCheck } from '@src/utility/accessCheck'
 
-import { useDevice } from '@src/hooks/useDevice'
 import MobilePermissionDialog from '@components/mobile/MobilePermissionDialog'
 import MobileRoleList from '@components/mobile/MobileRoleList'
+import { useDevice } from '@src/hooks/useDevice'
+import CustomCircularProgress from '@components/general/CustomCircularProgress'
 
 
 const GeneralConfirmDialog = lazy(
@@ -51,6 +52,7 @@ export const Route = createFileRoute('/(systemManagement)/permissions')({
 function Permissions({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
   const { control, handleSubmit, reset } = useForm()
   const { accessCheck } = useAccessCheck()
+  const { isMobile } = useDevice()
 
   const [openDialog, setOpenDialog] = useState<
     Record<string, 'add' | 'edit' | null>
@@ -168,12 +170,6 @@ function Permissions({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     accessInfoId: 102,
     KindAccessInfo: 'writeAccess',
   })
-  const isMobile = useDevice()
-  // 1. کامپوننت لیست نقش‌ها (نمای موبایل)
-
-
-  console.log('isMobile', isMobile)
-  // 2. کامپوننت دسترسی‌های نقش (نمای موبایل)
 
   const renderMobile = () => {
     return (
@@ -185,7 +181,7 @@ function Permissions({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
       />
     );
   }
-  console.log('openDialog', openDialog)
+
   const renderDesktop = () => {
     return (
       <>
@@ -233,7 +229,11 @@ function Permissions({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
       justifyContent={'flex-start'}
       columnGap={sizeConverter(6, 'spaceX')}
     >
-      {isMobile ? renderMobile() : renderDesktop()}
+      {permissionRoles?.isLoading ?
+        <Grid sx={{ m: 'auto', mt: '50%' }}>
+          <CustomCircularProgress thickness={2} size={60} />
+        </Grid>
+        : isMobile ? renderMobile() : renderDesktop()}
 
 
       <Suspense fallback={<SuspendDialog />}>

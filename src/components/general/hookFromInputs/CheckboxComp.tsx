@@ -7,6 +7,7 @@ import { Controller } from 'react-hook-form'
 import { Typography } from '@mui/material'
 import { sizeConverter } from '@src/utility/sizeConverter'
 import { formTypes } from '@src/data/type/reactHookFormType'
+import { useDevice } from '@src/hooks/useDevice'
 
 type CheckProps = {
     item: {
@@ -22,6 +23,8 @@ type CheckProps = {
 
 const CheckboxComponent = ({ item, control }: CheckProps) => {
     const disabled = item?.disabled
+    const { isMobile } = useDevice()
+
     return (
         <Grid
             container
@@ -42,15 +45,15 @@ const CheckboxComponent = ({ item, control }: CheckProps) => {
                         defaultValue={false}
                         render={({ field: props }) => (
                             <Checkbox
-                                sx={{ p: 0 }}
+                                sx={!isMobile ? { p: 0 } : {}}
                                 {...props}
                                 // style={{ padding: item.space ? item.space : 0, ...(item?.style || {}) }}
                                 disabled={disabled}
                                 icon={
                                     <CircleIcon
                                         sx={{
-                                            width: sizeConverter(20),
-                                            height: sizeConverter(20),
+                                            width: isMobile ? 30 : sizeConverter(20),
+                                            height: isMobile ? 30 : sizeConverter(20),
                                             color: 'white.0',
                                             stroke: '#ccc',
                                             strokeWidth: 2,
@@ -63,8 +66,8 @@ const CheckboxComponent = ({ item, control }: CheckProps) => {
                                         sx={{
                                             padding: 0,
                                             color: item?.disabled ? 'gray.0' : 'fontColor.0',
-                                            width: sizeConverter(20),
-                                            height: sizeConverter(20),
+                                            width: isMobile ? 30 : sizeConverter(20),
+                                            height: isMobile ? 30 : sizeConverter(20),
                                             ml: sizeConverter(4, 'spaceX'),
                                         }}
                                     />
@@ -77,7 +80,7 @@ const CheckboxComponent = ({ item, control }: CheckProps) => {
                 }
                 {...(item?.title && {
                     label: (
-                        <Typography sx={{ fontSize: sizeConverter(10), pl: sizeConverter(5, 'spaceX'), opacity: disabled ? 0.5 : 1 }}>
+                        <Typography sx={{ fontSize: isMobile ? 14 : sizeConverter(10), pl: sizeConverter(5, 'spaceX'), opacity: disabled ? 0.5 : 1, }}>
                             {item.title}
                         </Typography>
                     ),

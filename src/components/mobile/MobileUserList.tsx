@@ -2,7 +2,6 @@
 import React from 'react';
 import { Box, Fab } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { sizeConverter } from '@utility/sizeConverter';
 import UserMobileCard from './UserMobileCard';
 
 interface MobileUserListProps {
@@ -36,14 +35,14 @@ export const MobileUserList: React.FC<MobileUserListProps> = ({
             })}
 
             {hasAccess && (
-                <Fab 
-                    color="primary" 
-                    aria-label="add" 
+                <Fab
+                    color="primary"
+                    aria-label="add"
                     onClick={onAddClick}
-                    sx={{ 
-                        position: 'fixed', 
-                        bottom: sizeConverter(80, 'spaceY'), 
-                        right: sizeConverter(16, 'spaceX'),
+                    sx={{
+                        position: 'fixed',
+                        bottom: 80,
+                        right: 16,
                         zIndex: 1000
                     }}
                 >

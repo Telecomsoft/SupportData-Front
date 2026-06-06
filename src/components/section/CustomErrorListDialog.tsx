@@ -1,6 +1,7 @@
 // import UploadFile from "@components/general/uploadFile";
 import AutoCompleteComp from "@components/general/hookFromInputs/AutoComplete";
 import Grid from "@mui/material/Grid2";
+import { useDevice } from "@src/hooks/useDevice";
 
 import { sizeConverter } from "@src/utility/sizeConverter";
 
@@ -10,13 +11,13 @@ export const CustomErrorListDialog = ({
 }) => {
 
     const deviceId = watch('deviceID')
-
+    const { isMobile } = useDevice()
     const Custom = [
         {
             label: 'مدل قطعه',
             value: 'deviceModelID',
             kind: 'combo',
-            size: 5.9,
+            size: 12,
             type: 'multiple',
             disabled: !deviceId?.id,
             component: AutoCompleteComp,
@@ -26,7 +27,7 @@ export const CustomErrorListDialog = ({
     const filterDeviceModel = conditionValue?.deviceModels?.filter(i => i.deviceID == deviceId?.id)
 
     return (
-        <Grid container size={5.9} columnSpacing={sizeConverter(8, 'spaceX')}>
+        <Grid container size={isMobile ? 12 : 5.9} columnSpacing={sizeConverter(8, 'spaceX')}>
 
             {Custom.map((item) => {
 

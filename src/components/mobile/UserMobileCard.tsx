@@ -39,12 +39,13 @@ export default function UserMobileCard({
                 border: '1px solid #EAEAEA',
                 boxShadow: '0 4px 12px rgba(0,0,0,.08)',
                 backgroundColor: '#fff',
+                
             }}
         >
             <Box
                 sx={{
                     width: '100%',
-                    direction: 'rtl',
+                    // direction: 'rtl',
                     px: sizeConverter(24, 'spaceX'),
                     pt: sizeConverter(14, 'spaceY'),
                     pb: sizeConverter(8, 'spaceY'),

@@ -296,10 +296,13 @@ const GeneralDialog = ({
          fullScreen={isMobile}
          PaperProps={{
             sx: {
-               minWidth: width
-                  ? width
-                  : sizeConverter(600, 'width'),
+               minWidth: width ? width : sizeConverter(600, 'width'),
                borderRadius: isMobile ? 0 : sizeConverter(12, 'radius'),
+               // اضافه کردن استایل‌های موبایل برای فاصله از پایین
+               ...(isMobile && {
+
+                  paddingBottom: sizeConverter(7, 'height'),
+               }),
             }
          }}
          disableRestoreFocus
@@ -472,7 +475,8 @@ const GeneralDialog = ({
                      flex: 1,
                      overflowY: 'auto',
                      overflowX: 'hidden',
-                     py: 1,
+                     pt: 2,
+                     pb: 4,
                   }}
                >
                   <Grid

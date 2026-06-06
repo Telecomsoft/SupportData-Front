@@ -56,7 +56,7 @@ export default function MobileBottomNav() {
     };
 
     return (
-        <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 600 }}>
+        <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 6000 }}>
             <BottomNavigation
                 value={activeIndex !== -1 ? activeIndex : false} // در صورت عدم تطابق، هیچ تبی فعال نباشد
                 onChange={handleNavClick}

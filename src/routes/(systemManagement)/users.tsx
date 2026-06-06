@@ -25,6 +25,7 @@ import CircleIcon from '@mui/icons-material/Circle'
 import { useAccessCheck } from '@src/utility/accessCheck'
 import { useDevice } from '@hooks/useDevice' // <-- ایمپورت هوک تشخیص دستگاه
 import { MobileUserList } from '@components/mobile/MobileUserList'
+import CustomCircularProgress from '@components/general/CustomCircularProgress'
 
 const GeneralDeleteDialog = lazy(
     () => import('@components/general/GeneralDeleteDialog.tsx'),
@@ -54,7 +55,7 @@ type AddKindState = 'user' | 'password' | 'capacity' | null;
 
 function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     const { accessCheck } = useAccessCheck()
-    const { isMobile } = useDevice() // <-- بررسی موبایل بودن
+    const { isMobile } = useDevice()
 
     const users = useGetData<any>('api/User/List', 'get-users')
     const permissionRoles = useGetData<PermissionRole[]>('api/Role/List', 'get-roles-user')
@@ -154,7 +155,11 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             sx={{ overflowX: 'auto' }}
             columnGap={sizeConverter(6, 'spaceX')}
         >
-            {true ? renderMobile() : renderDesktop()}
+            {permissionRoles?.isLoading ?
+                <Grid sx={{ m: 'auto', mt: '50%' }}>
+                    <CustomCircularProgress thickness={2} size={60} />
+                </Grid>
+                : isMobile ? renderMobile() : renderDesktop()}
 
             <Suspense fallback={<SuspendDialog />}>
                 {(openDialog === 'add' || openDialog === 'edit') && addKind === 'user' && (
