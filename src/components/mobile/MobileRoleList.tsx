@@ -1,4 +1,4 @@
-import { Box, Fab } from '@mui/material';
+import { Box, Fab, useTheme } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RoleItemCard from './RoleItemCard';
 
@@ -15,12 +15,16 @@ export default function MobileRoleList({
     setOpenDialog,
     isAcceess
 }: MobileRoleListProps) {
+
+    const theme = useTheme()
+
     return (
-        <Box sx={{ width: '100%', p: 2, pb: 10, overflowY: 'auto' }}>
-            {permissionRoles.data?.value.map((role) => (
+        <Box sx={{ width: '100%', p: 2, pb: 10, overflowY: 'auto', bgcolor: theme.palette.bgColor[1] }}>
+            {permissionRoles?.data?.value?.map((role) => (
                 <RoleItemCard
                     key={role.id}
                     name={role.name}
+                    isAcceess={isAcceess}
                     onClick={() => setSelectedItem(role)} // اینجا به صفحه دسترسی‌ها می‌رود
                     onEdit={() => {
                         setSelectedItem(role);
@@ -37,15 +41,17 @@ export default function MobileRoleList({
             ))}
 
             {/* دکمه شناور افزودن نقش */}
-            {isAcceess && (
-                <Fab
-                    color="primary"
-                    sx={{ position: 'fixed', bottom: 70, right: 16, zIndex: 10 }}
-                    onClick={() => setOpenDialog((prev: any) => ({ ...prev, roleAdd: 'add' }))}
-                >
-                    <AddIcon />
-                </Fab>
-            )}
-        </Box>
+            {
+                isAcceess && (
+                    <Fab
+                        color="primary"
+                        sx={{ position: 'fixed', bottom: 70, right: 16, zIndex: 10 }}
+                        onClick={() => setOpenDialog((prev: any) => ({ ...prev, roleAdd: 'add' }))}
+                    >
+                        <AddIcon />
+                    </Fab>
+                )
+            }
+        </Box >
     );
 }

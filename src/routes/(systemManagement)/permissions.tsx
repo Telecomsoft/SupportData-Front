@@ -187,7 +187,7 @@ function Permissions({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
       <>
         <Sidebar
           {...(isAcceess && { toolbarArray: ['add', 'edit', 'delete'] })}
-          data={permissionRoles.data?.value}
+          data={permissionRoles?.data?.value}
           title={'لیست نقش ها'}
           treeStyle={'none'}
           showPictureUrlOrIcon={false}
@@ -291,14 +291,15 @@ function Permissions({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
           />
         )}
         {
-          isMobile && !!openDialog.roleMobile &&
+          isMobile && !!openDialog.roleMobile && isAcceess &&
           <MobilePermissionDialog
-            open={!!openDialog.roleMobile} // اگر آیتم انتخاب شده بود باز شود
+            open={!!openDialog.roleMobile}
             selectedRole={selectedItem}
-            permissions={updatedPermissions} // استفاده از استیت لوکال برای تغییرات لحظه‌ای تیک‌ها
+            permissions={updatedPermissions}
             onClose={() => { setSelectedItem(null); handleClickCloseDialog('roleMobile') }}
             onSave={handleSubmit(onSubmit)}
             onPermissionChange={handleAccessChange}
+            onSelectAll={selectAll}
           />
         }
       </Suspense>

@@ -41,7 +41,7 @@ export default function SimpleInfoDialog({
                         maxWidth: '100%',
                         maxHeight: '100%',
                         borderRadius: 0,
-                        m: 0,
+                        mb: 0,
                     }
                     : {
                         minWidth: sizeConverter(dialogWidth, 'width'),
@@ -142,18 +142,18 @@ export default function SimpleInfoDialog({
                     sx={{
                         mt: isMobile ? 'auto' : sizeConverter(15, 'spaceY'),
                         pt: isMobile ? sizeConverter(16, 'spaceY') : 0,
+                        pb: isMobile ? 8 : 0,
                         borderTop: isMobile ? '1px solid #EAEAEA' : 'none',
                     }}
                 >
                     <Button
                         onClick={onClose}
-                        variant="main"
-                        color="primary"
+                        variant="confirmMobile"
+                        // color="primary"
                         fullWidth={isMobile}
                         sx={{
-                            height: isMobile ? sizeConverter(56, 'height') : undefined,
-                            fontSize: isMobile ? sizeConverter(60) : undefined,
-                            fontWeight: 600,
+                            height: isMobile ? sizeConverter(30, 'height') : undefined,
+                           
                         }}
                     >
                         بستن

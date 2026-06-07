@@ -25,10 +25,11 @@ export function MobileLayout({ children }: Props) {
     return (
         <Grid container sx={{
             minHeight: '100dvh',
-            bgcolor: '#f8f9fa',
+            // bgcolor: '#f8f9fa',
             display: 'flex',
             flexDirection: 'column',
-            position: 'relative'
+            position: 'relative',
+            bgcolor: theme.palette.bgColor[1]
         }}>
             {/* AppBar ثابت */}
             <Grid

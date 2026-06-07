@@ -1,18 +1,19 @@
 import React from 'react';
-import { Box, Card, Typography, IconButton, Avatar } from '@mui/material';
+import { Box, Card, Typography, IconButton, Avatar, useTheme } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import PersonIcon from '@mui/icons-material/Person';
 
 type RoleItemCardProps = {
     name: string;
+    isAcceess: boolean;
     onEdit: () => void;
     onDelete: () => void;
     onClick: () => void;
     onRoleAdd: () => void;
 };
 
-const mainColor = '#7a0016';
 
 export default function RoleItemCard({
     name,
@@ -20,7 +21,10 @@ export default function RoleItemCard({
     onDelete,
     onClick,
     onRoleAdd,
+    isAcceess
 }: RoleItemCardProps) {
+
+    const theme = useTheme()
 
     return (
         <Card
@@ -31,50 +35,62 @@ export default function RoleItemCard({
                 p: 1.5,
                 mb: 2,
                 borderRadius: 4,
-                boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-                border: '1px solid #f0f0f0',
-                cursor: 'pointer'
+                boxShadow: `0 2px 8px ${theme.palette.black[6]}`,
+                border: `1px solid ${theme.palette.black[7]}`,
+                bgcolor: theme.palette.bgColor[0],
             }}
         >
-            <Avatar onClick={() => onRoleAdd()} sx={{ bgcolor: '#fff5f5', color: mainColor, mr: 2 }}>
-                <PersonIcon />
-            </Avatar>
-
-            <Box sx={{ flexGrow: 1 }}>
-                <Typography fontWeight="bold">{name}</Typography>
-            </Box>
-
-            <Box sx={{ display: 'flex', gap: 1 }}>
-                <IconButton
-                    onClick={(e) => {
-                        e.preventDefault(); // جلوگیری از رفتار پیش‌فرض
-                        e.stopPropagation(); // جلوگیری از انتقال کلیک به کارت اصلی (جلوگیری از باز شدن دیالوگ)
-                        if (onEdit) onEdit(); // فراخوانی تابع ویرایش
-                    }}
+            <Grid container size={8.5} onClick={() => onRoleAdd()}  >
+                <Avatar
                     sx={{
-                        border: '1px solid #eee',
-                        borderRadius: 2,
-                        color: mainColor
+                        bgcolor: theme.palette.bgColor[2],
+                        color: theme.palette.primary.main,
+                        mr: 2
                     }}
                 >
-                    <EditOutlinedIcon fontSize="small" />
-                </IconButton>
+                    <PersonIcon />
+                </Avatar>
 
-                <IconButton
-                    onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        if (onDelete) onDelete(); // فراخوانی تابع حذف
-                    }}
-                    sx={{
-                        border: '1px solid #eee',
-                        borderRadius: 2,
-                        color: mainColor
-                    }}
-                >
-                    <DeleteOutlineIcon fontSize="small" />
-                </IconButton>
-            </Box>
+                <Box sx={{ flexGrow: 1 }}>
+                    <Typography fontWeight="bold">{name}</Typography>
+                </Box>
+            </Grid>
+            <Grid container size={3} alignItems={'center'}>
+
+                {isAcceess && <Box sx={{ display: 'flex', gap: 1 }}>
+                    <IconButton
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            onEdit?.();
+                        }}
+                        sx={{
+                            border: `1px solid ${theme.palette.black[7]}`,
+                            borderRadius: 2,
+                            color: theme.palette.black[0],
+                            bgcolor: theme.palette.white[0],
+                        }}
+                    >
+                        <EditOutlinedIcon fontSize="small" />
+                    </IconButton>
+
+                    <IconButton
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            if (onDelete) onDelete(); // فراخوانی تابع حذف
+                        }}
+                        sx={{
+                            border: `1px solid ${theme.palette.black[7]}`,
+                            borderRadius: 2,
+                            color: theme.palette.black[0],
+                        }}
+                    >
+                        <DeleteOutlineIcon fontSize="small" />
+                    </IconButton>
+                </Box>}
+            </Grid>
+
         </Card>
     );
 }

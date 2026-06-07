@@ -41,6 +41,9 @@ import MobileErrorCard from '@components/mobile/MobileErrorCard'
 import { useDevice } from '@src/hooks/useDevice'
 import CustomCircularProgress from '@components/general/CustomCircularProgress'
 
+import SearchIcon from '@mui/icons-material/Search'
+import CloseIcon from '@mui/icons-material/Close'
+import { TextField, InputAdornment } from '@mui/material'
 
 export const Route = createFileRoute('/(dashboard)/errorsList')({
   component: withSnackbar(kioskErrors),
@@ -73,6 +76,14 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [solutionText, setSolutionText] = useState<string | null>(null)
 
+
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+
+  const filteredErrors = listErrors?.data?.value?.filter((item: any) => {
+    if (!searchQuery) return true;
+    return String(item?.code).includes(searchQuery);
+  });
   const handleOpenSolution = (event: any, text: string) => {
     setAnchorEl(event.currentTarget)
     setSolutionText(text)
@@ -272,7 +283,37 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
               pb: 8,
             }}
           >
-
+            <Box sx={{ px: 2, pt: 2, pb: 1, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+              {isSearchOpen ? (
+                <TextField
+                  fullWidth
+                  size="small"
+                  placeholder="جستجوی کد خطا..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  autoFocus
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          size="small"
+                          onClick={() => {
+                            setIsSearchOpen(false);
+                            setSearchQuery('');
+                          }}
+                        >
+                          <CloseIcon />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              ) : (
+                <IconButton onClick={() => setIsSearchOpen(true)} color="primary" sx={{ bgcolor: theme.palette.grey[200] }}>
+                  <SearchIcon />
+                </IconButton>
+              )}
+            </Box>
             <Box
               sx={{
                 flexGrow: 1,
@@ -290,7 +331,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
               }}
             >
               <Grid2 container spacing={2}>
-                {listErrors?.data?.value?.map((item) => (
+                {filteredErrors?.map((item) => (
                   <Grid2 size={12} key={item.id}>
                     <MobileErrorCard
                       hasAccess={hasWriteAccess}
@@ -307,9 +348,14 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                         setSelectedValue(item?.id);
                         setOpenDialog('delete');
                       }}
-                      onFiles={() => {
-                        item?.attachedDocuments?.forEach((file) => downloadHandler(file));
-                      }}
+                      onDownloadClick={downloadHandler}
+                      files={
+                        item?.attachedDocuments?.map((file: any, index: number) => ({
+                          id: index,
+                          name: `فایل ضمیمه ${index + 1}`,
+                          rawFile: file // خود فایل را اینجا نگه می‌داریم تا به هندلر پاس بدهیم
+                        })) || []
+                      }
                     />
                   </Grid2>
                 ))}

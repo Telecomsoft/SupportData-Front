@@ -98,7 +98,7 @@ const Login = (props: Partial<LoginProps>) => {
             }}
          >
             {signIn.isPending
-               ? <CustomCircularProgress size={sizeConverter(20)} color="white.0" />
+               ? <CustomCircularProgress size={isMobile ? 20 : sizeConverter(20)} color="white.0" />
                : 'ورود'}
          </Button>
       </>
