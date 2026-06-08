@@ -70,14 +70,9 @@ export default function MobileErrorCard({
                 sx={{
                     position: 'relative',
                     overflow: 'hidden',
-                    borderRadius: sizeConverter(45, 'radius'),
-
-                    // border: `1px solid ${theme.palette.black[7]}`,
-                    boxShadow: `0 4px 6px ${theme.palette.black[7]}`,
-                    backgroundColor: theme.palette.white[0],
+                    borderRadius: 3, boxShadow: '0 2px 10px rgba(0,0,0,0.05)'
                 }}
             >
-
                 <Box
                     sx={{
                         display: 'flex',
@@ -191,7 +186,7 @@ export default function MobileErrorCard({
                 open={isFilesDrawerOpen}
                 onClose={() => setIsFilesDrawerOpen(false)}
                 PaperProps={{
-                    sx: { borderTopLeftRadius: 16, borderTopRightRadius: 16, pb: 8, pt: 1,bgcolor:theme.palette.bgColor[1] }
+                    sx: { borderTopLeftRadius: 16, borderTopRightRadius: 16, pb: 8, pt: 1, bgcolor: theme.palette.bgColor[1] }
                 }}
             >
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', px: 2, py: 1, alignItems: 'center' }}>

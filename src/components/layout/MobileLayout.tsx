@@ -39,7 +39,7 @@ export function MobileLayout({ children }: Props) {
                 justifyContent="space-between" // توزیع المان‌ها در دو طرف
                 sx={{
                     position: 'fixed',
-                    zIndex: 120,
+                    zIndex: 12000,
                     bgcolor: theme.palette.dataGrid.main,
                     px: 2, // Padding افقی برای فاصله از لبه‌ها
                     height: '56px' // ارتفاع ثابت برای هماهنگی با محاسبات پایین
@@ -65,7 +65,7 @@ export function MobileLayout({ children }: Props) {
                 top: '56px',
                 left: 0,
                 right: 0,
-                zIndex: 1100,
+                zIndex: 12000,
                 bgcolor: 'primary.main',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
             }}>

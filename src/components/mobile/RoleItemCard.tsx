@@ -32,12 +32,13 @@ export default function RoleItemCard({
             sx={{
                 display: 'flex',
                 alignItems: 'center',
-                p: 1.5,
+                justifyContent: 'space-between',
+                backgroundColor: '#fff',
+                borderRadius: 3,
+                p: 2,
                 mb: 2,
-                borderRadius: 4,
-                boxShadow: `0 2px 8px ${theme.palette.black[6]}`,
-                border: `1px solid ${theme.palette.black[7]}`,
-                bgcolor: theme.palette.bgColor[0],
+                boxShadow: '0 4px 12px rgba(0,0,0,0.03)', // سایه ملایم مشابه عکس
+                cursor: 'pointer',
             }}
         >
             <Grid container size={8.5} onClick={() => onRoleAdd()}  >

@@ -300,8 +300,7 @@ const GeneralDialog = ({
                borderRadius: isMobile ? 0 : sizeConverter(12, 'radius'),
                // اضافه کردن استایل‌های موبایل برای فاصله از پایین
                ...(isMobile && {
-
-                  paddingBottom: sizeConverter(7, 'height'),
+                  paddingBottom: sizeConverter(7, 'spaceY'),
                }),
             }
          }}

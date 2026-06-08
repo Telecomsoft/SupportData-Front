@@ -37,11 +37,10 @@ export default function SettingsCard({
             sx={{
                 width: '100%',
                 overflow: 'hidden',
-                borderRadius: sizeConverter(66, 'radius'),
-                mb: sizeConverter(3, 'spaceY'),
+                mb: sizeConverter(6, 'spaceY'),
                 border: '1px solid #EAEAEA',
-                boxShadow: '0 4px 12px rgba(0,0,0,.08)',
-                backgroundColor: '#fff',
+                borderRadius: 3,
+                boxShadow: '0 2px 10px rgba(0,0,0,0.05)'
             }}
         >
             <Box

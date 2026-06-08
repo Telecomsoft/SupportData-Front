@@ -244,7 +244,7 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 </Grid>
                 : isMobile ? (
                     // ---------------- حالت موبایل ----------------
-                    <Box sx={{ width: '100%', p: 2, pb: 10, overflowY: 'auto' }}>
+                    <Box sx={{ width: '100%', p: 2, pb: 10, overflowY: 'auto',  }}>
                         {listBanks?.data?.value?.map((bank: any) => (
                             <SettingsCard
                                 key={bank.id}

@@ -4,13 +4,9 @@ import {
   Card,
   CardContent,
   Typography,
-  IconButton,
   Button,
   Checkbox,
-  Stack,
   Divider,
-  AppBar,
-  Toolbar,
   Dialog,
   Slide,
   Container,
@@ -18,13 +14,11 @@ import {
 import Grid from '@mui/material/Grid2';
 import { useTheme } from '@mui/material/styles';
 import { TransitionProps } from '@mui/material/transitions';
-import CloseIcon from '@mui/icons-material/Close';
 import SecurityIcon from '@mui/icons-material/Security';
 
-import SelectAllIcon from '@mui/icons-material/SelectAll'; // آیکون انتخاب همه
-import CircleIcon from '@mui/icons-material/Circle'
-
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import SelectAllIcon from '@mui/icons-material/SelectAll';
+import CircleIcon from '@mui/icons-material/Circle';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & { children: React.ReactElement },
@@ -40,7 +34,7 @@ export type MobilePermissionDialogProps = {
   onClose: () => void;
   onSave: () => void;
   onPermissionChange: (moduleId: string, type: 'read' | 'write', value: boolean) => void;
-  onSelectAll: (select: boolean) => void; // جدید: تابع انتخاب همه از والد
+  onSelectAll: (select: boolean) => void;
 };
 
 export default function MobilePermissionDialog({
@@ -56,7 +50,6 @@ export default function MobilePermissionDialog({
 
   if (!selectedRole) return null;
 
-  // بررسی می‌کند که آیا همه دسترسی‌ها (خواندن و نوشتن) برای همه ماژول‌ها فعال است
   const allSelected = permissions.length > 0 && permissions.every(
     (perm) => perm.readAccess === true && perm.writeAccess === true
   );
@@ -68,23 +61,18 @@ export default function MobilePermissionDialog({
   return (
     <Dialog
       fullScreen
+      sx={{ paddingTop: 10 }}
       open={open}
       onClose={onClose}
       TransitionComponent={Transition}
-
+      PaperProps={{
+        style: {
+          backgroundColor: theme.palette.bgColor[1],
+        },
+      }}
     >
-      <AppBar sx={{ position: 'relative', bgcolor: theme.palette.primary.main, elevation: 0 }}>
-        <Toolbar>
-          <IconButton edge="start" color="inherit" onClick={onClose} aria-label="close">
-            <CloseIcon />
-          </IconButton>
-          <Typography sx={{ ml: 2, flex: 1, fontWeight: 'bold' }} variant="h6" component="div">
-            تنظیم دسترسی: {selectedRole.name}
-          </Typography>
-        </Toolbar>
-      </AppBar>
-
-      <Container sx={{ p: 2, pb: 12 }}>
+      {/* پدینگ بالا و پایین اضافه شد تا محتوا با لبه‌ها و دکمه‌های پایین تداخل نداشته باشد */}
+      <Container sx={{ p: 2, pt: 4, pb: 12 }}>
         <Card sx={{ mb: 2, borderRadius: 3, boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
           <CardContent sx={{ display: 'flex', alignItems: 'center', py: '12px !important' }}>
             <AvatarIcon theme={theme} />
@@ -97,22 +85,20 @@ export default function MobilePermissionDialog({
           </CardContent>
         </Card>
 
-        <Grid container justifyContent={'space-between'} alignItems={'center'}>
+        <Grid container justifyContent={'space-between'} alignItems={'center'} mb={1}>
           <Typography variant="overline" sx={{ px: 1, fontWeight: 'bold', color: theme.palette.black[4] }}>
             لیست ماژول‌ها
           </Typography>
-          {/* دکمه انتخاب همه */}
-          <Grid container onClick={handleSelectAllClick} alignItems={'center'}>
-            <IconButton color="inherit" aria-label="select all">
-              <SelectAllIcon />
-            </IconButton>
+          <Grid container onClick={handleSelectAllClick} alignItems={'center'} sx={{ cursor: 'pointer' }}>
+            <SelectAllIcon sx={{ color: theme.palette.black[4] }} />
             <Typography variant="overline" sx={{ px: 1, fontWeight: 'bold', color: theme.palette.black[4] }}>
               انتخاب همه
             </Typography>
           </Grid>
         </Grid>
-        <Card sx={{ mb: 2, borderRadius: 3, overflow: 'hidden' }}>
-          <Box sx={{ display: 'flex', px: 2, py: 1.5, bgcolor: theme.palette.primary.main, color: theme.palette.white[0], fontsize: 15 }}>
+
+        <Card sx={{ mb: 2, borderRadius: 3, overflow: 'hidden' , boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
+          <Box sx={{ display: 'flex', px: 2, py: 1.5, bgcolor: theme.palette.primary.main, color: theme.palette.white[0] }}>
             <Typography variant="body2" fontWeight="bold" sx={{ textAlign: 'center', flexGrow: 1 }}>ماژول</Typography>
             <Typography variant="body2" fontWeight="bold" sx={{ width: 70, textAlign: 'center' }}>خواندن</Typography>
             <Typography variant="body2" fontWeight="bold" sx={{ width: 70, textAlign: 'center' }}>نوشتن</Typography>
@@ -145,23 +131,43 @@ export default function MobilePermissionDialog({
         </Card>
       </Container>
 
+      {/* بخش ثابت پایین با دو دکمه بروزرسانی و بستن */}
       <Box sx={{
         position: 'fixed',
-        bottom: 50,
+        bottom: 0,
         left: 0,
         right: 0,
         p: 2,
-        backgroundColor: `${theme.palette.white[0]}E6`,
-        backdropFilter: 'blur(8px)',
-        borderTop: `1px solid ${theme.palette.black[6]}`
+        pb: 8,
+        bgcolor: theme.palette.white[0],
+        boxShadow: '0 -4px 10px rgba(0,0,0,0.05)',
+        display: 'flex',
+        gap: 2,
+        zIndex: 10
       }}>
         <Button
-          variant="contained"
           fullWidth
+          variant="confirmMobile"
+          color="primary"
           onClick={onSave}
-          sx={{ bgcolor: theme.palette.primary.main, py: 1.5, borderRadius: 3, fontWeight: 'bold' }}
+          sx={{ py: 1.5, fontSize: '1rem', fontWeight: 'bold', borderRadius: 3 }}
         >
-          بروزرسانی دسترسی‌ها
+          بروزرسانی
+        </Button>
+        <Button
+          fullWidth
+          variant="cancelMobile"
+          onClick={onClose}
+          sx={{
+            py: 1.5,
+            fontSize: '1rem',
+            fontWeight: 'bold',
+            borderRadius: 3,
+            color: theme.palette.black[2],
+            borderColor: theme.palette.black[4]
+          }}
+        >
+          بستن
         </Button>
       </Box>
     </Dialog>

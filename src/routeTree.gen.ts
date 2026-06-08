@@ -14,6 +14,8 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
 import { Route as systemManagementUsersImport } from './routes/(systemManagement)/users'
 import { Route as systemManagementPermissionsImport } from './routes/(systemManagement)/permissions'
+import { Route as systemManagementMobileListSystemManagementImport } from './routes/(systemManagement)/mobileListSystemManagement'
+import { Route as settingsMobileListSettingsImport } from './routes/(settings)/mobileListSettings'
 import { Route as settingsDevicesListImport } from './routes/(settings)/devicesList'
 import { Route as settingsDeviceModelsListImport } from './routes/(settings)/deviceModelsList'
 import { Route as settingsBanksListImport } from './routes/(settings)/banksList'
@@ -39,6 +41,21 @@ const systemManagementPermissionsRoute =
     path: '/permissions',
     getParentRoute: () => rootRoute,
   } as any)
+
+const systemManagementMobileListSystemManagementRoute =
+  systemManagementMobileListSystemManagementImport.update({
+    id: '/(systemManagement)/mobileListSystemManagement',
+    path: '/mobileListSystemManagement',
+    getParentRoute: () => rootRoute,
+  } as any)
+
+const settingsMobileListSettingsRoute = settingsMobileListSettingsImport.update(
+  {
+    id: '/(settings)/mobileListSettings',
+    path: '/mobileListSettings',
+    getParentRoute: () => rootRoute,
+  } as any,
+)
 
 const settingsDevicesListRoute = settingsDevicesListImport.update({
   id: '/(settings)/devicesList',
@@ -103,6 +120,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof settingsDevicesListImport
       parentRoute: typeof rootRoute
     }
+    '/(settings)/mobileListSettings': {
+      id: '/(settings)/mobileListSettings'
+      path: '/mobileListSettings'
+      fullPath: '/mobileListSettings'
+      preLoaderRoute: typeof settingsMobileListSettingsImport
+      parentRoute: typeof rootRoute
+    }
+    '/(systemManagement)/mobileListSystemManagement': {
+      id: '/(systemManagement)/mobileListSystemManagement'
+      path: '/mobileListSystemManagement'
+      fullPath: '/mobileListSystemManagement'
+      preLoaderRoute: typeof systemManagementMobileListSystemManagementImport
+      parentRoute: typeof rootRoute
+    }
     '/(systemManagement)/permissions': {
       id: '/(systemManagement)/permissions'
       path: '/permissions'
@@ -128,6 +159,8 @@ export interface FileRoutesByFullPath {
   '/banksList': typeof settingsBanksListRoute
   '/deviceModelsList': typeof settingsDeviceModelsListRoute
   '/devicesList': typeof settingsDevicesListRoute
+  '/mobileListSettings': typeof settingsMobileListSettingsRoute
+  '/mobileListSystemManagement': typeof systemManagementMobileListSystemManagementRoute
   '/permissions': typeof systemManagementPermissionsRoute
   '/users': typeof systemManagementUsersRoute
 }
@@ -138,6 +171,8 @@ export interface FileRoutesByTo {
   '/banksList': typeof settingsBanksListRoute
   '/deviceModelsList': typeof settingsDeviceModelsListRoute
   '/devicesList': typeof settingsDevicesListRoute
+  '/mobileListSettings': typeof settingsMobileListSettingsRoute
+  '/mobileListSystemManagement': typeof systemManagementMobileListSystemManagementRoute
   '/permissions': typeof systemManagementPermissionsRoute
   '/users': typeof systemManagementUsersRoute
 }
@@ -149,6 +184,8 @@ export interface FileRoutesById {
   '/(settings)/banksList': typeof settingsBanksListRoute
   '/(settings)/deviceModelsList': typeof settingsDeviceModelsListRoute
   '/(settings)/devicesList': typeof settingsDevicesListRoute
+  '/(settings)/mobileListSettings': typeof settingsMobileListSettingsRoute
+  '/(systemManagement)/mobileListSystemManagement': typeof systemManagementMobileListSystemManagementRoute
   '/(systemManagement)/permissions': typeof systemManagementPermissionsRoute
   '/(systemManagement)/users': typeof systemManagementUsersRoute
 }
@@ -161,6 +198,8 @@ export interface FileRouteTypes {
     | '/banksList'
     | '/deviceModelsList'
     | '/devicesList'
+    | '/mobileListSettings'
+    | '/mobileListSystemManagement'
     | '/permissions'
     | '/users'
   fileRoutesByTo: FileRoutesByTo
@@ -170,6 +209,8 @@ export interface FileRouteTypes {
     | '/banksList'
     | '/deviceModelsList'
     | '/devicesList'
+    | '/mobileListSettings'
+    | '/mobileListSystemManagement'
     | '/permissions'
     | '/users'
   id:
@@ -179,6 +220,8 @@ export interface FileRouteTypes {
     | '/(settings)/banksList'
     | '/(settings)/deviceModelsList'
     | '/(settings)/devicesList'
+    | '/(settings)/mobileListSettings'
+    | '/(systemManagement)/mobileListSystemManagement'
     | '/(systemManagement)/permissions'
     | '/(systemManagement)/users'
   fileRoutesById: FileRoutesById
@@ -190,6 +233,8 @@ export interface RootRouteChildren {
   settingsBanksListRoute: typeof settingsBanksListRoute
   settingsDeviceModelsListRoute: typeof settingsDeviceModelsListRoute
   settingsDevicesListRoute: typeof settingsDevicesListRoute
+  settingsMobileListSettingsRoute: typeof settingsMobileListSettingsRoute
+  systemManagementMobileListSystemManagementRoute: typeof systemManagementMobileListSystemManagementRoute
   systemManagementPermissionsRoute: typeof systemManagementPermissionsRoute
   systemManagementUsersRoute: typeof systemManagementUsersRoute
 }
@@ -200,6 +245,9 @@ const rootRouteChildren: RootRouteChildren = {
   settingsBanksListRoute: settingsBanksListRoute,
   settingsDeviceModelsListRoute: settingsDeviceModelsListRoute,
   settingsDevicesListRoute: settingsDevicesListRoute,
+  settingsMobileListSettingsRoute: settingsMobileListSettingsRoute,
+  systemManagementMobileListSystemManagementRoute:
+    systemManagementMobileListSystemManagementRoute,
   systemManagementPermissionsRoute: systemManagementPermissionsRoute,
   systemManagementUsersRoute: systemManagementUsersRoute,
 }
@@ -221,6 +269,8 @@ export const routeTree = rootRoute
         "/(settings)/banksList",
         "/(settings)/deviceModelsList",
         "/(settings)/devicesList",
+        "/(settings)/mobileListSettings",
+        "/(systemManagement)/mobileListSystemManagement",
         "/(systemManagement)/permissions",
         "/(systemManagement)/users"
       ]
@@ -239,6 +289,12 @@ export const routeTree = rootRoute
     },
     "/(settings)/devicesList": {
       "filePath": "(settings)/devicesList.tsx"
+    },
+    "/(settings)/mobileListSettings": {
+      "filePath": "(settings)/mobileListSettings.tsx"
+    },
+    "/(systemManagement)/mobileListSystemManagement": {
+      "filePath": "(systemManagement)/mobileListSystemManagement.tsx"
     },
     "/(systemManagement)/permissions": {
       "filePath": "(systemManagement)/permissions.tsx"

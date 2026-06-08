@@ -55,7 +55,7 @@ export default function UserMobileCard({
                 <Grid container justifyContent="space-between" alignItems="center">
                     <Typography
                         sx={{
-                            fontSize: sizeConverter(42),
+                            fontSize: sizeConverter(48),
                             fontWeight: 700,
                             color: '#111',
                             lineHeight: 1.3,
@@ -67,13 +67,13 @@ export default function UserMobileCard({
                     </Typography>
                     
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Typography sx={{ fontSize: sizeConverter(32), color: '#6E6E6E' }}>
+                        <Typography sx={{ fontSize: sizeConverter(42), color: '#6E6E6E' }}>
                             {user.disabled ? 'غیرفعال' : 'فعال'}
                         </Typography>
                         <CircleIcon 
                             sx={{ 
                                 color: !user.disabled ? 'primary.main' : 'gray',
-                                fontSize: sizeConverter(40)
+                                fontSize: sizeConverter(60)
                             }} 
                         />
                     </Box>
@@ -85,7 +85,7 @@ export default function UserMobileCard({
                         sx={{
                             color: '#6E6E6E',
                             fontWeight: 700,
-                            fontSize: sizeConverter(36),
+                            fontSize: sizeConverter(42),
                         }}
                     >
                         نقش کاربر:
@@ -93,7 +93,7 @@ export default function UserMobileCard({
                     <Typography
                         sx={{
                             color: '#111',
-                            fontSize: sizeConverter(36),
+                            fontSize: sizeConverter(42),
                         }}
                     >
                         {roleName || 'نامشخص'}
@@ -114,22 +114,22 @@ export default function UserMobileCard({
                             }}
                         >
                             <ActionButton
-                                icon={<EditOutlinedIcon sx={{ fontSize: sizeConverter(44) }} />}
+                                icon={<EditOutlinedIcon sx={{ fontSize: sizeConverter(66) }} />}
                                 label="ویرایش"
                                 onClick={() => onAction('edit/user', user)}
                             />
                             <ActionButton
-                                icon={<DeleteOutlineIcon sx={{ fontSize: sizeConverter(44) }} />}
+                                icon={<DeleteOutlineIcon sx={{ fontSize: sizeConverter(66) }} />}
                                 label="حذف"
                                 onClick={() => onAction('delete', user)}
                             />
                             <ActionButton
-                                icon={<PasswordRoundedIcon sx={{ fontSize: sizeConverter(44) }} />}
+                                icon={<PasswordRoundedIcon sx={{ fontSize: sizeConverter(66) }} />}
                                 label="رمز عبور"
                                 onClick={() => onAction('add/password', user)}
                             />
                             <ActionButton
-                                icon={<LockResetIcon sx={{ fontSize: sizeConverter(44) }} />}
+                                icon={<LockResetIcon sx={{ fontSize: sizeConverter(66) }} />}
                                 label="بازنشانی"
                                 onClick={() => onAction('add/reset', user)}
                             />

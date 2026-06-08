@@ -16,7 +16,8 @@ export type DataType = {
    value: string
    link?: string
    icon: ComponentType<SVGProps<SVGSVGElement>> | SvgIconComponent | string | any
-   accessID?: number | number[]   // ✅ پشتیبانی از عدد یا آرایه (OR condition)
+   accessID?: number | number[]
+   mobileLink?: string
 }
 
 export const LAYOUT_SIDEBAR_DATA: (DataType & { children?: DataType[] })[] = [
@@ -32,6 +33,7 @@ export const LAYOUT_SIDEBAR_DATA: (DataType & { children?: DataType[] })[] = [
       name: 'تنظیمات',
       value: 'devicesList',
       link: '/devicesList',
+      mobileLink: '/mobileListSettings',
       icon: SettingsIcon,
       accessID: [104, 103],
       children: [
@@ -61,6 +63,7 @@ export const LAYOUT_SIDEBAR_DATA: (DataType & { children?: DataType[] })[] = [
    {
       name: 'تنظیمات سیستم',
       value: 'systemSettings',
+      mobileLink: '/mobileListSystemManagement',
       icon: SettingsApplicationsIcon,
       children: [
          {

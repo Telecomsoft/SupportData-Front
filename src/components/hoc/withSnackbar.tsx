@@ -43,7 +43,7 @@ export function withSnackbar<P extends object>(WrappedComponent: React.Component
             autoHide: boolean = defaultAutoHide,
             duration: number = defaultDuration,
             coordinates: SnackbarOrigin = {
-                vertical: 'top',
+                vertical: 'bottom',
                 horizontal: 'right',
             }
         ) => {

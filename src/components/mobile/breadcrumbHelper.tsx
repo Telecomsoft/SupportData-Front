@@ -1,3 +1,4 @@
+// src/components/mobile/breadcrumbHelper.ts
 import { LAYOUT_SIDEBAR_DATA } from "@src/data/layout-sidebar-data"
 
 export const getBreadcrumbs = (
@@ -5,17 +6,17 @@ export const getBreadcrumbs = (
    items: typeof LAYOUT_SIDEBAR_DATA
 ) => {
    for (const item of items) {
-      // ۱. اول بررسی می‌کنیم که آیا این مسیر متعلق به یکی از فرزندان است؟
+      // استفاده از لینک موبایل در صورت وجود برای مسیر برگشت والد
+      const parentPath = item.mobileLink || item.link;
+
       if (item.children && item.children.length > 0) {
-         const child = item.children.find(
-            c => c.link === pathname
-         )
+         const child = item.children.find(c => c.link === pathname)
 
          if (child) {
             return [
                {
                   label: item.name,
-                  path: item.link,
+                  path: parentPath,
                },
                {
                   label: child.name,
@@ -25,12 +26,11 @@ export const getBreadcrumbs = (
          }
       }
 
-      // ۲. اگر در فرزندان نبود (یا اصلاً فرزندی نداشت)، بررسی می‌کنیم آیا مسیر خود والد است؟
-      if (item.link === pathname) {
+      if (item.link === pathname || item.mobileLink === pathname) {
          return [
             {
                label: item.name,
-               path: item.link,
+               path: parentPath,
             },
          ]
       }
