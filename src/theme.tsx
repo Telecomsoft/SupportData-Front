@@ -519,8 +519,8 @@ const theme = createTheme({
                             props: { variant: 'main' },
                             style: ({ theme }: { theme: Theme }) => ({
                                 backgroundColor: theme.palette.primary['main'],
-                                borderRadius: sizeConverter(50, 'radius'),
-                                height: sizeConverter(22, 'height'),
+                                borderRadius: sizeConverter(80, 'radius'),
+                                height: sizeConverter(32, 'height'),
                                 minWidth: sizeConverter(100, 'width'),
                                 overflow: 'hidden',
                                 boxShadow:
@@ -553,8 +553,8 @@ const theme = createTheme({
                             props: { variant: 'confirm' },
                             style: ({ theme }: { theme: Theme }) => ({
                                 backgroundColor: theme.palette.green['0'],
-                                borderRadius: sizeConverter(50, 'radius'),
-                                height: sizeConverter(22, 'height'),
+                                borderRadius: sizeConverter(80, 'radius'),
+                                height: sizeConverter(32, 'height'),
                                 minWidth: sizeConverter(100, 'width'),
                                 overflow: 'hidden',
                                 boxShadow:
@@ -588,7 +588,8 @@ const theme = createTheme({
                             style: ({ theme }: { theme: Theme }) => ({
                                 backgroundColor: theme.palette.dataGrid.main,
                                 borderRadius: 50,
-                                height: 22,
+                                height: 44,
+                                flex: 1,
                                 minWidth: 100,
                                 overflow: 'hidden',
                                 boxShadow:
@@ -622,7 +623,8 @@ const theme = createTheme({
                             style: ({ theme }: { theme: Theme }) => ({
                                 backgroundColor: theme.palette.black['6'],
                                 borderRadius: 50,
-                                height: 22,
+                                height: 44,
+                                flex: 1,
                                 minWidth: 100,
                                 overflow: 'hidden',
                                 boxShadow:
@@ -645,6 +647,38 @@ const theme = createTheme({
 
                                 '@media (max-width:900px)': {
                                     padding: 14,
+                                },
+                            }),
+                        },
+                        {
+                            props: { variant: 'cancel' },
+                            style: ({ theme }: { theme: Theme }) => ({
+                                backgroundColor: theme.palette.black['6'],
+                                borderRadius: sizeConverter(80, 'radius'),
+                                height: sizeConverter(32, 'heihgt'),
+                                minWidth: sizeConverter(100, 'width'),
+                                overflow: 'hidden',
+                                boxShadow:
+                                    '0 0 1px 0 rgba(0, 0, 0, 0.04), 0 2px 6px 0 rgba(0, 0, 0, 0.04), 0 16px 24px 0 rgba(0, 0, 0, 0.06)',
+                                padding: sizeConverter(50, 'space'),
+                                fontSize: sizeConverter(13),
+                                // fontWeight: 'bold',
+                                fontFamily: 'yekanNormal',
+                                lineHeight: 1,
+                                letterSpacing: 'normal',
+                                textTransform: 'capitalize',
+                                color: theme.palette.black['0'],
+                                '&:hover': {
+                                    backgroundColor: theme.palette.black[4],
+                                    // color: theme.palette.white[0],
+                                },
+                                '&:active': {
+                                    backgroundColor: '#131313',
+                                },
+
+
+                                '@media (max-width:900px)': {
+                                    padding: sizeConverter(14, 'space'),
                                 },
                             }),
                         },

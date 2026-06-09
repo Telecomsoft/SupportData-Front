@@ -1,6 +1,7 @@
-import {SyntheticEvent, useState} from "react";
+import { SyntheticEvent, useState } from "react";
 import { Alert, AlertColor } from "@mui/lab";
 import { Snackbar, SnackbarOrigin } from "@mui/material";
+import { useDevice } from "@src/hooks/useDevice";
 
 export const SNACKBAR_SEVERITIES = {
     INFO: 'info',
@@ -27,6 +28,7 @@ interface WithSnackbarProps {
 
 export function withSnackbar<P extends object>(WrappedComponent: React.ComponentType<P>) {
     const SnackbarComponent: React.FC<P> = (props: P) => {
+        const { isMobile } = useDevice()
         const [open, setOpen] = useState(true);
         const [autoHide, setAutoHide] = useState(defaultAutoHide);
         const [message, setMessage] = useState<string>('');
@@ -43,7 +45,7 @@ export function withSnackbar<P extends object>(WrappedComponent: React.Component
             autoHide: boolean = defaultAutoHide,
             duration: number = defaultDuration,
             coordinates: SnackbarOrigin = {
-                vertical: 'bottom',
+                vertical: 'top',
                 horizontal: 'right',
             }
         ) => {
@@ -59,7 +61,7 @@ export function withSnackbar<P extends object>(WrappedComponent: React.Component
             setOpen(true);
         };
 
-        const handleClose = (_event: Event | SyntheticEvent<unknown, Event>,reason?: string) => {
+        const handleClose = (_event: Event | SyntheticEvent<unknown, Event>, reason?: string) => {
             if (reason === "clickaway") {
                 return;
             }
@@ -77,7 +79,7 @@ export function withSnackbar<P extends object>(WrappedComponent: React.Component
                         onClose={handleClose}
                         key={`${coordinates.vertical}${coordinates.horizontal}`}
                     >
-                        <Alert onClose={handleClose} severity={severity as AlertColor} sx={{ width: '100%', px: 2, borderRadius: 50 }}>
+                        <Alert onClose={handleClose} severity={severity as AlertColor} sx={{ mt: isMobile ? 12 : 0, width: '100%', px: 2, borderRadius: 50 }}>
                             {message}
                         </Alert>
                     </Snackbar>

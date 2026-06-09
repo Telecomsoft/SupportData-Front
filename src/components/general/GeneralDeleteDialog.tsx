@@ -238,7 +238,7 @@ const GeneralDeleteDialog = ({
     const endPoint = withoutDeleteID ? deleteEndPoint : deleteEndPoint + deleteID
     const deleteItem = useDeleteData(endPoint)
     const theme = useTheme()
-    const isMobile = useDevice()
+    const { isMobile } = useDevice()
     const { removeItem } = usePaymentListStore()
 
     const dangerColor = 'red.0'

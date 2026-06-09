@@ -14,6 +14,7 @@ import CustomCircularProgress from '@components/general/CustomCircularProgress'
 import { sizeConverter } from '@utility/sizeConverter'
 import { convertToPersianNumber } from '@utility/convertToPersianNumber'
 import { useDevice } from '@src/hooks/useDevice'
+import { useTheme } from '@mui/system'
 
 export type LoginFormData = {
    userName: string
@@ -25,7 +26,7 @@ interface LoginProps {
 }
 
 const Login = (props: Partial<LoginProps>) => {
-
+   const theme = useTheme()
    const { snackbarOpen } = props
    const { isMobile } = useDevice()
 
@@ -64,44 +65,52 @@ const Login = (props: Partial<LoginProps>) => {
    }
 
    const loginForm = (
-      <>
+      <Grid container >
 
-         {[
-            { label: 'نام کاربری', value: 'userName' },
-            { label: 'رمز عبور', value: 'password' },
-         ]?.map((item) => (
-            <Grid
-               container
-               key={item.value}
-               sx={{ mb: sizeConverter(20, 'spaceY') }}
-            >
-               <StyledTextField
-                  label={item.label}
-                  fullWidth
-                  type={item.value}
-                  {...register(item.value as keyof LoginFormData, {
-                     required: 'فیلد نباید خالی باشد.',
-                  })}
-                  error={!!errors[item.value as keyof LoginFormData]}
-                  helperText={errors[item.value as keyof LoginFormData]?.message}
-               />
-            </Grid>
-         ))}
+         {
+            [
+               { label: 'نام کاربری', value: 'userName' },
+               { label: 'رمز عبور', value: 'password' },
+            ]?.map((item) => (
+               <Grid
+                  container
+                  size={12}
+                  key={item.value}
+                  sx={{ mb: sizeConverter(20, 'spaceY'), }}
+               >
+                  <StyledTextField
+                     sx={{ borderRadius: 50 }}
+                     label={item.label}
+                     fullWidth
+                     focused
+                     type={item.value}
+                     {...register(item.value as keyof LoginFormData, {
+                        required: 'فیلد نباید خالی باشد.',
+                     })}
+                     error={!!errors[item.value as keyof LoginFormData]}
+                     helperText={errors[item.value as keyof LoginFormData]?.message}
+                  />
+               </Grid>
+            ))
+         }
 
-         <Button
+         < Button
+            fullWidth
             type="submit"
-            variant="contained"
+            variant={isMobile ? "confirmMobile" : 'main'}
             disabled={signIn.isPending}
             sx={{
-               width: 1,
+
                height: sizeConverter(44, 'height'),
             }}
          >
-            {signIn.isPending
-               ? <CustomCircularProgress size={isMobile ? 20 : sizeConverter(20)} color="white.0" />
-               : 'ورود'}
-         </Button>
-      </>
+            {
+               signIn.isPending
+                  ? <CustomCircularProgress size={isMobile ? 20 : sizeConverter(20)} color="white.0" />
+                  : 'ورود'
+            }
+         </Button >
+      </Grid >
    )
 
    // ==================== Mobile Version ====================
@@ -112,14 +121,15 @@ const Login = (props: Partial<LoginProps>) => {
             anchor="bottom"
             open
             variant="permanent"
+            sx={{ display: 'flex', alignItems: 'center' }}
             PaperProps={{
                sx: {
                   height: '100dvh',
                   borderTopLeftRadius: sizeConverter(28, 'radius'),
                   borderTopRightRadius: sizeConverter(28, 'radius'),
-                  bgcolor: 'white.0',
+                  bgcolor: theme.palette.bgColor[1],
                   px: sizeConverter(24, 'space'),
-                  pt: sizeConverter(16, 'spaceY'),
+                  pt: '40%'
                },
             }}
          >

@@ -71,16 +71,17 @@ type StyledTextFieldProps = {
 // }))
 
 // export default StyledTextField
+
 const StyledTextField = styled(TextField)<StyledTextFieldProps>(({ theme }) => ({
     width: '100%',
     borderRadius: sizeConverter(25, 'radius'),
 
     '& .MuiOutlinedInput-input': {
-        // padding: `0px ${sizeConverter(6)}px`,
-        color: '#000',
+        // استفاده از رنگ متن اصلی تم به جای #000
+        color: theme.palette.text.primary,
         fontSize: sizeConverter(12),
         borderRadius: sizeConverter(25, 'radius'),
-        minHeight: sizeConverter(30, 'height'),
+        // minHeight: sizeConverter(30, 'height'),
 
         '&[type="number"]': {
             MozAppearance: 'textfield',
@@ -96,7 +97,7 @@ const StyledTextField = styled(TextField)<StyledTextFieldProps>(({ theme }) => (
     },
 
     '& label': {
-        color: theme.palette.black['1'],
+        color: theme.palette.black?.['1'] || theme.palette.text.secondary,
         fontSize: sizeConverter(12),
         lineHeight: 1.2,
         marginTop: sizeConverter(-28, 'spaceY'),
@@ -107,24 +108,26 @@ const StyledTextField = styled(TextField)<StyledTextFieldProps>(({ theme }) => (
     },
 
     '& label.Mui-focused': {
-        color: theme.palette.black['1'],
+        color: theme.palette.primary.main, // معمولاً در فوکوس از رنگ اصلی استفاده می‌شود
     },
 
     '& .MuiIconButton-root': {
-        backgroundColor: '#fff',
+        // استفاده از رنگ پس‌زمینه کاغذ/سطح به جای #fff
+        backgroundColor: theme.palette.background.paper,
     },
 
     '& .Mui-error-root': {
-        color: theme.palette.black['1'],
+        color: theme.palette.error.main, // استفاده از رنگ خطای تم
     },
 
     '& .MuiFormHelperText-root': {
-        color: theme.palette.black['1'],
+        color: theme.palette.error.main, // هماهنگی متن راهنما با وضعیت خطا
     },
 
     '& .MuiFormLabel-root.Mui-error': {
-        color: theme.palette.black['1'],
-        borderColor: '#f5f5f5 !important',
+        color: theme.palette.error.main,
+        // جایگزینی #f5f5f5 با رنگ خاکستری بسیار روشن از تم یا شفافیت
+        borderColor: `${theme.palette.action.hover} !important`,
     },
 
     '& .MuiOutlinedInput-root': {
@@ -133,22 +136,28 @@ const StyledTextField = styled(TextField)<StyledTextFieldProps>(({ theme }) => (
 
         '& fieldset': {
             border: `${sizeConverter(1)}px solid`,
-            borderColor: theme.palette.black['7'],
+            borderColor: theme.palette.black?.['7'] || theme.palette.divider,
         },
 
         '&:hover fieldset': {
-            borderColor: theme.palette.black['4'],
+            borderColor: theme.palette.black?.['4'] || theme.palette.primary.light,
         },
 
         '&.Mui-focused fieldset': {
-            borderColor: theme.palette.black['2'],
+            borderColor: theme.palette.black?.['2'] || theme.palette.primary.main,
+        },
+
+        // اصلاح استایل فیلدست در حالت خطا
+        '&.Mui-error fieldset': {
+            borderColor: theme.palette.error.main,
         },
     },
 
     // ================= MOBILE =================
     [theme.breakpoints.down('md')]: {
-        margin: '12px 0',
-        padding: '0 10px',
+        margin: theme.spacing(1.5, 0), // استفاده از spacing تم به جای 12px
+        padding: theme.spacing(0, 1.25), // استفاده از spacing تم به جای 10px
+
         '& .MuiOutlinedInput-input': {
             padding: '14px 16px',
             fontSize: '1.05rem',
@@ -186,4 +195,5 @@ const StyledTextField = styled(TextField)<StyledTextFieldProps>(({ theme }) => (
         },
     },
 }))
+
 export default StyledTextField

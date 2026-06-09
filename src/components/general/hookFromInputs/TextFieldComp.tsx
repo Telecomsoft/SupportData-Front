@@ -78,7 +78,7 @@ const TextFieldComp = ({
     validators,
 }: TextFieldCompProps) => {
     const isValueFilled = value && value !== ''
-console.log('maxRows',maxRows)
+
     return (
         <Grid
             container

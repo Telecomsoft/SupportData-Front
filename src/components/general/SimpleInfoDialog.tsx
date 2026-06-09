@@ -1,10 +1,11 @@
 // src/components/general/SimpleInfoDialog.tsx
 import { ReactNode } from 'react'
 import Dialog from '@mui/material/Dialog'
-import Grid from '@mui/material/Grid2'
+import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
-import HighlightOffOutlinedIcon from '@mui/icons-material/HighlightOffOutlined'
+import IconButton from '@mui/material/IconButton'
+import CloseIcon from '@mui/icons-material/Close'
 
 import { sizeConverter } from '@src/utility/sizeConverter'
 import { useDevice } from '@src/hooks/useDevice'
@@ -34,132 +35,99 @@ export default function SimpleInfoDialog({
             onClose={onClose}
             fullScreen={isMobile}
             PaperProps={{
-                sx: isMobile
-                    ? {
-                        width: '100%',
-                        height: '100%',
-                        maxWidth: '100%',
-                        maxHeight: '100%',
-                        borderRadius: 0,
-                        mb: 0,
-                    }
-                    : {
-                        minWidth: sizeConverter(dialogWidth, 'width'),
-                        borderRadius: sizeConverter(12, 'radius'),
-                    },
+                sx: {
+                    display: 'flex',
+                    flexDirection: 'column',
+                    overflow: 'hidden',
+                    ...(isMobile
+                        ? { width: '100%', height: '100%', maxWidth: '100%', maxHeight: '100%', borderRadius: 0, m: 0 }
+                        : { minWidth: sizeConverter(dialogWidth, 'width'), maxHeight: '85vh', borderRadius: sizeConverter(16, 'radius') }
+                    ),
+                },
             }}
         >
-            <Grid
-                container
-                direction="column"
+            {/* Header */}
+            <Box
                 sx={{
-                    p: isMobile ? sizeConverter(20, 'space') : sizeConverter(10, 'space'),
-                    height: isMobile ? '100%' : 'auto',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    px: isMobile ? sizeConverter(20, 'space') : sizeConverter(16, 'space'),
+                    py: isMobile ? sizeConverter(16, 'spaceY') : sizeConverter(12, 'spaceY'),
+                    borderBottom: '1px solid',
+                    borderColor: 'divider',
+                    flexShrink: 0, ...(isMobile && { mt: 12 }),
                 }}
             >
-                {/* Header */}
-                <Grid
-                    container
-                    justifyContent="space-between"
-                    alignItems="center"
+                <Typography
                     sx={{
-                        pb: isMobile ? sizeConverter(16, 'spaceY') : 0,
-                        borderBottom: isMobile ? '1px solid #EAEAEA' : 'none',
+                        fontSize: isMobile ? sizeConverter(60) : sizeConverter(18),
+                        fontWeight: 700,
+                        lineHeight: 1.3,
                     }}
                 >
+                    {title}
+                </Typography>
+
+                <IconButton onClick={onClose} size="small" sx={{ color: 'text.secondary' }}>
+                    <CloseIcon fontSize={isMobile ? 'medium' : 'small'} />
+                </IconButton>
+            </Box>
+
+            {/* Content — scrollable */}
+            <Box
+                sx={{
+                    flex: 1,
+                    overflowY: 'auto',
+                    px: isMobile ? sizeConverter(20, 'space') : sizeConverter(16, 'space'),
+                    py: sizeConverter(14, 'spaceY'),
+                }}
+            >
+                {message || customContent ? (
+                    <Typography
+                        component="div"
+                        sx={{
+                            whiteSpace: 'pre-line',
+                            fontSize: isMobile ? sizeConverter(52) : sizeConverter(14),
+                            lineHeight: isMobile ? 1.8 : 1.7,
+                            color: 'text.primary',
+                        }}
+                    >
+                        {message || customContent}
+                    </Typography>
+                ) : (
                     <Typography
                         sx={{
-                            fontSize: isMobile ? sizeConverter(60) : sizeConverter(18),
-                            fontWeight: 700,
-                            lineHeight: 1.3,
+                            color: 'text.secondary',
+                            fontSize: isMobile ? sizeConverter(48) : sizeConverter(13),
+                            lineHeight: 1.8,
                         }}
                     >
-                        {title}
+                        دستورالعملی برای این خطا نوشته نشده است
                     </Typography>
+                )}
+            </Box>
 
-                    {!isMobile && (
-                        <HighlightOffOutlinedIcon
-                            sx={{
-                                cursor: 'pointer',
-                                fontSize: sizeConverter(48),
-                                color: '#999',
-                                '&:hover': { color: '#000' },
-                            }}
-                            onClick={onClose}
-                        />
-                    )}
-                </Grid>
-
-                {/* Content Area */}
-                <Grid
-                    sx={{
-                        mt: sizeConverter(12, 'spaceY'),
-                        flex: isMobile ? 1 : undefined,
-                        overflowY: 'auto',
-                        pr: isMobile ? 1 : 0, // کمی فاصله برای اسکرول
-                    }}
+            {/* Footer */}
+            <Box
+                sx={{
+                    flexShrink: 0,
+                    px: isMobile ? sizeConverter(20, 'space') : sizeConverter(16, 'space'),
+                    py: isMobile ? sizeConverter(16, 'spaceY') : sizeConverter(12, 'spaceY'),
+                    borderTop: '1px solid',
+                    borderColor: 'divider',
+                    pb: isMobile ? 8 : undefined,
+                }}
+            >
+                <Button
+                    onClick={onClose}
+                    variant={isMobile ? "confirmMobile" : 'cancel'}
+                    fullWidth={isMobile}
+                    sx={{ height: isMobile ? sizeConverter(30, 'height') : undefined, }}
                 >
-                    {(message || customContent) && (
-                        <Grid
-                            sx={{
-                                p: isMobile ? sizeConverter(18, 'space') : sizeConverter(12, 'space'),
-                                bgcolor: 'background.paper',
-                                borderRadius: isMobile ? 0 : sizeConverter(12, 'radius'),
-                                border: isMobile ? 'none' : '1px solid #e0e0e0',
-                            }}
-                        >
-                            <Typography
-                                component="div"
-                                sx={{
-                                    whiteSpace: 'pre-line',
-                                    fontSize: isMobile ? sizeConverter(52) : sizeConverter(14),
-                                    lineHeight: isMobile ? 1.8 : 1.7,
-                                }}
-                            >
-                                {message || customContent}
-                            </Typography>
-                        </Grid>
-                    )}
-
-                    {!message && !customContent && (
-                        <Typography
-                            sx={{
-                                p: sizeConverter(16, 'space'),
-                                color: 'text.secondary',
-                                fontSize: isMobile ? sizeConverter(48) : sizeConverter(13),
-                                lineHeight: 1.8,
-                            }}
-                        >
-                            دستورالعملی برای این خطا نوشته نشده است
-                        </Typography>
-                    )}
-                </Grid>
-
-                {/* Footer */}
-                <Grid
-                    container
-                    justifyContent="flex-end"
-                    sx={{
-                        mt: isMobile ? 'auto' : sizeConverter(15, 'spaceY'),
-                        pt: isMobile ? sizeConverter(16, 'spaceY') : 0,
-                        pb: isMobile ? 8 : 0,
-                        borderTop: isMobile ? '1px solid #EAEAEA' : 'none',
-                    }}
-                >
-                    <Button
-                        onClick={onClose}
-                        variant="confirmMobile"
-                        // color="primary"
-                        fullWidth={isMobile}
-                        sx={{
-                            height: isMobile ? sizeConverter(30, 'height') : undefined,
-                           
-                        }}
-                    >
-                        بستن
-                    </Button>
-                </Grid>
-            </Grid>
-        </Dialog>
+                    {isMobile ? 'بستن' : 'انصراف'}
+                </Button>
+            </Box>
+        </Dialog >
     )
 }

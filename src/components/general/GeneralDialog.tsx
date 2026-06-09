@@ -298,182 +298,194 @@ const GeneralDialog = ({
             sx: {
                minWidth: width ? width : sizeConverter(600, 'width'),
                borderRadius: isMobile ? 0 : sizeConverter(12, 'radius'),
-               // اضافه کردن استایل‌های موبایل برای فاصله از پایین
+               maxHeight: isMobile ? '100%' : '90vh',
+               display: 'flex',
+               flexDirection: 'column',
+               overflow: 'hidden',
+               backgroundColor: theme.palette.white[2],
                ...(isMobile && {
                   paddingBottom: sizeConverter(7, 'spaceY'),
                }),
-            }
+            },
          }}
          disableRestoreFocus
          open={!!open}
       >
-         <form onSubmit={handleSubmit(submitButton)} style={{ height: '100%', width: '100%' }}>
-            {
-               isMobile && (
-                  <Box
-                     sx={{
-                        width: '100%',
-                        position: 'sticky',
-                        top: 0,
-                        zIndex: 100,
-                        background:
-                           'linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(250,250,250,0.92) 100%)',
-                        backdropFilter: 'blur(12px)',
-                     }}
-                  >
+         <form
+            onSubmit={handleSubmit(submitButton)}
+            style={{
+               display: 'flex',
+               flexDirection: 'column',
+               flex: 1,
+               overflow: 'hidden',
+               height: '100%',
+            }}
+         >
+            {isMobile && (
+               <Box
+                  sx={{
+                     width: '100%',
+                     flexShrink: 0,
+                     zIndex: 100,
+                     background: `linear-gradient(
+            180deg,
+            ${theme.palette.white[0]}F8 0%,
+            ${theme.palette.bgColor[1]}EB 100%
+          )`,
+                     backdropFilter: 'blur(12px)',
+                  }}
+               >
+                  <Box sx={{ px: 2, pt: 1, pb: 1.5 }}>
+                     <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
+                        <Box
+                           sx={{
+                              width: 32,
+                              height: 4,
+                              borderRadius: 99,
+                              bgcolor: theme.palette.black[3] + '26',
+                           }}
+                        />
+                     </Box>
+
                      <Box
                         sx={{
-                           px: 2,
-                           pt: 1,
-                           pb: 1.5,
+                           display: 'grid',
+                           gridTemplateColumns: '44px 1fr 44px',
+                           alignItems: 'center',
+                           gap: 1,
                         }}
                      >
                         <Box
                            sx={{
+                              width: 44,
+                              height: 44,
+                              borderRadius: 3,
+                              bgcolor: theme.palette.primary.main,
                               display: 'flex',
+                              alignItems: 'center',
                               justifyContent: 'center',
-                              mb: 1,
                            }}
                         >
-                           <Box
-                              sx={{
-                                 width: 32,
-                                 height: 4,
-                                 borderRadius: 99,
-                                 bgcolor: 'rgba(0,0,0,.15)',
-                              }}
+                           <SvgComponent
+                              width={20}
+                              height={20}
+                              icon={open === 'add' ? PlusIcon : EditIcon}
+                              color={theme.palette.white[0]}
                            />
                         </Box>
 
+                        <Box textAlign="center">
+                           <Typography
+                              sx={{
+                                 fontSize: 10,
+                                 fontWeight: 700,
+                                 color: theme.palette.black[3],
+                                 textTransform: 'uppercase',
+                                 mb: 0.5,
+                              }}
+                           >
+                              {open === 'add' ? 'ADD' : 'EDIT'}
+                           </Typography>
+
+                           <Typography
+                              sx={{
+                                 fontSize: 18,
+                                 fontWeight: 700,
+                                 color: theme.palette.black[1],
+                              }}
+                           >
+                              {title}
+                           </Typography>
+                        </Box>
+
                         <Box
+                           onClick={close}
                            sx={{
-                              display: 'grid',
-                              gridTemplateColumns: '44px 1fr 44px',
+                              width: 36,
+                              height: 36,
+                              borderRadius: 2,
+                              bgcolor: theme.palette.black[3] + '10',
+                              display: 'flex',
                               alignItems: 'center',
-                              gap: 1,
+                              justifyContent: 'center',
+                              cursor: 'pointer',
                            }}
                         >
-                           <Box
-                              sx={{
-                                 width: 44,
-                                 height: 44,
-                                 borderRadius: 3,
-                                 bgcolor: theme.palette.primary.main,
-                                 display: 'flex',
-                                 alignItems: 'center',
-                                 justifyContent: 'center',
-                              }}
-                           >
-                              <SvgComponent
-                                 width={20}
-                                 height={20}
-                                 icon={open === 'add' ? PlusIcon : EditIcon}
-                                 color="#fff"
-                              />
-                           </Box>
-
-                           <Box textAlign="center">
-                              <Typography
-                                 sx={{
-                                    fontSize: 10,
-                                    fontWeight: 700,
-                                    color: '#888',
-                                    textTransform: 'uppercase',
-                                    mb: 0.5,
-                                 }}
-                              >
-                                 {open === 'add' ? 'ADD' : 'EDIT'}
-                              </Typography>
-
-                              <Typography
-                                 sx={{
-                                    fontSize: 18,
-                                    fontWeight: 700,
-                                    color: '#111',
-                                 }}
-                              >
-                                 {title}
-                              </Typography>
-                           </Box>
-
-                           <Box
-                              onClick={close}
-                              sx={{
-                                 width: 36,
-                                 height: 36,
-                                 borderRadius: 2,
-                                 bgcolor: 'rgba(0,0,0,.05)',
-                                 display: 'flex',
-                                 alignItems: 'center',
-                                 justifyContent: 'center',
-                                 cursor: 'pointer',
-                              }}
-                           >
-                              <HighlightOffOutlinedIcon />
-                           </Box>
+                           <HighlightOffOutlinedIcon sx={{ color: theme.palette.black[6] }} />
                         </Box>
                      </Box>
-
-                     <Divider />
                   </Box>
-               )
-            }
-            <Grid
-               container
-               direction="column"
+
+                  <Divider sx={{ borderColor: theme.palette.black[6] }} />
+               </Box>
+            )}
+
+            <Box
                sx={{
-                  height: '100%',
-                  maxHeight: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  flex: 1,
+                  overflow: 'hidden',
                   p: sizeConverter(10, 'space'),
                }}
             >
-               {!isMobile && <Grid
-                  container
-                  size={12}
-                  direction="row"
-                  justifyContent={'space-between'}
-                  alignItems={'center'}
-                  sx={{ pb: sizeConverter(5, 'spaceY') }}
-               >
-                  <Grid size={11} gap={1} container alignItems={'center'} direction="row">
-                     <Grid container alignItems={'center'} size="auto">
-                        <SvgComponent
-                           height={sizeConverter(26)}
-                           width={sizeConverter(26)}
-                           icon={open === 'add' ? PlusIcon : EditIcon}
-                           color={theme?.palette?.black['1']}
-                        />
-                     </Grid>
-                     <Grid size={10} justifyContent={'flex-start'} alignItems={'center'} container direction="row">
-                        <Typography variant="dialogTitle">{open === 'add' ? 'افزودن' : 'ویرایش'}</Typography>
-                        <Grid size={12}>
-                           <Typography noWrap variant="dialogSubTitle">
-                              {title}
+               {!isMobile && (
+                  <Grid
+                     container
+                     size={12}
+                     direction="row"
+                     justifyContent={'space-between'}
+                     alignItems={'center'}
+                     sx={{
+                        pb: sizeConverter(5, 'spaceY'),
+                        flexShrink: 0,
+                     }}
+                  >
+                     <Grid size={11} gap={1} container alignItems={'center'} direction="row">
+                        <Grid container alignItems={'center'} size="auto">
+                           <SvgComponent
+                              height={sizeConverter(26)}
+                              width={sizeConverter(26)}
+                              icon={open === 'add' ? PlusIcon : EditIcon}
+                              color={theme.palette.black[1]}
+                           />
+                        </Grid>
+
+                        <Grid size={10} justifyContent={'flex-start'} alignItems={'center'} container direction="row">
+                           <Typography variant="dialogTitle">
+                              {open === 'add' ? 'افزودن' : 'ویرایش'}
                            </Typography>
+
+                           <Grid size={12}>
+                              <Typography noWrap variant="dialogSubTitle">
+                                 {title}
+                              </Typography>
+                           </Grid>
                         </Grid>
                      </Grid>
-                  </Grid>
 
-                  <HighlightOffOutlinedIcon
-                     sx={{
-                        color: '#CCCCCC',
-                        width: sizeConverter(26),
-                        height: sizeConverter(26),
-                        cursor: 'pointer',
-                        transition: '0.2s ease-in-out',
-                        '&:hover': {
-                           color: '#000',
-                        },
-                     }}
-                     onClick={() => close()}
-                  />
-               </Grid>}
-               <Grid
-                  size={12}
+                     <HighlightOffOutlinedIcon
+                        sx={{
+                           color: theme.palette.black[3],
+                           width: sizeConverter(26),
+                           height: sizeConverter(26),
+                           cursor: 'pointer',
+                           transition: '0.2s ease-in-out',
+                           '&:hover': {
+                              color: theme.palette.black[1],
+                           },
+                        }}
+                        onClick={() => close()}
+                     />
+                  </Grid>
+               )}
+
+               <Box
                   sx={{
                      flex: 1,
                      overflowY: 'auto',
                      overflowX: 'hidden',
+                     minHeight: 0,
                      pt: 2,
                      pb: 4,
                   }}
@@ -486,7 +498,7 @@ const GeneralDialog = ({
                      direction="row"
                      sx={{
                         my: sizeConverter(15, 'spaceY'),
-                        bgcolor: !bgOff ? 'background.2' : 'transparent',
+                        bgcolor: !bgOff ? theme.palette.white[2] : 'transparent',
                         borderRadius: sizeConverter(12, 'radius'),
                      }}
                   >
@@ -500,6 +512,7 @@ const GeneralDialog = ({
                      >
                         {array.map((item, index) => {
                            const Component = item.component
+
                            return (
                               <Component
                                  key={index}
@@ -517,7 +530,11 @@ const GeneralDialog = ({
                                  searchBy={item?.searchBy}
                                  register={register}
                                  validators={item?.validators}
-                                 helperText={errors?.[item?.value]?.message ? String(errors[item?.value]?.message) : item?.helperText}
+                                 helperText={
+                                    errors?.[item?.value]?.message
+                                       ? String(errors[item?.value]?.message)
+                                       : item?.helperText
+                                 }
                                  error={!!errors?.[item?.value]?.message}
                                  getValues={getValues}
                                  control={control}
@@ -539,56 +556,29 @@ const GeneralDialog = ({
                         })}
                      </Grid>
                   </Grid>
-               </Grid>
+               </Box>
 
                <Grid
                   container
                   justifyContent={'flex-end'}
                   alignItems={'center'}
+                  columnGap={sizeConverter(5, 'spaceX')}
                   sx={{
                      mt: 2,
-
+                     flexShrink: 0,
                      ...(isMobile && {
-                        position: 'sticky',
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        bgcolor: '#fff',
-                        borderTop: '1px solid #e0e0e0',
+                        bgcolor: theme.palette.white[0],
+                        borderTop: `1px solid ${theme.palette.black[6]}`,
                         p: 2,
-                        zIndex: 10,
+                        pb:8
                      }),
                   }}
-                  columnGap={sizeConverter(5, 'spaceX')}
                >
-                  <Button
-                     onClick={() => close()}
-                     variant={isMobile ? 'cancelMobile' : "main"}
-                     sx={{
-                        ...(isMobile && {
-                           flex: 1,
-                           minHeight: 48,
-                        }),
-                        bgcolor: '#e1e1e1',
-                        color: '#000',
-                        '&:hover': {
-                           bgcolor: '#c4c4c4',
-                        },
-                     }}
-                  >
+                  <Button onClick={() => close()} variant={isMobile ? 'cancelMobile' : 'cancel'}>
                      انصراف
                   </Button>
 
-                  <Button
-                     type="submit"
-                     variant={isMobile ? 'confirmMobile' : "main"}
-                     sx={{
-                        ...(isMobile && {
-                           flex: 1,
-                           minHeight: 48,
-                        }),
-                     }}
-                  >
+                  <Button type="submit" variant={isMobile ? 'confirmMobile' : 'main'}>
                      {createItem?.isPending || editItem?.isPending ? (
                         <CustomCircularProgress
                            noPadding
@@ -600,10 +590,12 @@ const GeneralDialog = ({
                      )}
                   </Button>
                </Grid>
-            </Grid>
+            </Box>
          </form>
       </Dialog >
+
    )
+
 }
 
 export default GeneralDialog

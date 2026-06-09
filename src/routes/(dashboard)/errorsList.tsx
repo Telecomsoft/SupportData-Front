@@ -31,6 +31,7 @@ import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
 import StyledTextField from '@components/general/input/StyledTextField'
 import FloatingSearch from '@components/mobile/FloatingSearch'
+import GeneralDeleteDialog from '@components/general/GeneralDeleteDialog'
 
 export const Route = createFileRoute('/(dashboard)/errorsList')({
   component: withSnackbar(kioskErrors),
@@ -90,10 +91,44 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     { label: 'قطعه', value: 'deviceID', kind: 'combo', size: isMobile ? 12 : 5.9, component: AutoCompleteComp },
     { component: CustomErrorListDialog },
     { label: 'بانک های مرتبط', value: 'bankIDs', autocompleteType: 'multiple', type: 'multiple', kind: 'combo', size: isMobile ? 12 : 5.9, component: AutoCompleteComp },
-    { label: 'راه حل', value: 'solution', kind: 'textField', size: 12, component: TextFieldComp, multiline: true, maxRows: 12, validators: { ...REQUIRED_VALIDATOR } },
+    { label: 'راه حل', value: 'solution', kind: 'textField', size: 12, component: TextFieldComp, multiline: true, maxRows: 7, validators: { ...REQUIRED_VALIDATOR } },
     { label: 'فایل های ضمیمه', value: 'attachedDocuments', uploadType: 'multiple', kind: 'uploadFile', size: 12, component: UploadFile },
   ]
-
+  const KIOSKS_ARRAY_SERVER: DialogArrayType[] = [
+    {
+      value: 'code',
+      kind: 'textField'
+    },
+    {
+      value: 'title',
+      kind: 'textField',
+    },
+    {
+      value: 'groupID',
+      kind: 'combo',
+    },
+    {
+      value: 'deviceID',
+      kind: 'combo',
+    },
+    {
+      value: 'deviceModelID',
+      kind: 'combo',
+    },
+    {
+      kind: 'combo',
+      value: 'bankIDs',
+      type: 'multiple',
+    },
+    {
+      value: 'solution',
+      kind: 'textField',
+    },
+    {
+      value: 'attachedDocuments',
+      kind: 'uploadFile',
+    },
+  ]
   const KIOSKS_COLUMNS = [
     { field: 'code', headerName: 'کد خطا', width: sizeConverter(100, 'width') },
     { field: 'title', headerName: 'عنوان خطا', width: sizeConverter(100, 'width') },
@@ -130,7 +165,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
   return (
     <Grid container size={12}>
       {listErrors?.isLoading ? (
-        <Grid sx={{ m: 'auto', mt: '50%' }}>
+        <Grid sx={{ m: 'auto', mt: '30%' }}>
           <CustomCircularProgress thickness={2} size={60} />
         </Grid>
       ) : isMobile ? (
@@ -218,19 +253,69 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
       {
         (openDialog === 'add' || openDialog === 'edit') && (
           <GeneralDialog
+            key={`${openDialog}-${selectedValue}-${ListBanks?.dataUpdatedAt}`}
             open={openDialog}
             title={'خطا'}
             close={() => setOpenDialog(null)}
             array={KIOSKS_ARRAY}
+            serverArray={KIOSKS_ARRAY_SERVER}
             editEndpoint={'api/Error/UpdateError'}
             createEndpoint={'api/Error/AddError'}
-            defaultValue={listErrors?.data?.value?.find((i) => i?.id === selectedValue)}
+            autoCompleteOption={{
+              deviceID: ListDevices?.data?.value || [],
+              bankIDs: ListBanks?.data?.value || [],
+              groupID: Object.entries(listErrorGroups?.data?.value)?.map(([id, name]) => ({ id: Number(id), name })) || [],
+              deviceModelID: ListDeviceModels?.data?.value || []
+            }}
+            defaultValue={(() => {
+              const selectedItem = listErrors?.data?.value?.find(
+                (i) => i?.id === selectedValue
+              );
+
+              if (!selectedItem) return undefined;
+
+              return {
+                ...selectedItem,
+              };
+            })()}
             wrapperFunc={() => listErrors.refetch()}
             snackbarOpen={snackbarOpen}
+            conditionValue={{ deviceModels: ListDeviceModels?.data?.value || [] }}
+            apiValueGetter={(data: any) => {
+              const finalData = {
+                ...data,
+                ...(openDialog === 'edit' ? { id: selectedValue } : {}),
+                bankIDs: data?.bankIDs?.map((x: any) => x?.id),
+                code: +data?.code,
+                deviceID: data?.deviceID?.id ? +data.deviceID.id : undefined,
+                deviceModelID: data?.deviceModelID?.id ? +data.deviceModelID.id : undefined,
+                groupID: data?.groupID?.id ? +data.groupID.id : undefined,
+              }
+              return finalData
+            }}
+            sendFinalData={true}
           />
         )
       }
-
+      {
+        openDialog === 'delete' && (
+          <GeneralDeleteDialog
+            dialogTitle={'خطا'}
+            deleteID={selectedValue}
+            deleteDescription={`آیا از حذف  ${listErrors?.data?.value?.find((item) => item?.id === selectedValue)?.title} اطمینان دارید؟`}
+            snackbarOpen={snackbarOpen}
+            deleteEndPoint={'api/Error/DeleteError/'}
+            isDialogOpen={openDialog}
+            customFunAfterSuccess={() => {
+              listErrors?.refetch()
+              // queryClient?.refetchQueries({ queryKey: ['get-list-view'] })
+              // queryClient?.refetchQueries({ queryKey: ['kiosks-list'] })
+              setSelectedValue(null)
+            }}
+            dialogCloseFun={() => setOpenDialog(null)}
+          />
+        )
+      }
       {
         openDialog === 'info' && (
           <SimpleInfoDialog open={!!openDialog} onClose={() => setOpenDialog(null)} title="راه حل" customContent={selectedMessage} />

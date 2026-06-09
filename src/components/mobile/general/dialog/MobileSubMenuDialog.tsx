@@ -84,7 +84,7 @@ export default function MobileSubMenuDialog({ open, onClose, pageTitle, items }:
             <Box sx={{ p: 2 }}>
 
                 {/* لیست آیتم‌ها (کارت‌ها) */}
-                {items.map((item, index) => (
+                {items?.map((item, index) => (
                     <Card
                         key={index}
                         sx={{
