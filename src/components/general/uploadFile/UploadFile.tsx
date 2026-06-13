@@ -276,7 +276,7 @@ const UploadFile = ({ item, watch, setValue, register, error, helperText, snackb
                         minHeight: isMobile ? 48 : undefined,
                     }}
                 >
-                    {files.length === 0 && (
+                    {files?.length === 0 && (
                         <Typography
                             variant="caption"
                             sx={{

@@ -65,6 +65,7 @@ export const LAYOUT_SIDEBAR_DATA: (DataType & { children?: DataType[] })[] = [
       value: 'systemSettings',
       mobileLink: '/mobileListSystemManagement',
       icon: SettingsApplicationsIcon,
+      accessID: [101, 102],
       children: [
          {
             name: 'کاربران',

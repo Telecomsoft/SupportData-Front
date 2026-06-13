@@ -628,7 +628,7 @@ function GeneralConfirmDialog({
             >
                <Button
                   onClick={dialogCloseFun}
-                  variant="main"
+                  variant="cancel"
                   sx={{ mr: sizeConverter(3, 'spaceX') }}
                >
                   انصراف

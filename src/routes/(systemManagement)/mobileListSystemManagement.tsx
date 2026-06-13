@@ -3,6 +3,7 @@ import { Box, Stack, Typography } from '@mui/material';
 import { LAYOUT_SIDEBAR_DATA } from '@src/data/layout-sidebar-data';
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import { useAccessCheck } from '@src/utility/accessCheck';
 
 export const Route = createFileRoute(
     '/(systemManagement)/mobileListSystemManagement',
@@ -12,14 +13,42 @@ export const Route = createFileRoute(
 
 function mobileListSettings() {
     const navigate = useNavigate();
+    const { accessCheck } = useAccessCheck();
 
-    // پیدا کردن آیتم تنظیمات و زیرمجموعه‌های آن
-    const settingsData = LAYOUT_SIDEBAR_DATA.find(item => item.mobileLink === '/mobileListSystemManagement');
-    const subItems = settingsData?.children || [];
-    console.log('settingsData', settingsData)
+    const hasItemAccess = (item: any): boolean => {
+        const accessId = item.accessID;
+
+        if (accessId === undefined || accessId === null) {
+            return true;
+        }
+
+        if (Array.isArray(accessId)) {
+            return accessId.some((id: number) =>
+                accessCheck({
+                    accessInfoId: id,
+                    KindAccessInfo: 'readAccess',
+                })
+            );
+        }
+
+        return accessCheck({
+            accessInfoId: accessId,
+            KindAccessInfo: 'readAccess',
+        });
+    };
+
+    const settingsData = LAYOUT_SIDEBAR_DATA.find(
+        item => item.mobileLink === '/mobileListSystemManagement'
+    );
+
+    const subItems =
+        settingsData?.children?.filter((child) =>
+            hasItemAccess(child)
+        ) || [];
+
     return (
         <Box sx={{ p: 2, pb: 10 /* فاصله از پایین برای BottomNav */ }}>
-            {subItems.map((child, index) => {
+            {subItems?.map((child, index) => {
                 const IconComponent = child.icon;
 
                 return (

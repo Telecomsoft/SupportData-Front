@@ -17,11 +17,14 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DownloadOutlinedIcon from '@mui/icons-material/DownloadOutlined';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
-import CloseIcon from '@mui/icons-material/Close';
+import HighlightOffOutlinedIcon from '@mui/icons-material/HighlightOffOutlined'
 import { useTheme } from '@mui/material/styles';
 import { sizeConverter } from '@utility/sizeConverter';
-
+import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import ImageIcon from '@mui/icons-material/Image';
+import ArticleIcon from '@mui/icons-material/Article';
+import FileDialog from '@components/general/FileDialog';
 
 interface FileItem {
     id: string | number;
@@ -33,6 +36,7 @@ type MobileErrorCardProps = {
     title: string;
     subtitle?: string;
     device?: string;
+    deviceModel?: string;
     errorCode: string | number;
     hasAccess: boolean;
     onDelete?: () => void;
@@ -46,6 +50,7 @@ export default function MobileErrorCard({
     title,
     subtitle,
     device,
+    deviceModel,
     errorCode,
     onDelete,
     onEdit,
@@ -55,14 +60,31 @@ export default function MobileErrorCard({
     onDownloadClick,
 }: MobileErrorCardProps) {
     // استیت برای مدیریت باز و بسته بودن کشوی فایل‌ها
-    const [isFilesDrawerOpen, setIsFilesDrawerOpen] = useState(false);
-    const theme = useTheme();
+    const [isFilesDialogOpen, setIsFilesDialogOpen] = useState(false); const theme = useTheme();
 
     const handleOpenFiles = () => {
         if (files.length > 0) {
-            setIsFilesDrawerOpen(true);
+            setIsFilesDialogOpen(true);
         }
     };
+
+    // const getFileIcon = (rawFile) => {
+    //     const extension = rawFile?.split('.').pop().toLowerCase();
+    //     const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+
+    //     if (extension === 'pdf') {
+    //         return <PictureAsPdfIcon sx={{ color: theme.palette.primary.main }} />;
+    //     }
+    //     if (extension === 'txt') {
+    //         return <ArticleIcon sx={{ color: theme.palette.primary.main }} />;
+    //     }
+
+    //     if (imageExtensions.includes(extension)) {
+    //         return <ImageIcon sx={{ color: theme.palette.primary.main }} />;
+    //     }
+
+    //     return <DownloadForOfflineIcon sx={{ color: theme.palette.primary.main }} />;
+    // }
 
     return (
         <>
@@ -137,7 +159,15 @@ export default function MobileErrorCard({
                                         {device ?? '-'}
                                     </Typography>
                                     <Typography sx={{ color: theme.palette.black[3], fontWeight: 'bold', fontSize: sizeConverter(38) }}>
-                                        : دستگاه
+                                        : قطعه
+                                    </Typography>
+                                </Grid>
+                                <Grid container justifyContent={'flex-end'}>
+                                    <Typography sx={{ color: theme.palette.black[3], fontSize: sizeConverter(38) }}>
+                                        {deviceModel ?? '-'}
+                                    </Typography>
+                                    <Typography sx={{ color: theme.palette.black[3], fontWeight: 'bold', fontSize: sizeConverter(38) }}>
+                                        : مدل قطعه
                                     </Typography>
                                 </Grid>
                                 <Grid container justifyContent={'flex-end'}>
@@ -181,40 +211,57 @@ export default function MobileErrorCard({
             </Card>
 
             {/* کشوی نمایش فایل‌ها */}
-            <Drawer
+            {/* <Drawer
                 anchor="bottom"
                 open={isFilesDrawerOpen}
                 onClose={() => setIsFilesDrawerOpen(false)}
                 PaperProps={{
-                    sx: { borderTopLeftRadius: 16, borderTopRightRadius: 16, pb: 8, pt: 1, bgcolor: theme.palette.bgColor[1] }
+                    sx: { borderTopLeftRadius: 16, borderTopRightRadius: 16, pb: 8, pt: 1, bgcolor: theme.palette.white[0] }
                 }}
             >
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', px: 2, py: 1, alignItems: 'center' }}>
-                    <Typography variant="subtitle1" fontWeight="bold">فایل‌های ضمیمه</Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', pl: 2, pr: 1, py: 1, alignItems: 'center' }}>
+                    <Typography variant="subtitle1" fontWeight="bold">فایل‌ های ضمیمه</Typography>
                     <IconButton onClick={() => setIsFilesDrawerOpen(false)}>
-                        <CloseIcon />
+                        <HighlightOffOutlinedIcon />
                     </IconButton>
                 </Box>
                 <List>
                     {files?.map((file) => (
-                        <ListItem disablePadding key={file.id}>
-                            <ListItemButton
-                                key={file.id}
-                                onClick={() => {
-                                    console.log("Clicked file:", file);
-                                    if (onDownloadClick) {
-                                        onDownloadClick(file.rawFile);
-                                    } else {
-                                        console.error("onDownloadClick is undefined!");
-                                    }
-                                }}
-                            >
-                                <ListItemText primary={file.name} />
-                            </ListItemButton>
-                        </ListItem>
+                        <>
+                            <Grid container justifyContent={'space-between'} >
+
+                                <ListItem disablePadding key={file.id}>
+                                    <ListItemButton
+                                        sx={{ px: 2 }}
+                                        key={file.id}
+                                        onClick={() => {
+                                            if (onDownloadClick) {
+                                                onDownloadClick(file.rawFile);
+                                            } else {
+                                                console.error("onDownloadClick is undefined!");
+                                            }
+                                        }}
+                                    >
+                                        <ListItemText primary={file.name} />
+                                        {getFileIcon(file.rawFile)}
+                                    </ListItemButton>
+                                </ListItem>
+
+                            </Grid >
+                            <Divider sx={{
+                                mx: 2,
+                                borderColor: theme.palette.black[7]
+                            }} />
+                        </>
                     ))}
                 </List>
-            </Drawer>
+            </Drawer > */}
+            <FileDialog
+                open={isFilesDialogOpen}
+                onClose={() => setIsFilesDialogOpen(false)}
+                files={files}
+                onDownloadClick={onDownloadClick}
+            />
         </>
     );
 }

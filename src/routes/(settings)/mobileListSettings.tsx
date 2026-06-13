@@ -3,6 +3,7 @@ import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { createFileRoute, useNavigate } from '@tanstack/react-router'; // یا react-router-dom
 import { LAYOUT_SIDEBAR_DATA } from '@src/data/layout-sidebar-data';
 import { withSnackbar } from '@components/hoc/withSnackbar';
+import { useAccessCheck } from '@src/utility/accessCheck';
 
 export const Route = createFileRoute('/(settings)/mobileListSettings')({
     component: withSnackbar(mobileListSettings),
@@ -10,9 +11,39 @@ export const Route = createFileRoute('/(settings)/mobileListSettings')({
 
 function mobileListSettings() {
     const navigate = useNavigate();
+    const { accessCheck } = useAccessCheck();
 
-    const settingsData = LAYOUT_SIDEBAR_DATA.find(item => item.mobileLink === '/mobileListSettings');
-    const subItems = settingsData?.children || [];
+    const hasItemAccess = (item: any): boolean => {
+        const accessId = item.accessID;
+
+        if (accessId === undefined || accessId === null) {
+            return true;
+        }
+
+        if (Array.isArray(accessId)) {
+            return accessId.some((id: number) =>
+                accessCheck({
+                    accessInfoId: id,
+                    KindAccessInfo: 'readAccess',
+                })
+            );
+        }
+
+        return accessCheck({
+            accessInfoId: accessId,
+            KindAccessInfo: 'readAccess',
+        });
+    };
+
+    const settingsData = LAYOUT_SIDEBAR_DATA.find(
+        item => item.mobileLink === '/mobileListSettings'
+    );
+
+    const subItems =
+        settingsData?.children?.filter((child) =>
+            hasItemAccess(child)
+        ) || [];
+
 
     return (
         <Box sx={{ p: 2, pb: 10 /* فاصله از پایین برای BottomNav */ }}>

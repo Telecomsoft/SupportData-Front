@@ -157,6 +157,7 @@ import { SNACKBAR_SEVERITIES } from '@components/hoc/withSnackbar'
 import { UploadResponse } from '@src/data/type/uploadTypes'
 import getEndpoint from '@utility/getEndPoint.ts'
 import { useDevice } from '@src/hooks/useDevice'
+import { sizeConverter } from '@src/utility/sizeConverter'
 
 type UploadFileThumbnailProps = {
     file: { formData?: FormData; name: string; id: number; url?: string }
@@ -317,6 +318,7 @@ const UploadFileThumbnail = ({
                             }}
                         >
                             <TextWithTooltip
+                                fontSize={isMobile ? 9 : sizeConverter(9)}
                                 value={file.name}
                                 tooltipPlacement="bottom-start"
                             />

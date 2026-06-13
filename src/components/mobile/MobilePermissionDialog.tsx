@@ -16,6 +16,7 @@ import { useTheme } from '@mui/material/styles'
 import { TransitionProps } from '@mui/material/transitions'
 import SecurityIcon from '@mui/icons-material/Security'
 import SelectAllIcon from '@mui/icons-material/SelectAll'
+import DeselectIcon from '@mui/icons-material/Deselect'
 import CircleIcon from '@mui/icons-material/Circle'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 
@@ -72,7 +73,7 @@ export default function MobilePermissionDialog({
           display: 'flex',
           flexDirection: 'column',
           backgroundColor: theme.palette.bgColor[1],
-          pt:12
+          pt: 12
         },
       }}
     >
@@ -114,7 +115,11 @@ export default function MobilePermissionDialog({
             alignItems={'center'}
             sx={{ cursor: 'pointer' }}
           >
-            <SelectAllIcon sx={{ color: theme.palette.black[4] }} />
+            {!allSelected ?
+              < SelectAllIcon sx={{ color: theme.palette.black[4] }} />
+              :
+              < DeselectIcon sx={{ color: theme.palette.black[4] }} />
+            }
             <Typography
               variant="overline"
               sx={{ px: 1, fontWeight: 'bold', color: theme.palette.black[4] }}
@@ -226,7 +231,7 @@ export default function MobilePermissionDialog({
           boxShadow: '0 -4px 10px rgba(0,0,0,0.05)',
           display: 'flex',
           gap: 2,
-          pb:10
+          pb: 10
         }}
       >
         <Button fullWidth variant="cancelMobile" onClick={onClose}>

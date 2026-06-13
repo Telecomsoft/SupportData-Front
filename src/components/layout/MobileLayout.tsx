@@ -73,12 +73,7 @@ export function MobileLayout({ children }: Props) {
             </Box>
 
             {/* Main Content */}
-            <Box sx={{
-                flex: 1,
-                mt: 'calc(56px + 45px)', // اصلاح ارتفاع بر اساس Breadcrumbs واقعی
-                pb: 10,
-                p: 2,
-            }}>
+            <Box  sx={{ flexGrow: 1, overflowY: 'auto', px: 2, pt: 14, pb: 20 }}>
                 {children}
             </Box>
 

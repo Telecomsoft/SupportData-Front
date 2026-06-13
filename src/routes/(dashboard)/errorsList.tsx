@@ -32,6 +32,15 @@ import CloseIcon from '@mui/icons-material/Close'
 import StyledTextField from '@components/general/input/StyledTextField'
 import FloatingSearch from '@components/mobile/FloatingSearch'
 import GeneralDeleteDialog from '@components/general/GeneralDeleteDialog'
+import { useMemo } from 'react';
+// import { Tabs, Tab } from '@mui/material';
+import { ToggleButton, ToggleButtonGroup, Chip } from '@mui/material';
+import MemoryIcon from '@mui/icons-material/Memory'; // آیکون سخت‌افزار
+import CodeIcon from '@mui/icons-material/Code';     // آیکون نرم‌افزار
+import ReportProblemIcon from '@mui/icons-material/ReportProblem';
+import { ErrorFilterChips } from '@components/general/ErrorFilterChips'
+import FileDialog from '@components/general/FileDialog'
+import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 
 export const Route = createFileRoute('/(dashboard)/errorsList')({
   component: withSnackbar(kioskErrors),
@@ -59,6 +68,9 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
   const [openDialog, setOpenDialog] = useState<'add' | 'delete' | 'edit' | 'info' | null>(null)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [activeTab, setActiveTab] = useState('total');
+  const [isFilesDialogOpen, setIsFilesDialogOpen] = useState(false);
+
 
   const filteredErrors = listErrors?.data?.value?.filter((item: any) => {
     if (!searchQuery) return true
@@ -70,19 +82,73 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     setOpenDialog('info')
   }
 
+  // const downloadHandler = (file) => {
+  //   if (!!file) {
+  //     const link = document.createElement('a')
+  //     link.setAttribute('target', '_blank')
+  //     link.href = `${getEndpoint()}${file}`
+  //     link.click()
+  //   }
+  // }
   const downloadHandler = (file) => {
-    if (!!file) {
-      const link = document.createElement('a')
-      link.setAttribute('target', '_blank')
-      link.href = `${getEndpoint()}${file}`
-      link.click()
+    if (!file) return;
+
+    const link = document.createElement('a');
+    link.href = `${getEndpoint()}${file}`;
+
+    const extension = file.split('.').pop().toLowerCase();
+    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+
+    if (imageExtensions.includes(extension)) {
+      // باز شدن تصویر در یک تب جدید برای نمایش
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener noreferrer'); // برای امنیت بیشتر در تب جدید
+    } else {
+      // اجبار به دانلود برای تمام فایل‌های دیگر (PDF, Zip, etc.)
+      link.setAttribute('download', '');
     }
-  }
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+
+
 
   const hasWriteAccess = accessCheck({
     accessInfoId: 103,
     KindAccessInfo: 'writeAccess',
   })
+
+  const gridFilteredData = useMemo(() => {
+    if (!listErrors?.data?.value) return [];
+
+    return listErrors.data.value.filter((item) => {
+      // ⚠️ توجه: فیلد groupID یا groupName را بر اساس دیتای بک‌اند خودتون جایگزین کنید
+      if (activeTab === 'hardware') {
+        return item?.groupID === 1; // شناسه گروه سخت‌افزاری
+      } else if (activeTab === 'software') {
+        return item?.groupID === 2; // شناسه گروه نرم‌افزاری
+      }
+      return true;
+    });
+  }, [listErrors?.data?.value, activeTab]);
+
+  const finalMobileData = gridFilteredData?.filter((item: any) => {
+    if (!searchQuery) return true
+    return String(item?.code).includes(searchQuery) || String(item?.title).includes(searchQuery)
+  })
+
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+    setSelectedValue(null); // پاک کردن مقدار انتخاب شده قبلی موقع تغییر تب
+  };
+  const handleChipClick = (tabValue) => {
+    if (activeTab !== tabValue) {
+      setActiveTab(tabValue);
+    }
+  };
 
   const KIOSKS_ARRAY = [
     { label: 'کد خطا', value: 'code', kind: 'textField', size: 5.9, component: TextFieldComp },
@@ -133,21 +199,23 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     { field: 'code', headerName: 'کد خطا', width: sizeConverter(100, 'width') },
     { field: 'title', headerName: 'عنوان خطا', width: sizeConverter(100, 'width') },
     { field: 'deviceName', headerName: 'قطعه ', width: sizeConverter(100, 'width') },
+    { field: 'deviceModelName', headerName: 'مدل قطعه ', width: sizeConverter(100, 'width') },
     { field: 'banks', headerName: 'بانک های مرتبط', width: sizeConverter(200) },
     {
       field: 'attachedDocuments',
       headerName: 'فایل',
       width: sizeConverter(200),
       align: 'center',
-      renderCell: (params) => (
-        <Grid container justifyContent={'center'} sx={{ ml: sizeConverter(2, 'spaceX') }}>
-          {params?.value?.map((i, index) => (
-            <Grid key={index} size={2} onClick={() => downloadHandler(i)}>
-              <SvgComponent icon={downloadIcon} width={sizeConverter(16)} height={sizeConverter(16)} color={theme.palette.black[0]} />
-            </Grid>
-          ))}
-        </Grid>
-      ),
+      renderCell: (params) =>
+        //   <Grid container justifyContent={'center'} sx={{ ml: sizeConverter(2, 'spaceX') }}>
+        //     {params?.value?.map((i, index) => (
+        //       <Grid key={index} size={2} onClick={() => downloadHandler(i)}>
+        //         <SvgComponent icon={downloadIcon} width={sizeConverter(16)} height={sizeConverter(16)} color={theme.palette.black[0]} />
+        //       </Grid>
+        //     ))}
+        //   </Grid>
+        // ,
+        <DownloadForOfflineIcon sx={{ color: params?.row?.attachedDocuments?.length > 0 ? theme.palette.primary.main : theme.palette.black[7] }} onClick={params?.row?.attachedDocuments?.length > 0 ? () => setIsFilesDialogOpen(true) : null} />
     },
     {
       field: 'solution',
@@ -165,27 +233,43 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
   return (
     <Grid container size={12}>
       {listErrors?.isLoading ? (
-        <Grid sx={{ m: 'auto', mt: '30%' }}>
+        <Grid sx={{ m: 'auto', mt: isMobile ? '30%' : '15%' }}>
           <CustomCircularProgress thickness={2} size={60} />
         </Grid>
       ) : isMobile ? (
-        <Box sx={{ height: '100dvh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+        <Box sx={{
+          height: '100dvh',
+          display: 'flex', flexDirection: 'column', position: 'relative', width: '100%'
+        }}>
+
+          {/* اضافه شدن کامپوننت چیپ ها به حالت موبایل */}
+          <Box sx={{
+            width: '99%',
+            maxWidth: '90dvw',
+            overflow: 'hidden',
+            pb: 4
+          }}>
+            <ErrorFilterChips activeTab={activeTab} onTabChange={handleChipClick} />
+          </Box>
+
           {/* محتوای لیست با Padding Bottom برای دکمه‌های شناور */}
-          <Box sx={{ flexGrow: 1, overflowY: 'auto', px: 2, pt: 2, pb: 20 }}>
+          <Box sx={{ flexGrow: 1, overflowY: 'auto', px: 2, pt: 1, pb: 20 }}>
             <Grid2 container spacing={2}>
-              {filteredErrors?.map((item) => (
+              {/* استفاده از دیتای نهایی فیلتر شده برای موبایل */}
+              {finalMobileData?.map((item) => (
                 <Grid2 size={12} key={item.id}>
                   <MobileErrorCard
                     hasAccess={hasWriteAccess}
                     title={item?.title}
                     device={item?.deviceName}
+                    deviceModel={item?.deviceModelName}
                     errorCode={item?.code}
                     subtitle={item?.banks}
                     onInfo={() => handleShowInfo(item?.solution)}
                     onEdit={() => { setSelectedValue(item?.id); setOpenDialog('edit'); }}
                     onDelete={() => { setSelectedValue(item?.id); setOpenDialog('delete'); }}
                     onDownloadClick={downloadHandler}
-                    files={item?.attachedDocuments?.map((file, index) => ({ id: index, name: `فایل ${index + 1}`, rawFile: file })) || []}
+                    files={item?.attachedDocuments?.map((file, index) => ({ id: index, name: file.split('/')?.[3], rawFile: file })) || []}
                   />
                 </Grid2>
               ))}
@@ -193,8 +277,6 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
           </Box>
 
           {/* بخش دکمه‌های شناور و سرچ */}
-
-
           <Box
             sx={{
               position: "fixed",
@@ -210,7 +292,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             <FloatingSearch
               title="جستجوی کد یا عنوان..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              setSearchQuery={setSearchQuery}
               isOpen={isSearchOpen}
               setIsOpen={setIsSearchOpen}
               position={{
@@ -230,24 +312,35 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
 
         </Box>
       ) : (
-        <TelecomDataGrid
-          data={listErrors?.data?.value}
-          loading={listErrors?.isLoading}
-          doubleClickFunc={(data) => handleShowInfo(data?.solution)}
-          columns={KIOSKS_COLUMNS}
-          setRows={(data) => data && setSelectedValue(data?.[0])}
-          CustomToolBar={() => (
-            accessCheck({ accessInfoId: 105, KindAccessInfo: 'writeAccess' }) && (
-              <Grid container size={'auto'} spacing={sizeConverter(4, 'spaceX')}>
-                <DataGridIconProvider toolTipText={'اضافه'} Icon={AddIcon} clickFunc={() => setOpenDialog('add')} />
-                <DataGridIconProvider toolTipText={'ویرایش'} Icon={EditIcon} disable={!selectedValue} clickFunc={() => setOpenDialog('edit')} />
-                <DataGridIconProvider toolTipText={'حذف'} Icon={DeleteIcon} disable={!selectedValue} clickFunc={() => setOpenDialog('delete')} />
-              </Grid>
-            )
-          )}
-        />
+        <Grid container size={12} direction="column">
+
+          {/* استفاده از کامپوننت در حالت دسکتاپ */}
+          <Box sx={{ mb: 1 }}>
+            <ErrorFilterChips activeTab={activeTab} onTabChange={handleChipClick} />
+          </Box>
+
+          <TelecomDataGrid
+            data={gridFilteredData} // دیتای فیلتر شده به دیتاگرید پاس داده شده است
+            height={sizeConverter(550, 'height')}
+            loading={listErrors?.isLoading}
+            doubleClickFunc={(data) => handleShowInfo(data?.solution)}
+            columns={KIOSKS_COLUMNS}
+            setRows={(data) => data && setSelectedValue(data?.[0])}
+            defaultSortColumns={{ code: 'asc' }}
+            CustomToolBar={() => (
+              accessCheck({ accessInfoId: 105, KindAccessInfo: 'writeAccess' }) && (
+                <Grid container size={'auto'} spacing={sizeConverter(4, 'spaceX')}>
+                  <DataGridIconProvider toolTipText={'اضافه'} Icon={AddIcon} clickFunc={() => setOpenDialog('add')} />
+                  <DataGridIconProvider toolTipText={'ویرایش'} Icon={EditIcon} disable={!selectedValue} clickFunc={() => setOpenDialog('edit')} />
+                  <DataGridIconProvider toolTipText={'حذف'} Icon={DeleteIcon} disable={!selectedValue} clickFunc={() => setOpenDialog('delete')} />
+                </Grid>
+              )
+            )}
+          />
+        </Grid>
       )
       }
+
 
       {/* Dialogs */}
       {
@@ -321,6 +414,13 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
           <SimpleInfoDialog open={!!openDialog} onClose={() => setOpenDialog(null)} title="راه حل" customContent={selectedMessage} />
         )
       }
+      <FileDialog
+        open={isFilesDialogOpen}
+        onClose={() => setIsFilesDialogOpen(false)}
+        files={listErrors?.data?.value?.find((i) => i?.id === selectedValue)?.attachedDocuments?.map((file, index) => ({ id: index, name: file.split('/')?.[3], rawFile: file })) || []}
+
+        onDownloadClick={downloadHandler}
+      />
     </Grid >
   )
 }

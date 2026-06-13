@@ -5,7 +5,7 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
-import CloseIcon from '@mui/icons-material/Close'
+import HighlightOffOutlinedIcon from '@mui/icons-material/HighlightOffOutlined'
 
 import { sizeConverter } from '@src/utility/sizeConverter'
 import { useDevice } from '@src/hooks/useDevice'
@@ -54,8 +54,7 @@ export default function SimpleInfoDialog({
                     justifyContent: 'space-between',
                     px: isMobile ? sizeConverter(20, 'space') : sizeConverter(16, 'space'),
                     py: isMobile ? sizeConverter(16, 'spaceY') : sizeConverter(12, 'spaceY'),
-                    borderBottom: '1px solid',
-                    borderColor: 'divider',
+
                     flexShrink: 0, ...(isMobile && { mt: 12 }),
                 }}
             >
@@ -70,7 +69,7 @@ export default function SimpleInfoDialog({
                 </Typography>
 
                 <IconButton onClick={onClose} size="small" sx={{ color: 'text.secondary' }}>
-                    <CloseIcon fontSize={isMobile ? 'medium' : 'small'} />
+                    <HighlightOffOutlinedIcon fontSize={isMobile ? 'medium' : 'large'} />
                 </IconButton>
             </Box>
 
@@ -85,7 +84,7 @@ export default function SimpleInfoDialog({
             >
                 {message || customContent ? (
                     <Typography
-                        component="div"
+                        // component="div"
                         sx={{
                             whiteSpace: 'pre-line',
                             fontSize: isMobile ? sizeConverter(52) : sizeConverter(14),
@@ -114,8 +113,7 @@ export default function SimpleInfoDialog({
                     flexShrink: 0,
                     px: isMobile ? sizeConverter(20, 'space') : sizeConverter(16, 'space'),
                     py: isMobile ? sizeConverter(16, 'spaceY') : sizeConverter(12, 'spaceY'),
-                    borderTop: '1px solid',
-                    borderColor: 'divider',
+
                     pb: isMobile ? 8 : undefined,
                 }}
             >

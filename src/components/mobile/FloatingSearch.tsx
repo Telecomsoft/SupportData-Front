@@ -7,7 +7,7 @@ import { useTheme } from "@mui/material/styles"
 type FloatingSearchProps = {
     title?: string
     value: string
-    onChange: (e: any) => void
+    setSearchQuery: (e: any) => void
     isOpen: boolean
     setIsOpen: (v: boolean) => void
     position?: any
@@ -16,7 +16,7 @@ type FloatingSearchProps = {
 export default function FloatingSearch({
     title = "جستجو...",
     value,
-    onChange,
+    setSearchQuery,
     isOpen,
     setIsOpen,
     position,
@@ -41,14 +41,14 @@ export default function FloatingSearch({
                         fullWidth
                         placeholder={title}
                         value={value}
-                        onChange={onChange}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                         autoFocus
                         sx={{
                             "& .MuiOutlinedInput-root": {
                                 borderRadius: "30px",
                                 backgroundColor: theme.palette.background.paper,
                                 boxShadow: "0px 8px 20px rgba(0,0,0,0.15)",
-                                top:20
+                                top: 18
                             },
                         }}
                         InputProps={{
@@ -63,6 +63,7 @@ export default function FloatingSearch({
                                         size="small"
                                         onClick={() => {
                                             setIsOpen(false)
+                                            setSearchQuery('')
                                         }}
                                     >
                                         <CloseIcon fontSize="small" />

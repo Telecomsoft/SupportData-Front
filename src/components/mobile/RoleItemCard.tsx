@@ -33,15 +33,15 @@ export default function RoleItemCard({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                backgroundColor: '#fff',
+                backgroundColor: theme.palette.white[0],
                 borderRadius: 3,
                 p: 2,
                 mb: 2,
-                boxShadow: '0 4px 12px rgba(0,0,0,0.03)', // سایه ملایم مشابه عکس
+                boxShadow: `0 4px 12px rgba(0,0,0,0.03)`,
                 cursor: 'pointer',
             }}
         >
-            <Grid container size={8.5} onClick={() => onRoleAdd()}  >
+            <Grid container alignItems={'center'} size={8.5} onClick={() => onRoleAdd()}  >
                 <Avatar
                     sx={{
                         bgcolor: theme.palette.bgColor[2],
@@ -52,9 +52,8 @@ export default function RoleItemCard({
                     <PersonIcon />
                 </Avatar>
 
-                <Box sx={{ flexGrow: 1 }}>
-                    <Typography fontWeight="bold">{name}</Typography>
-                </Box>
+
+                <Typography fontWeight="bold">{name}</Typography>
             </Grid>
             <Grid container size={3} alignItems={'center'}>
 
@@ -79,7 +78,7 @@ export default function RoleItemCard({
                         onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            if (onDelete) onDelete(); // فراخوانی تابع حذف
+                            if (onDelete) onDelete(); 
                         }}
                         sx={{
                             border: `1px solid ${theme.palette.black[7]}`,

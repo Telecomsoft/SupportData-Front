@@ -181,7 +181,7 @@ function Permissions({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
       />
     );
   }
-
+  console.log('isAccess', isAcceess)
   const renderDesktop = () => {
     return (
       <>

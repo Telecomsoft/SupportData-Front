@@ -144,7 +144,7 @@ const SidebarLayout = ({ setIsOpen, isOpen }: SidebarLayoutProp) => {
    };
 
    const tree = useMemo(() => {
-      return LAYOUT_SIDEBAR_DATA.map((item) => {
+      return LAYOUT_SIDEBAR_DATA?.map((item) => {
          // فیلتر کردن فرزندان
          const filteredChildren = item.children?.filter((child) => hasItemAccess(child));
          return { ...item, children: filteredChildren };
@@ -161,7 +161,7 @@ const SidebarLayout = ({ setIsOpen, isOpen }: SidebarLayoutProp) => {
             <Grid container size={12} onClick={() => setIsOpen(p => !p)} justifyContent={'center'} alignItems={'center'} sx={{ flexWrap: 'nowrap', height: '10%', cursor: 'pointer' }}>
                <Typography variant={'header'} sx={{ color: 'white.1', fontFamily: 'yekanBold', fontSize: sizeConverter(16) }}>
                   <HeadsetMicIcon sx={{ fontSize: sizeConverter(20), mr: 1 }} />
-                  {isOpen ? 'KIOSK SUPPORT INFO ' : "K-S-I"}
+                  {isOpen ? 'KIOSK SUPPORT INFO ' : ""}
                </Typography>
             </Grid>
 
