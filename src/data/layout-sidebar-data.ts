@@ -32,27 +32,26 @@ export const LAYOUT_SIDEBAR_DATA: (DataType & { children?: DataType[] })[] = [
    {
       name: 'تنظیمات',
       value: 'devicesList',
-      link: '/devicesList',
       mobileLink: '/mobileListSettings',
       icon: SettingsIcon,
       accessID: [104, 103],
       children: [
          {
-            name: 'لیست قطعات مرتبط',
+            name: 'لیست  نوع قطعات ',
             value: 'devicesList',
             link: '/devicesList',
             icon: ComputerIcon,
             accessID: 104,
          },
          {
-            name: 'لیست مدل قطعات مرتبط',
+            name: 'لیست مدل قطعات ',
             value: 'deviceModelsList',
             link: '/deviceModelsList',
             icon: MemoryIcon,
             accessID: 104,
          },
          {
-            name: 'لیست بانک های مرتبط',
+            name: 'لیست بانک ها ',
             value: 'banksList',
             link: '/banksList',
             icon: AccountBalanceIcon,
@@ -61,7 +60,7 @@ export const LAYOUT_SIDEBAR_DATA: (DataType & { children?: DataType[] })[] = [
       ],
    },
    {
-      name: 'تنظیمات سیستم',
+      name: 'تنظیمات کاربران',
       value: 'systemSettings',
       mobileLink: '/mobileListSystemManagement',
       icon: SettingsApplicationsIcon,

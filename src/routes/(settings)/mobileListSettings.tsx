@@ -4,6 +4,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'; // یا r
 import { LAYOUT_SIDEBAR_DATA } from '@src/data/layout-sidebar-data';
 import { withSnackbar } from '@components/hoc/withSnackbar';
 import { useAccessCheck } from '@src/utility/accessCheck';
+import { useTheme } from '@mui/system';
 
 export const Route = createFileRoute('/(settings)/mobileListSettings')({
     component: withSnackbar(mobileListSettings),
@@ -12,6 +13,7 @@ export const Route = createFileRoute('/(settings)/mobileListSettings')({
 function mobileListSettings() {
     const navigate = useNavigate();
     const { accessCheck } = useAccessCheck();
+    const theme = useTheme()
 
     const hasItemAccess = (item: any): boolean => {
         const accessId = item.accessID;
@@ -58,7 +60,7 @@ function mobileListSettings() {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
-                            backgroundColor: '#fff',
+                            backgroundColor: theme.palette.white[0],
                             borderRadius: 3,
                             p: 2,
                             mb: 2,
@@ -74,8 +76,8 @@ function mobileListSettings() {
                                     width: 50,
                                     height: 50,
                                     borderRadius: 2,
-                                    backgroundColor: '#fbe9e9', // رنگ پس‌زمینه آیکون (قرمز بسیار روشن)
-                                    color: '#8b1935', // رنگ آیکون (قرمز تیره)
+                                    backgroundColor: theme.palette.white[1], // رنگ پس‌زمینه آیکون (قرمز بسیار روشن)
+                                    color: theme.palette.primary.main, // رنگ آیکون (قرمز تیره)
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
@@ -96,7 +98,7 @@ function mobileListSettings() {
                         </Stack>
 
                         {/* بخش چپ: فلش */}
-                        <KeyboardArrowLeftIcon sx={{ color: '#8b1935' }} />
+                        <KeyboardArrowLeftIcon sx={{ color: theme.palette.primary.main }} />
                     </Box>
                 );
             })}

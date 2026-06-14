@@ -201,6 +201,8 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
       label: 'توضیحات',
       value: 'description',
       kind: 'textField',
+      maxRows: 2,
+      multiline: true,
       size: isMobile ? 12 : 8.9,
       component: TextFieldComp,
     },

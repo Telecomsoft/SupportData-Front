@@ -13,12 +13,12 @@ export default function Layout({ children }: LayoutProps) {
 
     return (
         <Grid container justifyContent={'space-between'} sx={{ height: '100vh', overflow: 'hidden' }}>
-            <Grid container size={isOpen ? 1.65 : 0.6} sx={{ transition: 'all 0.2s ease-in-out'}}>
+            <Grid container size={isOpen ? 2.1 : 0.6} sx={{ transition: 'all 0.2s ease-in-out'}}>
                 <SideBarLayout setIsOpen={setIsOpen} isOpen={isOpen} />
             </Grid>
             <Grid
                 container
-                size={isOpen ? 10.35 : 11.4}
+                size={isOpen ? 9.9 : 11.4}
                 alignContent={'flex-start'}
                 alignItems={'center'}
                 justifyContent={'center'}

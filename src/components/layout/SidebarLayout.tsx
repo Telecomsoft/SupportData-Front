@@ -119,6 +119,7 @@ import { sizeConverter } from '@utility/sizeConverter';
 import { LAYOUT_SIDEBAR_DATA } from '@data/layout-sidebar-data';
 import TreeWrapper from '@components/general/tree/TreeWrapper';
 import { useAccessCheck } from '@src/utility/accessCheck';
+import { filterNavigationByAccess } from '@components/mobile/utils/navigationAccess';
 
 type SidebarLayoutProp = {
    setIsOpen: Dispatch<SetStateAction<boolean>>;
@@ -128,32 +129,15 @@ type SidebarLayoutProp = {
 const SidebarLayout = ({ setIsOpen, isOpen }: SidebarLayoutProp) => {
    const { accessCheck } = useAccessCheck();
 
-   // تابع بررسی دسترسی برای یک آیتم (پشتیبانی از accessID: number | number[])
-   const hasItemAccess = (item: any): boolean => {
-      const accessId = item.accessID;
-      if (accessId === undefined || accessId === null) return true; // بدون محدودیت
 
-      if (Array.isArray(accessId)) {
-         // شرط OR: حداقل یکی از accessIDها باید مجاز باشد
-         return accessId.some((id: number) =>
-            accessCheck({ accessInfoId: id, KindAccessInfo: 'readAccess' })
-         );
-      }
-      // عدد تکی
-      return accessCheck({ accessInfoId: accessId, KindAccessInfo: 'readAccess' });
-   };
-
-   const tree = useMemo(() => {
-      return LAYOUT_SIDEBAR_DATA?.map((item) => {
-         // فیلتر کردن فرزندان
-         const filteredChildren = item.children?.filter((child) => hasItemAccess(child));
-         return { ...item, children: filteredChildren };
-      }).filter((item) => {
-         const hasSelfAccess = hasItemAccess(item);
-         const hasRemainingChildren = item.children && item.children.length > 0;
-         return hasSelfAccess && (item.link || hasRemainingChildren);
-      });
-   }, [accessCheck]);
+   const tree = useMemo(
+      () =>
+         filterNavigationByAccess(
+            LAYOUT_SIDEBAR_DATA,
+            accessCheck
+         ),
+      [accessCheck]
+   )
 
    return (
       <Grid container size={12} sx={{ bgcolor: 'primary.main', height: 1 }}>
@@ -166,7 +150,7 @@ const SidebarLayout = ({ setIsOpen, isOpen }: SidebarLayoutProp) => {
             </Grid>
 
             <Grid container sx={{ width: 1, height: sizeConverter(660, 'height'), color: 'white', overflowY: 'auto', overflowX: 'hidden' }}>
-               <Grid container alignContent={'flex-start'}>
+               <Grid container size={11} alignContent={'flex-start'}>
                   <TreeWrapper treeHeight={'auto'} data={tree} isFullWidth={isOpen} treeStyle={'layout'} childrenSink={true} />
                </Grid>
             </Grid>

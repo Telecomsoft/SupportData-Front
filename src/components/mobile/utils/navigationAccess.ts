@@ -1,6 +1,6 @@
 // src/utils/sidebarAccess.ts
 
-export const hasAccessToItem = (
+export const hasNavigationAccess = (
     item: any,
     accessCheck: any
 ): boolean => {
@@ -24,29 +24,26 @@ export const hasAccessToItem = (
         KindAccessInfo: 'readAccess',
     });
 };
-
-export const filterSidebarByAccess = (
-    data: any[],
+export const filterNavigationByAccess = (
+    navigation: any[],
     accessCheck: any
 ) => {
-    return data
+    return navigation
         .map((item) => ({
             ...item,
             children:
                 item.children?.filter((child: any) =>
-                    hasAccessToItem(child, accessCheck)
+                    hasNavigationAccess(child, accessCheck)
                 ) || [],
         }))
         .filter((item) => {
-            const hasSelfAccess = hasAccessToItem(
-                item,
-                accessCheck
-            );
-
             const hasChildren =
                 item.children &&
                 item.children.length > 0;
 
-            return hasSelfAccess || hasChildren;
+            const hasSelfAccess =
+                hasNavigationAccess(item, accessCheck);
+
+            return hasChildren || hasSelfAccess;
         });
 };

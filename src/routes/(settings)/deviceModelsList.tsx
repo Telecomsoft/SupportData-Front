@@ -262,6 +262,8 @@ function DeviceModelsList({
     {
       label: 'توضیحات',
       value: 'description',
+      multiline: true,
+      maxRows: 4,
       kind: 'textField',
       size: isMobile ? 12 : 12,
       component: TextFieldComp,

@@ -24,12 +24,12 @@ export function MobileLayout({ children }: Props) {
     }
     return (
         <Grid container sx={{
-            minHeight: '100dvh',
-            // bgcolor: '#f8f9fa',
+            height: '100dvh',
             display: 'flex',
             flexDirection: 'column',
             position: 'relative',
-            bgcolor: theme.palette.bgColor[1]
+            bgcolor: theme.palette.bgColor[1],
+            overflow: 'hidden',
         }}>
             {/* AppBar ثابت */}
             <Grid
@@ -73,7 +73,13 @@ export function MobileLayout({ children }: Props) {
             </Box>
 
             {/* Main Content */}
-            <Box  sx={{ flexGrow: 1, overflowY: 'auto', px: 2, pt: 14, pb: 20 }}>
+            <Box sx={{
+                flex: 1,
+                px: 2,
+                pt: 14,
+                pb: 20,
+                minHeight: 0,
+            }}>
                 {children}
             </Box>
 

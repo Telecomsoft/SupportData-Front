@@ -11,7 +11,7 @@ const filterTabs = [
 
 export const ErrorFilterChips = ({ activeTab, onTabChange }) => {
 
-    console.log('activeTab',activeTab)
+  console.log('activeTab', activeTab)
   return (
     <Box
       sx={{
@@ -39,7 +39,6 @@ export const ErrorFilterChips = ({ activeTab, onTabChange }) => {
       >
         {filterTabs.map((tab) => {
           const isActive = activeTab === tab.id;
-console.log('tab',tab)
           return (
             <Chip
               key={tab.id}

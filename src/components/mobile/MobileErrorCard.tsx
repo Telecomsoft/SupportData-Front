@@ -173,7 +173,7 @@ export default function MobileErrorCard({
                                 <Grid container justifyContent={'flex-end'}>
                                     <Grid container size={10.8}>
                                         <Typography sx={{ color: theme.palette.black[3], fontSize: sizeConverter(38) }}>
-                                            {subtitle ?? '-'}
+                                            {subtitle?.length > 0 ? subtitle : 'همه بانک ها'}
                                         </Typography>
                                     </Grid>
                                     <Typography sx={{ color: theme.palette.black[3], fontWeight: 'bold', fontSize: sizeConverter(38) }}>

@@ -4,6 +4,9 @@ import { LAYOUT_SIDEBAR_DATA } from '@src/data/layout-sidebar-data';
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { useAccessCheck } from '@src/utility/accessCheck';
+import { useMemo } from 'react';
+import { filterNavigationByAccess } from '@components/mobile/utils/navigationAccess';
+import { useTheme } from '@mui/system';
 
 export const Route = createFileRoute(
     '/(systemManagement)/mobileListSystemManagement',
@@ -14,37 +17,25 @@ export const Route = createFileRoute(
 function mobileListSettings() {
     const navigate = useNavigate();
     const { accessCheck } = useAccessCheck();
+    const theme = useTheme()
 
-    const hasItemAccess = (item: any): boolean => {
-        const accessId = item.accessID;
-
-        if (accessId === undefined || accessId === null) {
-            return true;
-        }
-
-        if (Array.isArray(accessId)) {
-            return accessId.some((id: number) =>
-                accessCheck({
-                    accessInfoId: id,
-                    KindAccessInfo: 'readAccess',
-                })
-            );
-        }
-
-        return accessCheck({
-            accessInfoId: accessId,
-            KindAccessInfo: 'readAccess',
-        });
-    };
-
-    const settingsData = LAYOUT_SIDEBAR_DATA.find(
-        item => item.mobileLink === '/mobileListSystemManagement'
+    const menuItems = useMemo(
+        () =>
+            filterNavigationByAccess(
+                LAYOUT_SIDEBAR_DATA,
+                accessCheck
+            ),
+        [accessCheck]
     );
 
-    const subItems =
-        settingsData?.children?.filter((child) =>
-            hasItemAccess(child)
-        ) || [];
+    const settingsData = menuItems.find(
+        item =>
+            item.mobileLink ===
+            '/mobileListSystemManagement'
+    );
+
+    const subItems = settingsData?.children || [];
+
 
     return (
         <Box sx={{ p: 2, pb: 10 /* فاصله از پایین برای BottomNav */ }}>
@@ -59,7 +50,7 @@ function mobileListSettings() {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
-                            backgroundColor: '#fff',
+                            backgroundColor: theme.palette.white[0],
                             borderRadius: 3,
                             p: 2,
                             mb: 2,
@@ -75,8 +66,8 @@ function mobileListSettings() {
                                     width: 50,
                                     height: 50,
                                     borderRadius: 2,
-                                    backgroundColor: '#fbe9e9', // رنگ پس‌زمینه آیکون (قرمز بسیار روشن)
-                                    color: '#8b1935', // رنگ آیکون (قرمز تیره)
+                                    backgroundColor: theme.palette.white[1], // رنگ پس‌زمینه آیکون (قرمز بسیار روشن)
+                                    color: theme.palette.primary.main,
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
@@ -97,7 +88,7 @@ function mobileListSettings() {
                         </Stack>
 
                         {/* بخش چپ: فلش */}
-                        <KeyboardArrowLeftIcon sx={{ color: '#8b1935' }} />
+                        <KeyboardArrowLeftIcon sx={{ color: theme.palette.primary.main, }} />
                     </Box>
                 );
             })}

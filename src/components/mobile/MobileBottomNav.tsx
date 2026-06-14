@@ -3,52 +3,25 @@ import { useLocation, useNavigate } from '@tanstack/react-router';
 import { LAYOUT_SIDEBAR_DATA } from '@src/data/layout-sidebar-data';
 import { useMemo } from 'react';
 import { useAccessCheck } from '@src/utility/accessCheck';
+import { filterNavigationByAccess } from './utils/navigationAccess';
 
 export default function MobileBottomNav() {
     const location = useLocation();
     const navigate = useNavigate();
     const { accessCheck } = useAccessCheck();
 
-    const hasItemAccess = (item: any): boolean => {
-        const accessId = item.accessID;
+    const menuItems = useMemo(
+        () =>
+            filterNavigationByAccess(
+                LAYOUT_SIDEBAR_DATA,
+                accessCheck
+            ),
+        [accessCheck]
+    );
 
-        if (accessId === undefined || accessId === null) {
-            return true;
-        }
 
-        if (Array.isArray(accessId)) {
-            return accessId.some((id) =>
-                accessCheck({
-                    accessInfoId: id,
-                    KindAccessInfo: 'readAccess',
-                })
-            );
-        }
 
-        return accessCheck({
-            accessInfoId: accessId,
-            KindAccessInfo: 'readAccess',
-        });
-    };
-
-  const mobileMenuItems = useMemo(() => {
-    return LAYOUT_SIDEBAR_DATA.map((item) => {
-        const filteredChildren =
-            item.children?.filter((child) => hasItemAccess(child)) || [];
-
-        return {
-            ...item,
-            children: filteredChildren,
-        };
-    }).filter((item) => {
-        const hasChildren = item.children.length > 0;
-        const hasSelfAccess = hasItemAccess(item);
-
-        return hasSelfAccess || hasChildren;
-    });
-}, [accessCheck]);
-
-    const activeIndex = mobileMenuItems.findIndex(
+    const activeIndex = menuItems?.findIndex(
         (item) =>
             location.pathname === item.link ||
             location.pathname === item.mobileLink ||
@@ -61,7 +34,7 @@ export default function MobileBottomNav() {
         event: React.SyntheticEvent,
         newValue: number
     ) => {
-        const selectedItem = mobileMenuItems[newValue];
+        const selectedItem = menuItems?.[newValue];
 
         const targetRoute =
             selectedItem.mobileLink || selectedItem.link;
@@ -70,6 +43,8 @@ export default function MobileBottomNav() {
             navigate({ to: targetRoute });
         }
     };
+
+
 
     return (
         <Paper
@@ -86,7 +61,7 @@ export default function MobileBottomNav() {
                 value={activeIndex !== -1 ? activeIndex : false}
                 onChange={handleNavClick}
             >
-                {mobileMenuItems.map((item) => {
+                {menuItems.map((item) => {
                     const Icon = item.icon;
 
                     return (

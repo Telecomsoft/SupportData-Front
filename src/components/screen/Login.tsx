@@ -63,6 +63,21 @@ const Login = (props: Partial<LoginProps>) => {
          },
       })
    }
+   const versionInfo = (
+      <Typography
+         variant="normalBold"
+         sx={{
+            textAlign: 'center',
+            color: 'text.secondary',
+            fontSize: sizeConverter(12, 'font'),
+         }}
+      >
+         نسخه نرم افزار{' '}
+         {process.env.PACKAGE_VERSION
+            ? convertToPersianNumber(process.env.PACKAGE_VERSION)
+            : ''}
+      </Typography>
+   )
 
    const loginForm = (
       <Grid container >
@@ -121,21 +136,26 @@ const Login = (props: Partial<LoginProps>) => {
             anchor="bottom"
             open
             variant="permanent"
-            sx={{ display: 'flex', alignItems: 'center' }}
             PaperProps={{
                sx: {
                   height: '100dvh',
+                  display: 'flex',
+                  flexDirection: 'column',
                   borderTopLeftRadius: sizeConverter(28, 'radius'),
                   borderTopRightRadius: sizeConverter(28, 'radius'),
                   bgcolor: theme.palette.bgColor[1],
                   px: sizeConverter(24, 'space'),
-                  pt: '40%'
+                  pt: '40%',
                },
             }}
          >
-
-            {/* Drawer Handle */}
-            <Box sx={{ display: 'flex', justifyContent: 'center', mb: sizeConverter(8, 'spaceY') }}>
+            <Box
+               sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  mb: sizeConverter(8, 'spaceY'),
+               }}
+            >
                <Box
                   sx={{
                      width: 40,
@@ -146,7 +166,6 @@ const Login = (props: Partial<LoginProps>) => {
                />
             </Box>
 
-            {/* Title */}
             <Typography
                sx={{
                   textAlign: 'center',
@@ -159,27 +178,31 @@ const Login = (props: Partial<LoginProps>) => {
                KIOSK SUPPORT INFO
             </Typography>
 
-            {/* Form */}
             <form onSubmit={handleSubmit(submitButton)}>
                {loginForm}
             </form>
-
-            <Divider sx={{ my: sizeConverter(24, 'spaceY') }} />
-
-            <Typography
-               variant="normalBold"
+            <Box
                sx={{
-                  textAlign: 'center',
-                  color: 'text.secondary',
-                  fontSize: 12
+                  position: 'fixed',
+                  bottom: sizeConverter(20, 'space'),
+                  left: '50%',
+                  transform: 'translateX(-50%)',
                }}
             >
-               نسخه نرم افزار&nbsp;
-               {process.env.PACKAGE_VERSION
-                  ? convertToPersianNumber(process.env.PACKAGE_VERSION)
-                  : ''}
-            </Typography>
-
+               <Typography
+                  variant="normalBold"
+                  sx={{
+                     color: 'primary.main',
+                     fontSize: 12,
+                     whiteSpace: 'nowrap',
+                  }}
+               >
+                  نسخه نرم افزار{' '}
+                  {process.env.PACKAGE_VERSION
+                     ? convertToPersianNumber(process.env.PACKAGE_VERSION)
+                     : ''}
+               </Typography>
+            </Box>
          </Drawer>
       )
    }
@@ -195,6 +218,7 @@ const Login = (props: Partial<LoginProps>) => {
             height: '100vh',
             bgcolor: 'primary.main',
             px: sizeConverter(16, 'space'),
+            position: 'relative',
          }}
       >
          <Grid
@@ -204,9 +228,9 @@ const Login = (props: Partial<LoginProps>) => {
                p: sizeConverter(32, 'space'),
                borderRadius: sizeConverter(16, 'radius'),
                bgcolor: 'white.0',
+               boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
             }}
          >
-
             <Typography
                sx={{
                   mb: sizeConverter(24, 'spaceY'),
@@ -220,12 +244,36 @@ const Login = (props: Partial<LoginProps>) => {
                KIOSK SUPPORT INFO
             </Typography>
 
-            <form onSubmit={handleSubmit(submitButton)} style={{ width: '100%' }}>
+            <form
+               onSubmit={handleSubmit(submitButton)}
+               style={{ width: '100%' }}
+            >
                {loginForm}
             </form>
-
          </Grid>
 
+         <Box
+            sx={{
+               position: 'fixed',
+               bottom: sizeConverter(20, 'space'),
+               left: '50%',
+               transform: 'translateX(-50%)',
+            }}
+         >
+            <Typography
+               variant="normalBold"
+               sx={{
+                  color: 'white.0',
+                  fontSize: sizeConverter(12, 'font'),
+                  whiteSpace: 'nowrap',
+               }}
+            >
+               نسخه نرم افزار{' '}
+               {process.env.PACKAGE_VERSION
+                  ? convertToPersianNumber(process.env.PACKAGE_VERSION)
+                  : ''}
+            </Typography>
+         </Box>
       </Grid>
    )
 }

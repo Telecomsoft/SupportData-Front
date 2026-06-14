@@ -211,6 +211,8 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             label: 'توضیحات',
             value: 'description',
             kind: 'textField',
+            maxRows: 2,
+            multiline: true,
             size: isMobile ? 12 : 8.9,
             component: TextFieldComp,
             validators: { ...REQUIRED_VALIDATOR },
@@ -244,7 +246,7 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 </Grid>
                 : isMobile ? (
                     // ---------------- حالت موبایل ----------------
-                    <Box sx={{ width: '100%', p: 2, pb: 10, overflowY: 'auto',  }}>
+                    <Box sx={{ width: '100%', p: 2, pb: 10, overflowY: 'auto', }}>
                         {listBanks?.data?.value?.map((bank: any) => (
                             <SettingsCard
                                 key={bank.id}

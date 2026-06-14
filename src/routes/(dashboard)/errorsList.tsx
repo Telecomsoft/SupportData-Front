@@ -12,7 +12,7 @@ import DataGridIconProvider from '@components/general/telecomDataGrid/components
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { Box, Fab, Grid2, useTheme, Zoom, InputAdornment, IconButton } from '@mui/material'
+import { Box, Fab, Grid2, useTheme, Zoom, InputAdornment, IconButton, Typography } from '@mui/material'
 import { REQUIRED_VALIDATOR } from '@src/data/validators/validators'
 import TextFieldComp from '@components/general/hookFromInputs/TextFieldComp'
 import AutoCompleteComp from '@components/general/hookFromInputs/AutoComplete'
@@ -90,30 +90,35 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
   //     link.click()
   //   }
   // }
-  const downloadHandler = (file) => {
+  const downloadHandler = (file: string) => {
     if (!file) return;
 
     const link = document.createElement('a');
     link.href = `${getEndpoint()}${file}`;
 
-    const extension = file.split('.').pop().toLowerCase();
-    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+    const extension = file.split('.').pop()?.toLowerCase() || '';
+
+    const imageExtensions = [
+      'jpg',
+      'jpeg',
+      'png',
+      'gif',
+      'webp',
+      'svg',
+      'pdf',
+      'txt',
+    ];
 
     if (imageExtensions.includes(extension)) {
-      // باز شدن تصویر در یک تب جدید برای نمایش
-      link.setAttribute('target', '_blank');
-      link.setAttribute('rel', 'noopener noreferrer'); // برای امنیت بیشتر در تب جدید
+      link.target = '_blank';
     } else {
-      // اجبار به دانلود برای تمام فایل‌های دیگر (PDF, Zip, etc.)
-      link.setAttribute('download', '');
+      link.download = '';
     }
 
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
-
-
 
 
   const hasWriteAccess = accessCheck({
@@ -125,11 +130,10 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     if (!listErrors?.data?.value) return [];
 
     return listErrors.data.value.filter((item) => {
-      // ⚠️ توجه: فیلد groupID یا groupName را بر اساس دیتای بک‌اند خودتون جایگزین کنید
       if (activeTab === 'hardware') {
-        return item?.groupID === 1; // شناسه گروه سخت‌افزاری
+        return item?.groupID === 1;
       } else if (activeTab === 'software') {
-        return item?.groupID === 2; // شناسه گروه نرم‌افزاری
+        return item?.groupID === 2;
       }
       return true;
     });
@@ -142,7 +146,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
-    setSelectedValue(null); // پاک کردن مقدار انتخاب شده قبلی موقع تغییر تب
+    setSelectedValue(null);
   };
   const handleChipClick = (tabValue) => {
     if (activeTab !== tabValue) {
@@ -156,7 +160,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     { label: 'گروه', value: 'groupID', kind: 'combo', size: isMobile ? 12 : 5.9, component: AutoCompleteComp, validators: { ...REQUIRED_VALIDATOR } },
     { label: 'قطعه', value: 'deviceID', kind: 'combo', size: isMobile ? 12 : 5.9, component: AutoCompleteComp },
     { component: CustomErrorListDialog },
-    { label: 'بانک های مرتبط', value: 'bankIDs', autocompleteType: 'multiple', type: 'multiple', kind: 'combo', size: isMobile ? 12 : 5.9, component: AutoCompleteComp },
+    { label: 'بانک های ', value: 'bankIDs', autocompleteType: 'multiple', type: 'multiple', kind: 'combo', size: isMobile ? 12 : 5.9, component: AutoCompleteComp },
     { label: 'راه حل', value: 'solution', kind: 'textField', size: 12, component: TextFieldComp, multiline: true, maxRows: 7, validators: { ...REQUIRED_VALIDATOR } },
     { label: 'فایل های ضمیمه', value: 'attachedDocuments', uploadType: 'multiple', kind: 'uploadFile', size: 12, component: UploadFile },
   ]
@@ -200,21 +204,13 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     { field: 'title', headerName: 'عنوان خطا', width: sizeConverter(100, 'width') },
     { field: 'deviceName', headerName: 'قطعه ', width: sizeConverter(100, 'width') },
     { field: 'deviceModelName', headerName: 'مدل قطعه ', width: sizeConverter(100, 'width') },
-    { field: 'banks', headerName: 'بانک های مرتبط', width: sizeConverter(200) },
+    { field: 'banks', headerName: 'بانک های ', width: sizeConverter(200), renderCell: (params) => <Typography variant='caption' > {params?.value?.length > 0 ? params?.value : 'همه بانک ها'} </Typography> },
     {
       field: 'attachedDocuments',
       headerName: 'فایل',
       width: sizeConverter(200),
       align: 'center',
       renderCell: (params) =>
-        //   <Grid container justifyContent={'center'} sx={{ ml: sizeConverter(2, 'spaceX') }}>
-        //     {params?.value?.map((i, index) => (
-        //       <Grid key={index} size={2} onClick={() => downloadHandler(i)}>
-        //         <SvgComponent icon={downloadIcon} width={sizeConverter(16)} height={sizeConverter(16)} color={theme.palette.black[0]} />
-        //       </Grid>
-        //     ))}
-        //   </Grid>
-        // ,
         <DownloadForOfflineIcon sx={{ color: params?.row?.attachedDocuments?.length > 0 ? theme.palette.primary.main : theme.palette.black[7] }} onClick={params?.row?.attachedDocuments?.length > 0 ? () => setIsFilesDialogOpen(true) : null} />
     },
     {
@@ -239,10 +235,13 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
       ) : isMobile ? (
         <Box sx={{
           height: '100dvh',
-          display: 'flex', flexDirection: 'column', position: 'relative', width: '100%'
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          width: '100%',
+          pb: 5
         }}>
 
-          {/* اضافه شدن کامپوننت چیپ ها به حالت موبایل */}
           <Box sx={{
             width: '99%',
             maxWidth: '90dvw',
@@ -252,10 +251,15 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             <ErrorFilterChips activeTab={activeTab} onTabChange={handleChipClick} />
           </Box>
 
-          {/* محتوای لیست با Padding Bottom برای دکمه‌های شناور */}
-          <Box sx={{ flexGrow: 1, overflowY: 'auto', px: 2, pt: 1, pb: 20 }}>
+          <Box sx={{
+            flex: 1,
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            px: 2,
+            pb: 20,
+            WebkitOverflowScrolling: 'touch',
+          }}>
             <Grid2 container spacing={2}>
-              {/* استفاده از دیتای نهایی فیلتر شده برای موبایل */}
               {finalMobileData?.map((item) => (
                 <Grid2 size={12} key={item.id}>
                   <MobileErrorCard
@@ -276,7 +280,6 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             </Grid2>
           </Box>
 
-          {/* بخش دکمه‌های شناور و سرچ */}
           <Box
             sx={{
               position: "fixed",
