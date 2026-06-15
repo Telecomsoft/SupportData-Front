@@ -40,7 +40,7 @@ export default function SimpleInfoDialog({
                     flexDirection: 'column',
                     overflow: 'hidden',
                     ...(isMobile
-                        ? { width: '100%', height: '100%', maxWidth: '100%', maxHeight: '100%', borderRadius: 0, m: 0 }
+                        ? { width: '100%', height: '100%', maxWidth: '100%', maxHeight: '100%', borderRadius: 0, m: 0,px:1 }
                         : { minWidth: sizeConverter(dialogWidth, 'width'), maxHeight: '85vh', borderRadius: sizeConverter(16, 'radius') }
                     ),
                 },
@@ -68,9 +68,9 @@ export default function SimpleInfoDialog({
                     {title}
                 </Typography>
 
-                <IconButton onClick={onClose} size="small" sx={{ color: 'text.secondary' }}>
+                {!isMobile && <IconButton onClick={onClose} size="small" sx={{ color: 'text.secondary' }}>
                     <HighlightOffOutlinedIcon fontSize={isMobile ? 'medium' : 'large'} />
-                </IconButton>
+                </IconButton>}
             </Box>
 
             {/* Content — scrollable */}

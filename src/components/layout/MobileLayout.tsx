@@ -56,7 +56,7 @@ export function MobileLayout({ children }: Props) {
                 </Typography>
                 <IconButton onClick={handleLogout} sx={{ color: theme.palette.white[0] }}>
                     <LogoutIcon sx={{
-                        // transform: "rotate(360deg)"
+                        transform: "rotate(180deg)"
                     }} fontSize="medium" />
                 </IconButton>
             </Grid>

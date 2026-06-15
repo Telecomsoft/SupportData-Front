@@ -39,8 +39,6 @@ export default function MobileRoleList({
                     }}
                 />
             ))}
-
-            {/* دکمه شناور افزودن نقش */}
             {
                 isAcceess && (
                     <Fab

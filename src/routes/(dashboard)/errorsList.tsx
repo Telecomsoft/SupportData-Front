@@ -127,12 +127,13 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
   })
 
   const gridFilteredData = useMemo(() => {
+
     if (!listErrors?.data?.value) return [];
 
     return listErrors.data.value.filter((item) => {
-      if (activeTab === 'hardware') {
+      if (activeTab === 'software') {
         return item?.groupID === 1;
-      } else if (activeTab === 'software') {
+      } else if (activeTab === 'hardware') {
         return item?.groupID === 2;
       }
       return true;
@@ -144,13 +145,11 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     return String(item?.code).includes(searchQuery) || String(item?.title).includes(searchQuery)
   })
 
-  const handleTabChange = (event, newValue) => {
-    setActiveTab(newValue);
-    setSelectedValue(null);
-  };
+
   const handleChipClick = (tabValue) => {
     if (activeTab !== tabValue) {
       setActiveTab(tabValue);
+      setSelectedValue(null);
     }
   };
 

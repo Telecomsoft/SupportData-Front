@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 export const useDevice = () => {
     const theme = useTheme()
 
-    const isMobile = useMediaQuery(theme.breakpoints.down('md')) // < 900px
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm')) // < 900px
 
     return useMemo(() => ({
         isMobile,

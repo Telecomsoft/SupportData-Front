@@ -296,7 +296,10 @@ function Permissions({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             open={!!openDialog.roleMobile}
             selectedRole={selectedItem}
             permissions={updatedPermissions}
-            onClose={() => { setSelectedItem(null); handleClickCloseDialog('roleMobile') }}
+            onClose={() => {
+              setSelectedItem(null)
+              handleClickCloseDialog('roleMobile')
+            }}
             onSave={handleSubmit(onSubmit)}
             onPermissionChange={handleAccessChange}
             onSelectAll={selectAll}
