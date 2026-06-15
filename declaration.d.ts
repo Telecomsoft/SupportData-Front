@@ -175,6 +175,9 @@ declare module '@mui/material/Button' {
     interface ButtonPropsVariantOverrides {
         main: true
         confirm: true
+        cancel: true
+        cancelMobile: true
+        confirmMobile: true
     }
 }
 

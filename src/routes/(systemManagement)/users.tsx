@@ -5,7 +5,7 @@ import { lazy, Suspense, useState } from 'react'
 import { withSnackbar } from '@components/hoc/withSnackbar.tsx'
 import { snackbarOpenType } from '@type/snackbarOpen.ts'
 import { useGetData } from '@hooks/useGetData.ts'
-import { User, UserType } from '@type/userType.ts'
+import { User } from '@type/userType.ts'
 import SuspendDialog from '@components/general/SuspendDialog.tsx'
 
 import { sizeConverter } from '@utility/sizeConverter.ts'
@@ -93,11 +93,11 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             renderCell: (param) => <CircleIcon sx={{ color: !param?.value ? 'primary.main' : 'gray' }} />
         },
         ...(hasWriteAccess ? [{
-            field: 'password', headerName: 'تغییر رمز عبور', width: sizeConverter(120, 'width'), align: 'center',
+            field: 'password', headerName: 'تغییر رمز عبور', width: sizeConverter(120, 'width'), align: 'center' as const,
             renderCell: () => <PasswordRoundedIcon onClick={() => handleDialog('add/password')} />
         }] : []),
         ...(hasWriteAccess ? [{
-            field: 'reset', headerName: 'باز نشانی رمز عبور', width: sizeConverter(120, 'width'), align: 'center',
+            field: 'reset', headerName: 'باز نشانی رمز عبور', width: sizeConverter(120, 'width'), align: 'center' as const,
             renderCell: () => <LockResetIcon onClick={() => handleDialog('add/reset')} />
         }] : [])
     ]
@@ -173,7 +173,7 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                         snackbarOpen={snackbarOpen}
                         autoCompleteOption={{ roleID: permissionRoles?.data?.value ?? [] }}
                         open={openDialog}
-                        wrapperFunc={(res: User) => {
+                        wrapperFunc={() => {
                             users?.refetch();
                         }}
                         close={() => {
@@ -192,7 +192,7 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                         deleteDescription={`آیا میخواهید کاربر ${users?.data?.value?.find((i: any) => i.id == selectedItem?.[0])?.userName} را حذف کنید؟`}
                         snackbarOpen={snackbarOpen}
                         deleteEndPoint={'api/User/Delete/'}
-                        isDialogOpen={openDialog === 'delete'}
+                        isDialogOpen={openDialog === 'delete' ? 'add' : null}
                         customFunAfterSuccess={() => {
                             users?.refetch();
                             setSelectedItem(null);
@@ -214,7 +214,7 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                         apiValueGetter={(data) => ({ ...data, userID: selectedItem?.[0] })}
                         editEndpoint={'api/User/SetPassword'}
                         snackbarOpen={snackbarOpen}
-                        open={!!addKind}
+                        open="add"
                         wrapperFunc={() => users?.refetch()}
                         close={() => {
                             setAddKind(null);

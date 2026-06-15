@@ -1,4 +1,4 @@
-import { styled, Autocomplete, Theme } from '@mui/material';
+import { styled, Autocomplete } from '@mui/material';
 import { sizeConverter } from '@utility/sizeConverter';
 import { useDevice } from '@src/hooks/useDevice';
 

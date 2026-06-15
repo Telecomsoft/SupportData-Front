@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Card, Typography, IconButton, Avatar, useTheme } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';

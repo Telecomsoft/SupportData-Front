@@ -6,7 +6,6 @@ import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import Drawer from '@mui/material/Drawer'
 import Box from '@mui/material/Box'
-import Divider from '@mui/material/Divider'
 import { SNACKBAR_SEVERITIES, SnackbarSeverity, withSnackbar } from '@components/hoc/withSnackbar'
 import Cookies from 'js-cookie'
 import StyledTextField from '@components/general/input/StyledTextField'
@@ -49,7 +48,7 @@ const Login = (props: Partial<LoginProps>) => {
                Cookies.set('accessInfo', JSON.stringify(res.data.value.accessInfo), { expires: 15 })
                Cookies.set('auth_token', res.data.value.token, { expires: 15, path: '/' })
                Cookies.set('userName', res.data.value.userName, { expires: 15, path: '/' })
-               Cookies.set('userId', res.data.value.userID, { expires: 15, path: '/' })
+               Cookies.set('userId', String(res.data.value.userID), { expires: 15, path: '/' })
 
                navigate({ to: '/errorsList' })
 
@@ -63,21 +62,6 @@ const Login = (props: Partial<LoginProps>) => {
          },
       })
    }
-   const versionInfo = (
-      <Typography
-         variant="normalBold"
-         sx={{
-            textAlign: 'center',
-            color: 'text.secondary',
-            fontSize: sizeConverter(12, 'font'),
-         }}
-      >
-         نسخه نرم افزار{' '}
-         {process.env.PACKAGE_VERSION
-            ? convertToPersianNumber(process.env.PACKAGE_VERSION)
-            : ''}
-      </Typography>
-   )
 
    const loginForm = (
       <Grid container >

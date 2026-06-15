@@ -7,7 +7,7 @@ import { sizeConverter } from "@src/utility/sizeConverter";
 
 
 export const CustomErrorListDialog = ({
-    register, errors, control, setValue, watch, unregister, actionKind, conditionValue
+    register, errors, control, setValue, watch, unregister, conditionValue
 }) => {
 
     const deviceId = watch('deviceID')
@@ -33,17 +33,15 @@ export const CustomErrorListDialog = ({
 
                 return <item.component
                     key={item.value}
-                    item={item}
                     register={register}
                     control={control}
                     watch={watch}
                     errors={errors}
                     unregister={unregister}
                     value={item?.value}
-                    // ۴. حالا فقط آرایه‌ی مربوط به این فیلد را مستقیم استخراج کنید
                     autoCompleteOption={filterDeviceModel}
                     label={item?.label}
-                    actionKind={actionKind}
+                    autocompleteType={item.type as 'multiple'}
                     setValue={setValue}
                     disabled={item?.disabled}
 

@@ -4,7 +4,6 @@ import { SvgIconComponent } from '@mui/icons-material'
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import SettingsIcon from '@mui/icons-material/Settings';
-import DevicesIcon from '@mui/icons-material/Devices';
 import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications'
 import SupervisedUserCircleRoundedIcon from '@mui/icons-material/SupervisedUserCircleRounded'
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt'

@@ -33,7 +33,7 @@ export type MobilePermissionDialogProps = {
   permissions: any[]
   onClose: () => void
   onSave: () => void
-  onPermissionChange: (moduleId: string, type: 'read' | 'write', value: boolean) => void
+  onPermissionChange: (perm: any, type: 'readAccess' | 'writeAccess', value: boolean) => void
   onSelectAll: (select: boolean) => void
 }
 

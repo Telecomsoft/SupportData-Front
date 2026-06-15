@@ -4,14 +4,15 @@ import { Grid2 as Grid } from '@mui/material';
 import Chip from '@mui/material/Chip';
 import { StyledAutoComplete } from '@components/general/input/StyledAutoComplete';
 import StyledTextField from '@components/general/input/StyledTextField';
+import { AutoCompleteCompProps } from '@components/general/hookFromInputs/AutoComplete';
 
 const MobileAutoCompleteComp = ({
     autoCompleteOption,
     label,
     value,
     autocompleteType = 'single',
-    searchEndPoint,
-    searchBy = 'Name',
+    searchEndPoint: _searchEndPoint,
+    searchBy: _searchBy = 'Name',
     size = 12,
     control,
     validators,
@@ -36,14 +37,14 @@ const MobileAutoCompleteComp = ({
                         multiple={autocompleteType === 'multiple'}
                         freeSolo={autocompleteType === 'freeSolo' || autocompleteType === 'singleFreeSolo'}
                         getOptionLabel={(option: any) => option?.name || option || ''}
-                        isOptionEqualToValue={(option, val) => option?.id === val?.id}
+                        isOptionEqualToValue={(option: any, val: any) => option?.id === val?.id}
                         value={controllerValue ?? (autocompleteType === 'multiple' ? [] : null)}
                         
                         onChange={(_event, newValue) => {
                             if (autocompleteType === 'multiple') {
                                 onChange(newValue);
                             } else if (autocompleteType === 'freeSolo' || autocompleteType === 'singleFreeSolo') {
-                                onChange(typeof newValue === 'string' ? newValue : newValue?.name || newValue);
+                                onChange(typeof newValue === 'string' ? newValue : (newValue as any)?.name || newValue);
                             } else {
                                 onChange(newValue);
                             }

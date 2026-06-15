@@ -5,25 +5,14 @@ import {
     Box,
     IconButton,
     Divider,
-    Drawer,
-    List,
-    ListItem,
-    ListItemText,
-    ListItemIcon,
-    ListItemButton,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DownloadOutlinedIcon from '@mui/icons-material/DownloadOutlined';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import HighlightOffOutlinedIcon from '@mui/icons-material/HighlightOffOutlined'
 import { useTheme } from '@mui/material/styles';
 import { sizeConverter } from '@utility/sizeConverter';
-import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
-import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import ImageIcon from '@mui/icons-material/Image';
-import ArticleIcon from '@mui/icons-material/Article';
 import FileDialog from '@components/general/FileDialog';
 
 interface FileItem {

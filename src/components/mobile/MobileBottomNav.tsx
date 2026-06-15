@@ -31,7 +31,7 @@ export default function MobileBottomNav() {
     );
 
     const handleNavClick = (
-        event: React.SyntheticEvent,
+        _event: React.SyntheticEvent,
         newValue: number
     ) => {
         const selectedItem = menuItems?.[newValue];

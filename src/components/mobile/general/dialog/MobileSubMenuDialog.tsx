@@ -1,3 +1,4 @@
+
 import React, { forwardRef } from 'react';
 import {
     Dialog,
@@ -11,17 +12,8 @@ import {
 import { TransitionProps } from '@mui/material/transitions';
 import { useNavigate } from '@tanstack/react-router';
 
-// آیکون‌ها (طبق تصویر)
-import MemoryIcon from '@mui/icons-material/Memory';
-import ComputerIcon from '@mui/icons-material/Computer';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import AddBoxIcon from '@mui/icons-material/AddBox';
-import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import CloseIcon from '@mui/icons-material/Close';
 import HighlightOffOutlinedIcon from '@mui/icons-material/HighlightOffOutlined'
-import { sizeConverter } from '@src/utility/sizeConverter';
 // انیمیشن باز شدن دیالوگ از پایین به بالا
 const Transition = forwardRef(function Transition(
     props: TransitionProps & { children: React.ReactElement },
@@ -45,7 +37,7 @@ interface MobileSubMenuDialogProps {
     items: SubMenuItem[];
 }
 
-export default function MobileSubMenuDialog({ open, onClose, pageTitle, items }: MobileSubMenuDialogProps) {
+export default function MobileSubMenuDialog({ open, onClose, items }: MobileSubMenuDialogProps) {
     const navigate = useNavigate();
 
     const handleNavigation = (route: string) => {
