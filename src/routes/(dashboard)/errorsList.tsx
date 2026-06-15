@@ -41,6 +41,7 @@ import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import { ErrorFilterChips } from '@components/general/ErrorFilterChips'
 import FileDialog from '@components/general/FileDialog'
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
+import ImageDialog from '@components/general/ImageDialog'
 
 export const Route = createFileRoute('/(dashboard)/errorsList')({
   component: withSnackbar(kioskErrors),
@@ -70,6 +71,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
   const [searchQuery, setSearchQuery] = useState('')
   const [activeTab, setActiveTab] = useState('total');
   const [isFilesDialogOpen, setIsFilesDialogOpen] = useState(false);
+  const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
 
 
   const filteredErrors = listErrors?.data?.value?.filter((item: any) => {
@@ -159,7 +161,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     { label: 'گروه', value: 'groupID', kind: 'combo', size: isMobile ? 12 : 5.9, component: AutoCompleteComp, validators: { ...REQUIRED_VALIDATOR } },
     { label: 'قطعه', value: 'deviceID', kind: 'combo', size: isMobile ? 12 : 5.9, component: AutoCompleteComp },
     { component: CustomErrorListDialog },
-    { label: 'بانک های ', value: 'bankIDs', autocompleteType: 'multiple', type: 'multiple', kind: 'combo', size: isMobile ? 12 : 5.9, component: AutoCompleteComp },
+    { label: 'بانک ها ', value: 'bankIDs', autocompleteType: 'multiple', type: 'multiple', kind: 'combo', size: isMobile ? 12 : 5.9, component: AutoCompleteComp },
     { label: 'راه حل', value: 'solution', kind: 'textField', size: 12, component: TextFieldComp, multiline: true, maxRows: 7, validators: { ...REQUIRED_VALIDATOR } },
     { label: 'فایل های ضمیمه', value: 'attachedDocuments', uploadType: 'multiple', kind: 'uploadFile', size: 12, component: UploadFile },
   ]
@@ -201,13 +203,18 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
   const KIOSKS_COLUMNS = [
     { field: 'code', headerName: 'کد خطا', width: sizeConverter(100, 'width') },
     { field: 'title', headerName: 'عنوان خطا', width: sizeConverter(100, 'width') },
+    // { field: 'deviceID', headerName: 'کد قطعه ', width: sizeConverter(100, 'width') },
+    // { field: 'deviceModelID', headerName: 'کد مدل قطعه ', width: sizeConverter(100, 'width') },
     { field: 'deviceName', headerName: 'قطعه ', width: sizeConverter(100, 'width') },
-    { field: 'deviceModelName', headerName: 'مدل قطعه ', width: sizeConverter(100, 'width') },
-    { field: 'banks', headerName: 'بانک های ', width: sizeConverter(200), renderCell: (params) => <Typography variant='caption' > {params?.value?.length > 0 ? params?.value : 'همه بانک ها'} </Typography> },
+    {
+      field: 'deviceModelName', headerName: 'مدل قطعه ', width: sizeConverter(100, 'width'), renderCell: (params) =>
+        <DownloadForOfflineIcon sx={{ color: !!params?.row?.deviceModelDocument > 0 ? theme.palette.primary.main : theme.palette.black[7] }} onClick={!!params?.row?.deviceModelDocument ? () => setIsImageDialogOpen(true) : null} />
+    },
+    { field: 'banks', headerName: 'بانک ها ', width: sizeConverter(200), renderCell: (params) => <Typography variant='caption' > {params?.value?.length > 0 ? params?.value : 'همه بانک ها'} </Typography> },
     {
       field: 'attachedDocuments',
       headerName: 'فایل',
-      width: sizeConverter(200),
+      width: sizeConverter(80),
       align: 'center',
       renderCell: (params) =>
         <DownloadForOfflineIcon sx={{ color: params?.row?.attachedDocuments?.length > 0 ? theme.palette.primary.main : theme.palette.black[7] }} onClick={params?.row?.attachedDocuments?.length > 0 ? () => setIsFilesDialogOpen(true) : null} />
@@ -215,7 +222,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     {
       field: 'solution',
       headerName: 'دستورالعمل',
-      width: sizeConverter(120, 'width'),
+      width: sizeConverter(80, 'width'),
       align: 'center',
       renderCell: (params) => (
         <IconButton onClick={() => handleShowInfo(params?.value)}>
@@ -422,6 +429,12 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
         files={listErrors?.data?.value?.find((i) => i?.id === selectedValue)?.attachedDocuments?.map((file, index) => ({ id: index, name: file.split('/')?.[3], rawFile: file })) || []}
 
         onDownloadClick={downloadHandler}
+      />
+      <ImageDialog
+        open={isImageDialogOpen}
+        onClose={() => setIsImageDialogOpen(false)}
+        imageUrl={`${getEndpoint()}${listErrors?.data?.value?.find((i) => i?.id === selectedValue)?.deviceModelDocument}`}
+        description={listErrors?.data?.value?.find((i) => i?.id === selectedValue)?.deviceModelDescription}
       />
     </Grid >
   )

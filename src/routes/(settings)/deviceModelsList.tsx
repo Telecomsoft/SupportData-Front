@@ -212,6 +212,10 @@ import { useAccessCheck } from '@src/utility/accessCheck'
 import MobileErrorCard from '@components/mobile/MobileErrorCard'
 import SettingsCard from '@components/mobile/SettingsCard'
 import CustomCircularProgress from '@components/general/CustomCircularProgress'
+import UploadFile from '@components/general/uploadFile'
+import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
+import FileDialog from '@components/general/FileDialog'
+import getEndpoint from '@src/utility/getEndPoint'
 
 export const Route = createFileRoute('/(settings)/DeviceModelsList ')({
   component: withSnackbar(DeviceModelsList),
@@ -242,15 +246,18 @@ function DeviceModelsList({
     KindAccessInfo: 'writeAccess',
   })
 
+  const downloadHandler = (file) => {
+    if (!!file) {
+
+      const link = document.createElement('a')
+      link.setAttribute('target', '_blank')
+      link.href = `${getEndpoint()}${file}`
+      link.click()
+    }
+
+  }
+
   const KIOSKS_ARRAY: DialogArrayType[] = [
-    {
-      label: 'نام مدل قطعه',
-      value: 'name',
-      kind: 'textField',
-      size: isMobile ? 12 : 5.9,
-      component: TextFieldComp,
-      validators: { ...REQUIRED_VALIDATOR },
-    },
     {
       label: 'نام قطعه',
       value: 'deviceID',
@@ -260,6 +267,15 @@ function DeviceModelsList({
       validators: { ...REQUIRED_VALIDATOR },
     },
     {
+      label: 'نام مدل قطعه',
+      value: 'name',
+      kind: 'textField',
+      size: isMobile ? 12 : 5.9,
+      component: TextFieldComp,
+      validators: { ...REQUIRED_VALIDATOR },
+    },
+
+    {
       label: 'توضیحات',
       value: 'description',
       multiline: true,
@@ -268,14 +284,11 @@ function DeviceModelsList({
       size: isMobile ? 12 : 12,
       component: TextFieldComp,
     },
+    { label: 'فایل های ضمیمه', value: 'document', uploadType: 'single', kind: 'uploadFile', size: 12, component: UploadFile },
   ]
 
   const KIOSKS_COLUMNS: TelecomColumnsType[] = [
-    {
-      field: 'name',
-      headerName: ' نام مدل قطعه ',
-      width: sizeConverter(120, 'width'),
-    },
+
     {
       field: 'deviceID',
       headerName: ' نام  قطعه ',
@@ -284,16 +297,30 @@ function DeviceModelsList({
       renderCell: (param) => <Typography variant="caption">{ListDevices?.data?.value?.find(i => i.id === param?.value)?.name}</Typography>
     },
     {
+      field: 'name',
+      headerName: ' نام مدل قطعه ',
+      width: sizeConverter(120, 'width'),
+    },
+    {
+      field: 'document',
+      headerName: 'فایل',
+      width: sizeConverter(80),
+      align: 'center',
+      renderCell: (params) =>
+        <DownloadForOfflineIcon sx={{ color: !!params?.value  ? theme.palette.primary.main : theme.palette.black[7] }} onClick={!!params?.value ? () => downloadHandler(params?.value) : null} />
+    },
+    {
       field: 'description',
       headerName: 'توضیحات ',
       width: sizeConverter(250, 'width'),
-    }
+    },
+
   ]
 
   return (
     <Grid container size={12}>
       {ListDeviceModels?.isLoading ?
-        <Grid sx={{ m: 'auto', mt: '50%' }}>
+        <Grid sx={{ m: 'auto', mt: isMobile ? '50%' : '20%' }}>
           <CustomCircularProgress thickness={2} size={60} />
         </Grid>
         : isMobile ? (
@@ -413,5 +440,6 @@ function DeviceModelsList({
         />
       )}
     </Grid>
+
   )
 }

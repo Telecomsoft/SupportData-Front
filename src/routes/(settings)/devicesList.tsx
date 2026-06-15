@@ -210,6 +210,11 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
 
   const KIOSKS_COLUMNS: TelecomColumnsType[] = [
     {
+      field: 'id',
+      headerName: 'کد قطعه',
+      width: sizeConverter(120, 'width')
+    },
+    {
       field: 'name',
       headerName: 'نام قطعه',
       width: sizeConverter(120, 'width')
@@ -229,7 +234,7 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
   return (
     <Grid container size={12}>
       {ListDevices?.isLoading ?
-        <Grid sx={{ m: 'auto', mt: '50%' }}>
+        <Grid sx={{ m: 'auto', mt: isMobile ? '50%' : '20%' }}>
           <CustomCircularProgress thickness={2} size={60} />
         </Grid>
         : isMobile ? (

@@ -241,7 +241,7 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
         <Grid container size={12} sx={{ position: 'relative', height: '100%' }}>
 
             {listBanks?.isLoading ?
-                <Grid sx={{ m: 'auto', mt: '50%' }}>
+                <Grid sx={{ m: 'auto', mt: isMobile ? '50%': '20%'  }}>
                     <CustomCircularProgress thickness={2} size={60} />
                 </Grid>
                 : isMobile ? (
