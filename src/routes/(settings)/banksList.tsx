@@ -238,16 +238,37 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     })
 
     return (
-        <Grid container size={12} sx={{ position: 'relative', height: '100%' }}>
-
-            {listBanks?.isLoading ?
-                <Grid sx={{ m: 'auto', mt: isMobile ? '50%': '20%'  }}>
+        <Grid
+            container
+            size={12}
+            sx={{
+                position: 'relative',
+                height: isMobile ? '100dvh' : 'auto',
+                overflow: isMobile ? 'hidden' : 'visible'
+            }}
+        >
+            {listBanks?.isLoading ? (
+                <Grid sx={{ m: 'auto', mt: isMobile ? '50%' : '20%' }}>
                     <CustomCircularProgress thickness={2} size={60} />
                 </Grid>
-                : isMobile ? (
-                    // ---------------- حالت موبایل ----------------
-                    <Box sx={{ width: '100%', p: 2, pb: 10, overflowY: 'auto', }}>
-                        {listBanks?.data?.value?.map((bank: any) => (
+            ) : isMobile ? (
+                // ---------------- حالت موبایل ----------------
+                <Box
+                    sx={{
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        overflowY: 'auto',
+                        overflowX: 'hidden',
+                        pb: 26,
+                        gap: 2,
+                        WebkitOverflowScrolling: 'touch',
+                    }}
+                >
+                    {listBanks?.data?.value?.map((bank: any) => (
+                        <Grid size={12} key={bank.id}>
+
                             <SettingsCard
                                 key={bank.id}
                                 name={bank.name}
@@ -262,50 +283,54 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                                 }}
                                 hasAccess={hasWriteAccess}
                             />
-                        ))}
+                        </Grid>
+                    ))}
 
-                        {/* دکمه افزودن شناور (FAB) برای موبایل */}
-                        {hasWriteAccess && (
-                            <Fab
-                                color="primary"
-                                sx={{ position: 'fixed', bottom: 70, right: 16, zIndex: 10 }}
-                                onClick={() => setOpenDialog('add')}
-                            >
-                                <AddIcon />
-                            </Fab>
-                        )}
-                    </Box>
-                ) : (
-                    // ---------------- حالت دسکتاپ ----------------
-                    <TelecomDataGrid
-                        data={listBanks?.data?.value}
-                        loading={listBanks?.isLoading}
-                        CustomToolBar={() => {
-                            return hasWriteAccess && (
-                                <Grid container size={'auto'} spacing={sizeConverter(4, 'spaceX')}>
-                                    <DataGridIconProvider toolTipText={'اضافه'} Icon={AddIcon} disable={false} clickFunc={() => setOpenDialog('add')} />
-                                    <DataGridIconProvider
-                                        toolTipText={'ویرایش'}
-                                        Icon={EditIcon}
-                                        disable={!selectedValue}
-                                        clickFunc={() => setOpenDialog('edit')}
-                                    />
-                                    <DataGridIconProvider
-                                        toolTipText={'حذف'}
-                                        Icon={DeleteIcon}
-                                        disable={!selectedValue}
-                                        clickFunc={() => setOpenDialog('delete')}
-                                    />
-                                </Grid>
-                            )
-                        }}
-                        //@ts-ignore
-                        setRows={(data) => data && setSelectedValue(data?.[0])}
-                        multiSelect={false}
-                        disableRowSelection={false}
-                        columns={KIOSKS_COLUMNS}
-                    />
-                )}
+                    {/* دکمه افزودن شناور (FAB) برای موبایل */}
+                    {hasWriteAccess && (
+                        <Fab
+                            color="primary"
+                            sx={{ position: 'fixed', bottom: 70, right: 16, zIndex: 10 }}
+                            onClick={() => {
+                                setSelectedValue(undefined); // ریست کردن مقدار قبلی هنگام اضافه کردن
+                                setOpenDialog('add');
+                            }}
+                        >
+                            <AddIcon />
+                        </Fab>
+                    )}
+                </Box>
+            ) : (
+                // ---------------- حالت دسکتاپ ----------------
+                <TelecomDataGrid
+                    data={listBanks?.data?.value}
+                    loading={listBanks?.isLoading}
+                    CustomToolBar={() => {
+                        return hasWriteAccess && (
+                            <Grid container size={'auto'} spacing={sizeConverter(4, 'spaceX')}>
+                                <DataGridIconProvider toolTipText={'اضافه'} Icon={AddIcon} disable={false} clickFunc={() => setOpenDialog('add')} />
+                                <DataGridIconProvider
+                                    toolTipText={'ویرایش'}
+                                    Icon={EditIcon}
+                                    disable={!selectedValue}
+                                    clickFunc={() => setOpenDialog('edit')}
+                                />
+                                <DataGridIconProvider
+                                    toolTipText={'حذف'}
+                                    Icon={DeleteIcon}
+                                    disable={!selectedValue}
+                                    clickFunc={() => setOpenDialog('delete')}
+                                />
+                            </Grid>
+                        )
+                    }}
+                    //@ts-ignore
+                    setRows={(data) => data && setSelectedValue(data?.[0])}
+                    multiSelect={false}
+                    disableRowSelection={false}
+                    columns={KIOSKS_COLUMNS}
+                />
+            )}
 
             {/* دیالوگ‌ها (مشترک بین دسکتاپ و موبایل) */}
             {(openDialog === 'add' || openDialog === 'edit') && (

@@ -173,15 +173,31 @@ function Permissions({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
 
   const renderMobile = () => {
     return (
-      <MobileRoleList
-        permissionRoles={permissionRoles}
-        setSelectedItem={setSelectedItem}
-        setOpenDialog={setOpenDialog}
-        isAcceess={isAcceess}
-      />
+      <Grid
+        container
+        size={12}
+        spacing={2}
+        sx={{
+          flex: 1,
+          minHeight: 0,
+          height: '100%',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          pb: 26,
+          alignContent: 'flex-start',
+          WebkitOverflowScrolling: 'touch',
+        }}
+      >
+        <MobileRoleList
+          permissionRoles={permissionRoles}
+          setSelectedItem={setSelectedItem}
+          setOpenDialog={setOpenDialog}
+          isAcceess={isAcceess}
+        />
+      </Grid>
     );
   }
-  console.log('isAccess', isAcceess)
+
   const renderDesktop = () => {
     return (
       <>
@@ -228,6 +244,10 @@ function Permissions({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
       size={12}
       justifyContent={'flex-start'}
       columnGap={sizeConverter(6, 'spaceX')}
+      sx={{
+        height: isMobile ? '100dvh' : 'auto',
+        overflow: isMobile ? 'hidden' : 'visible'
+      }}
     >
       {permissionRoles?.isLoading ?
         <Grid sx={{ m: 'auto', mt: isMobile ? '50%' : '20%' }}>

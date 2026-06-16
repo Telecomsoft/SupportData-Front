@@ -318,7 +318,7 @@ const UploadFileThumbnail = ({
                             }}
                         >
                             <TextWithTooltip
-                                fontSize={isMobile ? 9 : sizeConverter(9)}
+                                fontSize={isMobile ? 12 : sizeConverter(9)}
                                 value={file.name}
                                 tooltipPlacement="bottom-start"
                             />

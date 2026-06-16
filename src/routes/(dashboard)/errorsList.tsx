@@ -42,6 +42,7 @@ import { ErrorFilterChips } from '@components/general/ErrorFilterChips'
 import FileDialog from '@components/general/FileDialog'
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 import ImageDialog from '@components/general/ImageDialog'
+import MoreIcon from '@mui/icons-material/More'
 
 export const Route = createFileRoute('/(dashboard)/errorsList')({
   component: withSnackbar(kioskErrors),
@@ -158,6 +159,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
   const KIOSKS_ARRAY = [
     { label: 'کد خطا', value: 'code', kind: 'textField', size: 5.9, component: TextFieldComp },
     { label: 'عنوان خطا', value: 'title', kind: 'textField', size: 5.9, component: TextFieldComp, validators: { ...REQUIRED_VALIDATOR } },
+    // { label: 'کد مدل قطعه', value: 'deviceModelCode', kind: 'textField', size: 5.9, component: TextFieldComp, validators: { ...REQUIRED_VALIDATOR } },
     { label: 'گروه', value: 'groupID', kind: 'combo', size: isMobile ? 12 : 5.9, component: AutoCompleteComp, validators: { ...REQUIRED_VALIDATOR } },
     { label: 'قطعه', value: 'deviceID', kind: 'combo', size: isMobile ? 12 : 5.9, component: AutoCompleteComp },
     { component: CustomErrorListDialog },
@@ -203,12 +205,15 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
   const KIOSKS_COLUMNS = [
     { field: 'code', headerName: 'کد خطا', width: sizeConverter(100, 'width') },
     { field: 'title', headerName: 'عنوان خطا', width: sizeConverter(100, 'width') },
-    // { field: 'deviceID', headerName: 'کد قطعه ', width: sizeConverter(100, 'width') },
-    // { field: 'deviceModelID', headerName: 'کد مدل قطعه ', width: sizeConverter(100, 'width') },
+    { field: 'deviceCode', headerName: 'کد قطعه ', width: sizeConverter(100, 'width') },
+    { field: 'deviceModelCode', headerName: 'کد مدل قطعه ', width: sizeConverter(100, 'width') },
     { field: 'deviceName', headerName: 'قطعه ', width: sizeConverter(100, 'width') },
     {
-      field: 'deviceModelName', headerName: 'مدل قطعه ', width: sizeConverter(100, 'width'), renderCell: (params) =>
-        <DownloadForOfflineIcon sx={{ color: !!params?.row?.deviceModelDocument > 0 ? theme.palette.primary.main : theme.palette.black[7] }} onClick={!!params?.row?.deviceModelDocument ? () => setIsImageDialogOpen(true) : null} />
+      field: 'deviceModelName', headerName: 'مدل قطعه ', width: sizeConverter(100, 'width'), renderCell: (params) => <Grid container alignItems={'center'} onClick={!!params?.row?.deviceModelDocument ? () => setIsImageDialogOpen(true) : null} >
+        {/* <Typography variant='caption' onClick={!!params?.row?.deviceModelDocument ? () => setIsImageDialogOpen(true) : null}>جزييات ...</Typography> */}
+        <DownloadForOfflineIcon sx={{ mr: sizeConverter(4, 'spaceX'), color: !!params?.row?.deviceModelDocument > 0 ? theme.palette.primary.main : theme.palette.black[7] }} />
+        <Typography variant='caption'>{params?.value}</Typography>
+      </Grid>
     },
     { field: 'banks', headerName: 'بانک ها ', width: sizeConverter(200), renderCell: (params) => <Typography variant='caption' > {params?.value?.length > 0 ? params?.value : 'همه بانک ها'} </Typography> },
     {
@@ -262,7 +267,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             overflowY: 'auto',
             overflowX: 'hidden',
             px: 2,
-            pb: 20,
+            pb: 26,
             WebkitOverflowScrolling: 'touch',
           }}>
             <Grid2 container spacing={2}>
@@ -271,10 +276,17 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                   <MobileErrorCard
                     hasAccess={hasWriteAccess}
                     title={item?.title}
+                    deviceCode={item?.deviceCode}
+                    deviceModelCode={item?.deviceModelCode}
+                    deviceModelDocument={item?.deviceModelDocument}
                     device={item?.deviceName}
                     deviceModel={item?.deviceModelName}
                     errorCode={item?.code}
                     subtitle={item?.banks}
+                    onShowGuide={() => {
+                      setSelectedValue(item.id);
+                      setIsImageDialogOpen(true);
+                    }}
                     onInfo={() => handleShowInfo(item?.solution)}
                     onEdit={() => { setSelectedValue(item?.id); setOpenDialog('edit'); }}
                     onDelete={() => { setSelectedValue(item?.id); setOpenDialog('delete'); }}
@@ -289,7 +301,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
           <Box
             sx={{
               position: "fixed",
-              bottom: 85,
+              bottom: 70,
               right: 16,
               left: 16,
               display: "flex",
@@ -305,7 +317,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
               isOpen={isSearchOpen}
               setIsOpen={setIsSearchOpen}
               position={{
-                bottom: 90,
+                bottom: 75,
                 right: 86,
               }}
             />
@@ -390,7 +402,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 bankIDs: data?.bankIDs?.map((x: any) => x?.id),
                 code: +data?.code,
                 deviceID: data?.deviceID?.id ? +data.deviceID.id : undefined,
-                deviceModelID: data?.deviceModelID?.id ? +data.deviceModelID.id : undefined,
+                deviceModelID: data?.deviceModelID?.id ? data.deviceModelID.id : undefined,
                 groupID: data?.groupID?.id ? +data.groupID.id : undefined,
               }
               return finalData
@@ -432,6 +444,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
       />
       <ImageDialog
         open={isImageDialogOpen}
+        deviceModelName={listErrors?.data?.value?.find((i) => i?.id === selectedValue)?.deviceModelName}
         onClose={() => setIsImageDialogOpen(false)}
         imageUrl={`${getEndpoint()}${listErrors?.data?.value?.find((i) => i?.id === selectedValue)?.deviceModelDocument}`}
         description={listErrors?.data?.value?.find((i) => i?.id === selectedValue)?.deviceModelDescription}

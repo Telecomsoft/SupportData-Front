@@ -138,13 +138,29 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     );
 
     const renderMobile = () => (
-        <MobileUserList
-            users={users?.data?.value || []}
-            roles={permissionRoles?.data?.value || []}
-            hasAccess={hasWriteAccess}
-            onAction={handleMobileAction}
-            onAddClick={() => handleDialog('add/user')}
-        />
+        <Grid
+            container
+            size={12}
+            spacing={2}
+            sx={{
+                flex: 1,
+                minHeight: 0,
+                height: '100%',
+                overflowY: 'auto',
+                overflowX: 'hidden',
+                pb: 26,
+                alignContent: 'flex-start',
+                WebkitOverflowScrolling: 'touch',
+            }}
+        >
+            <MobileUserList
+                users={users?.data?.value || []}
+                roles={permissionRoles?.data?.value || []}
+                hasAccess={hasWriteAccess}
+                onAction={handleMobileAction}
+                onAddClick={() => handleDialog('add/user')}
+            />
+        </Grid>
     );
 
     return (
@@ -152,7 +168,10 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             container
             size={12}
             justifyContent={'flex-start'}
-            sx={{ overflowX: 'auto' }}
+            sx={{
+                height: isMobile ? '100dvh' : 'auto',
+                overflow: isMobile ? 'hidden' : 'visible'
+            }}
             columnGap={sizeConverter(6, 'spaceX')}
         >
             {permissionRoles?.isLoading ?

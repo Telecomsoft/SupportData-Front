@@ -14,6 +14,7 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useTheme } from '@mui/material/styles';
 import { sizeConverter } from '@utility/sizeConverter';
 import FileDialog from '@components/general/FileDialog';
+import MemoryIcon from '@mui/icons-material/Memory';
 
 interface FileItem {
     id: string | number;
@@ -26,6 +27,9 @@ type MobileErrorCardProps = {
     subtitle?: string;
     device?: string;
     deviceModel?: string;
+    deviceModelDocument?: string;
+    deviceCode?: string;
+    deviceModelCode?: string;
     errorCode: string | number;
     hasAccess: boolean;
     onDelete?: () => void;
@@ -33,6 +37,8 @@ type MobileErrorCardProps = {
     onInfo?: () => void;
     files?: FileItem[];
     onDownloadClick?: (file: any) => void;
+    onShowGuide?: () => void;
+
 };
 
 export default function MobileErrorCard({
@@ -41,14 +47,18 @@ export default function MobileErrorCard({
     device,
     deviceModel,
     errorCode,
+    deviceCode,
+    deviceModelCode,
+    deviceModelDocument,
     onDelete,
     onEdit,
     onInfo,
     hasAccess,
     files = [],
+    onShowGuide,
     onDownloadClick,
 }: MobileErrorCardProps) {
-    // استیت برای مدیریت باز و بسته بودن کشوی فایل‌ها
+
     const [isFilesDialogOpen, setIsFilesDialogOpen] = useState(false); const theme = useTheme();
 
     const handleOpenFiles = () => {
@@ -57,23 +67,6 @@ export default function MobileErrorCard({
         }
     };
 
-    // const getFileIcon = (rawFile) => {
-    //     const extension = rawFile?.split('.').pop().toLowerCase();
-    //     const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
-
-    //     if (extension === 'pdf') {
-    //         return <PictureAsPdfIcon sx={{ color: theme.palette.primary.main }} />;
-    //     }
-    //     if (extension === 'txt') {
-    //         return <ArticleIcon sx={{ color: theme.palette.primary.main }} />;
-    //     }
-
-    //     if (imageExtensions.includes(extension)) {
-    //         return <ImageIcon sx={{ color: theme.palette.primary.main }} />;
-    //     }
-
-    //     return <DownloadForOfflineIcon sx={{ color: theme.palette.primary.main }} />;
-    // }
 
     return (
         <>
@@ -81,14 +74,15 @@ export default function MobileErrorCard({
                 sx={{
                     position: 'relative',
                     overflow: 'hidden',
-                    borderRadius: 3, boxShadow: '0 2px 10px rgba(0,0,0,0.05)'
+                    borderRadius: 3,
+                    boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
                 }}
             >
                 <Box
                     sx={{
                         display: 'flex',
                         minHeight: sizeConverter(100, 'height'),
-                        direction: 'rtl',
+                        // direction: 'ltr',
                     }}
                 >
                     <Box
@@ -99,7 +93,29 @@ export default function MobileErrorCard({
                             px: sizeConverter(36, 'spaceX'),
                         }}
                     >
-                        <Grid container wrap="nowrap" alignItems="center">
+                        {/* Header */}
+                        <Grid container wrap="nowrap" alignItems="center" spacing={1}>
+                            <Box
+                                sx={{
+                                    flex: 1,
+                                    minWidth: 0,
+                                }}
+                            >
+                                <Typography
+                                    sx={{
+                                        fontSize: sizeConverter(46),
+                                        fontWeight: 'bold',
+                                        color: theme.palette.black[0],
+                                        lineHeight: 1.5,
+                                        //
+                                        whiteSpace: 'normal',
+                                        overflowWrap: 'break-word',
+                                        wordBreak: 'break-word',
+                                    }}
+                                >
+                                    {title}
+                                </Typography>
+                            </Box>
                             <Box
                                 sx={{
                                     flexShrink: 0,
@@ -108,7 +124,11 @@ export default function MobileErrorCard({
                                     px: 1.5,
                                     py: 0.5,
                                     borderRadius: sizeConverter(60, 'radius'),
-                                    background: `linear-gradient(180deg, ${theme.palette.primary.main} 0%, ${theme.palette.dataGrid.bgHeaderColor} 100%)`,
+                                    background: `linear-gradient(
+                                    180deg,
+                                    ${theme.palette.primary.main} 0%,
+                                    ${theme.palette.dataGrid.bgHeaderColor} 100%
+                                )`,
                                     color: theme.palette.white[0],
                                 }}
                             >
@@ -124,74 +144,241 @@ export default function MobileErrorCard({
                                 </Typography>
                             </Box>
 
-                            <Box sx={{ flex: 1, minWidth: 0, display: 'flex', direction: 'ltr' }}>
-                                <Typography
-                                    sx={{
-                                        fontSize: sizeConverter(46),
-                                        fontWeight: 'bold',
-                                        color: theme.palette.black[0],
-                                        lineHeight: 1.5,
-                                        whiteSpace: 'normal',
-                                        overflowWrap: 'break-word',
-                                        wordBreak: 'break-word',
-                                    }}
-                                >
-                                    {title}
-                                </Typography>
-                            </Box>
+
                         </Grid>
 
-                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 1 }}>
-                            <Box sx={{ flex: 1, textAlign: 'center' }}>
-                                <Grid container justifyContent={'flex-end'}>
-                                    <Typography sx={{ color: theme.palette.black[3], fontSize: sizeConverter(38) }}>
-                                        {device ?? '-'}
-                                    </Typography>
-                                    <Typography sx={{ color: theme.palette.black[3], fontWeight: 'bold', fontSize: sizeConverter(38) }}>
-                                        : قطعه
-                                    </Typography>
-                                </Grid>
-                                <Grid container justifyContent={'flex-end'}>
-                                    <Typography sx={{ color: theme.palette.black[3], fontSize: sizeConverter(38) }}>
-                                        {deviceModel ?? '-'}
-                                    </Typography>
-                                    <Typography sx={{ color: theme.palette.black[3], fontWeight: 'bold', fontSize: sizeConverter(38) }}>
-                                        : مدل قطعه
-                                    </Typography>
-                                </Grid>
-                                <Grid container justifyContent={'flex-end'}>
-                                    <Grid container size={10.8}>
-                                        <Typography sx={{ color: theme.palette.black[3], fontSize: sizeConverter(38) }}>
-                                            {subtitle?.length > 0 ? subtitle : 'همه بانک ها'}
+                        {/* Device */}
+                        <Box sx={{ mt: 1 }}>
+                            {/* ردیف اول */}
+                            <Grid container spacing={1}>
+                                <Grid size={7}>
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            // justifyContent: 'flex-end',
+                                            // alignItems: 'flex-start',
+                                            gap: 0.5,
+                                        }}
+                                    >
+                                        <Typography
+                                            sx={{
+                                                color: theme.palette.black[3],
+                                                fontWeight: 'bold',
+                                                fontSize: sizeConverter(38),
+                                                whiteSpace: 'nowrap',
+                                            }}
+                                        >
+                                            قطعه :
                                         </Typography>
-                                    </Grid>
-                                    <Typography sx={{ color: theme.palette.black[3], fontWeight: 'bold', fontSize: sizeConverter(38) }}>
-                                        : بانک
-                                    </Typography>
+
+                                        <Typography
+                                            sx={{
+                                                color: theme.palette.black[3],
+                                                fontSize: sizeConverter(38),
+                                                flex: 1,
+
+                                                wordBreak: 'break-word',
+                                                overflowWrap: 'anywhere',
+                                            }}
+                                        >
+                                            {device ?? '-'}
+                                        </Typography>
+                                    </Box>
                                 </Grid>
+
+                                <Grid size={5}>
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            justifyContent: 'flex-end',
+                                            alignItems: 'flex-start',
+                                            gap: 0.5,
+                                        }}
+                                    >
+                                        <Typography
+                                            sx={{
+                                                color: theme.palette.black[3],
+                                                fontWeight: 'bold',
+                                                fontSize: sizeConverter(38),
+                                                whiteSpace: 'nowrap',
+                                            }}
+                                        >
+                                            کد قطعه :
+                                        </Typography>
+
+                                        <Typography
+                                            sx={{
+                                                color: theme.palette.black[3],
+                                                fontSize: sizeConverter(38),
+
+                                                wordBreak: 'break-word',
+                                            }}
+                                        >
+                                            {deviceCode ?? '-'}
+                                        </Typography>
+                                    </Box>
+                                </Grid>
+                            </Grid>
+
+                            {/* ردیف دوم */}
+                            <Grid container spacing={1} sx={{ mt: 0.5 }}>
+                                <Grid size={7}>
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            justifyContent: 'flex-end',
+                                            alignItems: 'flex-start',
+                                            gap: 0.5,
+                                        }}
+                                    >
+                                        <Typography
+                                            sx={{
+                                                color: theme.palette.black[3],
+                                                fontWeight: 'bold',
+                                                fontSize: sizeConverter(38),
+                                                whiteSpace: 'nowrap',
+                                            }}
+                                        >
+                                            مدل قطعه :
+                                        </Typography>
+
+                                        <Typography
+                                            sx={{
+                                                color: theme.palette.black[3],
+                                                fontSize: sizeConverter(38),
+                                                flex: 1,
+
+                                                wordBreak: 'break-word',
+                                                overflowWrap: 'anywhere',
+                                            }}
+                                        >
+                                            {deviceModel ?? '-'}
+                                        </Typography>
+                                    </Box>
+                                </Grid>
+
+                                <Grid size={5}>
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            justifyContent: 'flex-end',
+                                            alignItems: 'flex-start',
+                                            gap: 0.5,
+                                        }}
+                                    >
+                                        <Typography
+                                            sx={{
+                                                color: theme.palette.black[3],
+                                                fontWeight: 'bold',
+                                                fontSize: sizeConverter(38),
+                                                whiteSpace: 'nowrap',
+                                            }}
+                                        >
+                                            کد مدل قطعه :
+                                        </Typography>
+
+                                        <Typography
+                                            sx={{
+                                                color: theme.palette.black[3],
+                                                fontSize: sizeConverter(38),
+
+                                                wordBreak: 'break-word',
+                                            }}
+                                        >
+                                            {deviceModelCode ?? '-'}
+                                        </Typography>
+                                    </Box>
+                                </Grid>
+                            </Grid>
+
+                            {/* بانک */}
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'flex-end',
+                                    alignItems: 'flex-start',
+                                    gap: 0.5,
+                                    mt: 0.5,
+                                }}
+                            >
+                                <Typography
+                                    sx={{
+                                        color: theme.palette.black[3],
+                                        fontWeight: 'bold',
+                                        fontSize: sizeConverter(38),
+                                        whiteSpace: 'nowrap',
+                                    }}
+                                >
+                                    بانک :
+                                </Typography>
+
+                                <Typography
+                                    sx={{
+                                        color: theme.palette.black[3],
+                                        fontSize: sizeConverter(38),
+                                        flex: 1,
+
+                                        wordBreak: 'break-word',
+                                        overflowWrap: 'anywhere',
+                                    }}
+                                >
+                                    {subtitle?.length > 0 ? subtitle : 'همه بانک ها'}
+                                </Typography>
                             </Box>
                         </Box>
 
-                        <Divider sx={{
-                            my: sizeConverter(2, 'spaceY'),
-                            borderColor: theme.palette.black[7]
-                        }} />
 
-                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
-                            <ActionButton icon={<InfoOutlinedIcon />} label="راهنما" onClick={onInfo} />
 
-                            {/* تغییر دکمه فایل‌ها */}
+
+
+                        <Divider
+                            sx={{
+                                my: sizeConverter(2, 'spaceY'),
+                                borderColor: theme.palette.black[7],
+                            }}
+                        />
+
+                        {/* Actions */}
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-around',
+                            }}
+                        >
+                            <ActionButton
+                                icon={<InfoOutlinedIcon />}
+                                label="راهنما"
+                                onClick={onInfo}
+                            />
+
+                            <ActionButton
+                                icon={<MemoryIcon />}
+                                label="جزییات مدل قطعه"
+                                onClick={onShowGuide}
+                                disabled={!deviceModelDocument}
+                            />
+
                             <ActionButton
                                 icon={<DownloadOutlinedIcon />}
-                                label={`فایل‌ها ${files.length > 0 ? `(${files.length})` : ''}`}
+                                label={`فایل‌ها ${files.length > 0 ? `(${files.length})` : ''
+                                    }`}
                                 onClick={handleOpenFiles}
                                 disabled={files.length === 0}
                             />
 
                             {hasAccess && (
                                 <>
-                                    <ActionButton icon={<EditOutlinedIcon />} label="ویرایش" onClick={onEdit} />
-                                    <ActionButton icon={<DeleteOutlineIcon />} label="حذف" onClick={onDelete} />
+                                    <ActionButton
+                                        icon={<EditOutlinedIcon />}
+                                        label="ویرایش"
+                                        onClick={onEdit}
+                                    />
+                                    <ActionButton
+                                        icon={<DeleteOutlineIcon />}
+                                        label="حذف"
+                                        onClick={onDelete}
+                                    />
                                 </>
                             )}
                         </Box>
@@ -199,52 +386,6 @@ export default function MobileErrorCard({
                 </Box>
             </Card>
 
-            {/* کشوی نمایش فایل‌ها */}
-            {/* <Drawer
-                anchor="bottom"
-                open={isFilesDrawerOpen}
-                onClose={() => setIsFilesDrawerOpen(false)}
-                PaperProps={{
-                    sx: { borderTopLeftRadius: 16, borderTopRightRadius: 16, pb: 8, pt: 1, bgcolor: theme.palette.white[0] }
-                }}
-            >
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', pl: 2, pr: 1, py: 1, alignItems: 'center' }}>
-                    <Typography variant="subtitle1" fontWeight="bold">فایل‌ های ضمیمه</Typography>
-                    <IconButton onClick={() => setIsFilesDrawerOpen(false)}>
-                        <HighlightOffOutlinedIcon />
-                    </IconButton>
-                </Box>
-                <List>
-                    {files?.map((file) => (
-                        <>
-                            <Grid container justifyContent={'space-between'} >
-
-                                <ListItem disablePadding key={file.id}>
-                                    <ListItemButton
-                                        sx={{ px: 2 }}
-                                        key={file.id}
-                                        onClick={() => {
-                                            if (onDownloadClick) {
-                                                onDownloadClick(file.rawFile);
-                                            } else {
-                                                console.error("onDownloadClick is undefined!");
-                                            }
-                                        }}
-                                    >
-                                        <ListItemText primary={file.name} />
-                                        {getFileIcon(file.rawFile)}
-                                    </ListItemButton>
-                                </ListItem>
-
-                            </Grid >
-                            <Divider sx={{
-                                mx: 2,
-                                borderColor: theme.palette.black[7]
-                            }} />
-                        </>
-                    ))}
-                </List>
-            </Drawer > */}
             <FileDialog
                 open={isFilesDialogOpen}
                 onClose={() => setIsFilesDialogOpen(false)}

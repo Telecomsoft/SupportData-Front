@@ -258,19 +258,28 @@ function DeviceModelsList({
   }
 
   const KIOSKS_ARRAY: DialogArrayType[] = [
+
     {
       label: 'نام قطعه',
       value: 'deviceID',
       kind: 'combo',
-      size: isMobile ? 12 : 5.9,
+      size: isMobile ? 12 : 4.9,
       component: AutoCompleteComp,
       validators: { ...REQUIRED_VALIDATOR },
+    },
+    {
+      label: 'کد مدل قطعه',
+      value: 'code',
+      kind: 'textField',
+      size: isMobile ? 12 : 1.9,
+      component: TextFieldComp,
+      validators: { ...REQUIRED_VALIDATOR }
     },
     {
       label: 'نام مدل قطعه',
       value: 'name',
       kind: 'textField',
-      size: isMobile ? 12 : 5.9,
+      size: isMobile ? 12 : 4.9,
       component: TextFieldComp,
       validators: { ...REQUIRED_VALIDATOR },
     },
@@ -279,9 +288,9 @@ function DeviceModelsList({
       label: 'توضیحات',
       value: 'description',
       multiline: true,
-      maxRows: 4,
+      maxRows: 8,
       kind: 'textField',
-      size: isMobile ? 12 : 12,
+      size: 12,
       component: TextFieldComp,
     },
     { label: 'فایل های ضمیمه', value: 'document', uploadType: 'single', kind: 'uploadFile', size: 12, component: UploadFile },
@@ -297,6 +306,12 @@ function DeviceModelsList({
       renderCell: (param) => <Typography variant="caption">{ListDevices?.data?.value?.find(i => i.id === param?.value)?.name}</Typography>
     },
     {
+      field: 'code',
+      headerName: 'کد مدل قطعه',
+      width: sizeConverter(120, 'width')
+    },
+
+    {
       field: 'name',
       headerName: ' نام مدل قطعه ',
       width: sizeConverter(120, 'width'),
@@ -307,7 +322,7 @@ function DeviceModelsList({
       width: sizeConverter(80),
       align: 'center',
       renderCell: (params) =>
-        <DownloadForOfflineIcon sx={{ color: !!params?.value  ? theme.palette.primary.main : theme.palette.black[7] }} onClick={!!params?.value ? () => downloadHandler(params?.value) : null} />
+        <DownloadForOfflineIcon sx={{ color: !!params?.value ? theme.palette.primary.main : theme.palette.black[7] }} onClick={!!params?.value ? () => downloadHandler(params?.value) : null} />
     },
     {
       field: 'description',
@@ -318,24 +333,52 @@ function DeviceModelsList({
   ]
 
   return (
-    <Grid container size={12}>
-      {ListDeviceModels?.isLoading ?
+    <Grid
+      container
+      size={12}
+      sx={{
+        height: isMobile ? '100dvh' : 'auto',
+        overflow: isMobile ? 'hidden' : 'visible'
+      }}
+    >
+      {ListDeviceModels?.isLoading ? (
         <Grid sx={{ m: 'auto', mt: isMobile ? '50%' : '20%' }}>
           <CustomCircularProgress thickness={2} size={60} />
         </Grid>
-        : isMobile ? (
-          // === نمای موبایل ===
-          <Grid container size={12} spacing={2} sx={{ pb: 10, px: 2 }}>
-            {ListDeviceModels?.data?.value?.map((item) => {
-              // پیدا کردن نام قطعه برای نمایش در کارت موبایل
-              const deviceName = ListDevices?.data?.value?.find(i => i.id === item.deviceID)?.name || '-';
+      ) : isMobile ? (
+        // === نمای موبایل ===
+        <Grid
+          container
+          size={12}
+          spacing={2}
+          sx={{
+            flex: 1,
+            minHeight: 0,
+            height: '100%',
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            px: 2,
+            pb: 26,
+            alignContent: 'flex-start',
+            WebkitOverflowScrolling: 'touch',
+          }}
+        >
+          {ListDeviceModels?.data?.value?.map((item) => {
+            const deviceName = ListDevices?.data?.value?.find(i => i.id === item.deviceID)?.name || '-';
 
-              return (
+            return (
+              <Grid size={12} key={item.id}>
                 <SettingsCard
                   key={item.id}
                   name={item.name}
+                  code={item.code}
                   description={item.description}
-                  device={deviceName} // پاس دادن نام قطعه
+                  deviceName={deviceName}
+                  deviceModelDocument={item.document} // پاس دادن آدرس سند
+                  onShowDocument={() => {
+                    setSelectedValue(item.id);
+                    downloadHandler(item.document)
+                  }}
                   onEdit={() => {
                     setSelectedValue(item.id)
                     setOpenDialog('edit')
@@ -346,67 +389,67 @@ function DeviceModelsList({
                   }}
                   hasAccess={canWrite}
                 />
-              )
-            })}
+              </Grid>
+            )
+          })}
 
-            {canWrite && (
-              <Fab
-                color="primary"
-                aria-label="add"
-                sx={{ position: 'fixed', bottom: 70, right: 16, zIndex: 10 }}
-                onClick={() => {
-                  setSelectedValue(undefined)
-                  setOpenDialog('add')
-                }}
-              >
-                <AddIcon />
-              </Fab>
-            )}
-          </Grid>
-        ) : (
-          // === نمای دسکتاپ ===
-          <TelecomDataGrid
-            data={ListDeviceModels?.data?.value}
-            loading={ListDeviceModels?.isLoading}
-            CustomToolBar={() => {
-              return (
-                canWrite && (
-                  <Grid container size={'auto'} spacing={sizeConverter(4, 'spaceX')}>
-                    <DataGridIconProvider
-                      toolTipText={'اضافه'}
-                      Icon={AddIcon}
-                      disable={false}
-                      clickFunc={() => setOpenDialog('add')}
-                    />
-                    <DataGridIconProvider
-                      toolTipText={'ویرایش'}
-                      Icon={EditIcon}
-                      disable={!selectedValue}
-                      clickFunc={() => setOpenDialog('edit')}
-                    />
-                    <DataGridIconProvider
-                      toolTipText={'حذف'}
-                      Icon={DeleteIcon}
-                      disable={!selectedValue}
-                      clickFunc={() => setOpenDialog('delete')}
-                    />
-                  </Grid>
-                )
+          {canWrite && (
+            <Fab
+              color="primary"
+              aria-label="add"
+              sx={{ position: 'fixed', bottom: 70, right: 16, zIndex: 10 }}
+              onClick={() => {
+                setSelectedValue(undefined)
+                setOpenDialog('add')
+              }}
+            >
+              <AddIcon />
+            </Fab>
+          )}
+        </Grid>
+      ) : (
+        // === نمای دسکتاپ ===
+        <TelecomDataGrid
+          data={ListDeviceModels?.data?.value}
+          loading={ListDeviceModels?.isLoading}
+          CustomToolBar={() => {
+            return (
+              canWrite && (
+                <Grid container size={'auto'} spacing={sizeConverter(4, 'spaceX')}>
+                  <DataGridIconProvider
+                    toolTipText={'اضافه'}
+                    Icon={AddIcon}
+                    disable={false}
+                    clickFunc={() => setOpenDialog('add')}
+                  />
+                  <DataGridIconProvider
+                    toolTipText={'ویرایش'}
+                    Icon={EditIcon}
+                    disable={!selectedValue}
+                    clickFunc={() => setOpenDialog('edit')}
+                  />
+                  <DataGridIconProvider
+                    toolTipText={'حذف'}
+                    Icon={DeleteIcon}
+                    disable={!selectedValue}
+                    clickFunc={() => setOpenDialog('delete')}
+                  />
+                </Grid>
               )
-            }}
-            //@ts-ignore
-            setRows={(data) => data && setSelectedValue(data?.[0])}
-            multiSelect={false}
-            disableRowSelection={false}
-            columns={KIOSKS_COLUMNS}
-          />
-        )}
+            )
+          }}
+          //@ts-ignore
+          setRows={(data) => data && setSelectedValue(data?.[0])}
+          multiSelect={false}
+          disableRowSelection={false}
+          columns={KIOSKS_COLUMNS}
+        />
+      )}
 
       {/* دیالوگ‌ها */}
       {(openDialog === 'add' || openDialog === 'edit') && (
         <GeneralDialog
           open={openDialog}
-          // width={sizeConverter(700,'width')}
           title={'قطعه'}
           close={() => setOpenDialog(null)}
           array={KIOSKS_ARRAY}
@@ -440,6 +483,5 @@ function DeviceModelsList({
         />
       )}
     </Grid>
-
   )
 }

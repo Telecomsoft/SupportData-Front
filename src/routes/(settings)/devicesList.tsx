@@ -171,6 +171,7 @@ import { useAccessCheck } from '@src/utility/accessCheck'
 import MobileErrorCard from '@components/mobile/MobileErrorCard'
 import SettingsCard from '@components/mobile/SettingsCard'
 import CustomCircularProgress from '@components/general/CustomCircularProgress'
+import { useDevice } from '@src/hooks/useDevice'
 
 export const Route = createFileRoute('/(settings)/devicesList')({
   component: withSnackbar(devicesList),
@@ -183,34 +184,43 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
   const ListDevices = useGetData<User[]>('api/Error/ListDevices', 'List-devices')
   const { accessCheck } = useAccessCheck()
   const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+  const { isMobile } = useDevice()
 
   const [selectedValue, setSelectedValue] = useState<number | undefined>(undefined)
   const [openDialog, setOpenDialog] = useState<'add' | 'delete' | 'edit' | null>(null)
 
   const KIOSKS_ARRAY: DialogArrayType[] = [
     {
-      label: 'نام قطعه',
-      value: 'name',
+      label: 'کد قطعه',
+      value: 'code',
       kind: 'textField',
       size: isMobile ? 12 : 2.9,
       component: TextFieldComp,
+      validators: { ...REQUIRED_VALIDATOR }
+    },
+    {
+      label: 'نام قطعه',
+      value: 'name',
+      kind: 'textField',
+      size: isMobile ? 12 : 8.9,
+      component: TextFieldComp,
       validators: { ...REQUIRED_VALIDATOR },
     },
+
     {
       label: 'توضیحات',
       value: 'description',
       kind: 'textField',
       maxRows: 2,
       multiline: true,
-      size: isMobile ? 12 : 8.9,
+      size: 12,
       component: TextFieldComp,
     },
   ]
 
   const KIOSKS_COLUMNS: TelecomColumnsType[] = [
     {
-      field: 'id',
+      field: 'code',
       headerName: 'کد قطعه',
       width: sizeConverter(120, 'width')
     },
@@ -232,18 +242,41 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
   })
 
   return (
-    <Grid container size={12}>
-      {ListDevices?.isLoading ?
+    <Grid
+      container
+      size={12}
+      sx={{
+        // ۱. اگر موبایل بود، ارتفاع کل صفحه را قفل کن تا فرزند اجازه اسکرول پیدا کند
+        height: isMobile ? '100dvh' : 'auto',
+        overflow: isMobile ? 'hidden' : 'visible',
+      }}
+    >
+      {ListDevices?.isLoading ? (
         <Grid sx={{ m: 'auto', mt: isMobile ? '50%' : '20%' }}>
           <CustomCircularProgress thickness={2} size={60} />
         </Grid>
-        : isMobile ? (
-          // === نمای موبایل ===
-          <Grid container size={12} spacing={2} sx={{ pb: 10, px: 2 }}>
-            {ListDevices?.data?.value?.map((item) => (
+      ) : isMobile ? (
+        // === نمای موبایل ===
+        <Grid
+          container
+          size={12}
+          spacing={2}
+          sx={{
+            flex: 1,
+            minHeight: 0,
+            height: '100%',
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            pb: 26,
+            alignContent: 'flex-start',
+            WebkitOverflowScrolling: 'touch',
+          }}
+        >
+          {ListDevices?.data?.value?.map((item) => (
+            <Grid size={12} key={item.id}>
               <SettingsCard
-                key={item.id}
                 name={item.name}
+                code={item.code}
                 description={item.description}
                 onEdit={() => {
                   setSelectedValue(item.id)
@@ -255,54 +288,54 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 }}
                 hasAccess={canWrite}
               />
-            ))}
+            </Grid>
+          ))}
 
-            {/* دکمه شناور افزودن در موبایل */}
-
-            {canWrite && (
-              <Fab
-                color="primary"
-                sx={{ position: 'fixed', bottom: 70, right: 16, zIndex: 10 }}
-                onClick={() => {
-                  setSelectedValue(undefined)
-                  setOpenDialog('add')
-                }}
-              >
-                <AddIcon />
-              </Fab>
-            )}
-          </Grid>
-        ) : (
-          // === نمای دسکتاپ ===
-          <TelecomDataGrid
-            data={ListDevices?.data?.value}
-            loading={ListDevices?.isLoading}
-            CustomToolBar={() => {
-              return canWrite && (
-                <Grid container size={'auto'} spacing={sizeConverter(4, 'spaceX')}>
-                  <DataGridIconProvider toolTipText={'اضافه'} Icon={AddIcon} disable={false} clickFunc={() => setOpenDialog('add')} />
-                  <DataGridIconProvider
-                    toolTipText={'ویرایش'}
-                    Icon={EditIcon}
-                    disable={!selectedValue}
-                    clickFunc={() => setOpenDialog('edit')}
-                  />
-                  <DataGridIconProvider
-                    toolTipText={'حذف'}
-                    Icon={DeleteIcon}
-                    disable={!selectedValue}
-                    clickFunc={() => setOpenDialog('delete')}
-                  />
-                </Grid>
-              )
-            }}
-            //@ts-ignore
-            setRows={(data) => data && setSelectedValue(data?.[0])}
-            multiSelect={false}
-            disableRowSelection={false}
-            columns={KIOSKS_COLUMNS}
-          />
-        )
+          {/* دکمه شناور افزودن در موبایل */}
+          {canWrite && (
+            <Fab
+              color="primary"
+              sx={{ position: 'fixed', bottom: 70, right: 16, zIndex: 10 }}
+              onClick={() => {
+                setSelectedValue(undefined)
+                setOpenDialog('add')
+              }}
+            >
+              <AddIcon />
+            </Fab>
+          )}
+        </Grid>
+      ) : (
+        // === نمای دسکتاپ ===
+        <TelecomDataGrid
+          data={ListDevices?.data?.value}
+          loading={ListDevices?.isLoading}
+          CustomToolBar={() => {
+            return canWrite && (
+              <Grid container size={'auto'} spacing={sizeConverter(4, 'spaceX')}>
+                <DataGridIconProvider toolTipText={'اضافه'} Icon={AddIcon} disable={false} clickFunc={() => setOpenDialog('add')} />
+                <DataGridIconProvider
+                  toolTipText={'ویرایش'}
+                  Icon={EditIcon}
+                  disable={!selectedValue}
+                  clickFunc={() => setOpenDialog('edit')}
+                />
+                <DataGridIconProvider
+                  toolTipText={'حذف'}
+                  Icon={DeleteIcon}
+                  disable={!selectedValue}
+                  clickFunc={() => setOpenDialog('delete')}
+                />
+              </Grid>
+            )
+          }}
+          //@ts-ignore
+          setRows={(data) => data && setSelectedValue(data?.[0])}
+          multiSelect={false}
+          disableRowSelection={false}
+          columns={KIOSKS_COLUMNS}
+        />
+      )
       }
 
       {/* دیالوگ‌های افزودن، ویرایش و حذف (مشترک برای موبایل و دسکتاپ) */}
@@ -341,5 +374,5 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
         )
       }
     </Grid >
-  )
+  );
 }

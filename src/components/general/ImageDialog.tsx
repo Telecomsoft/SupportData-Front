@@ -21,7 +21,8 @@ type ImageDialogProps = {
     open: boolean;
     onClose: () => void;
     imageUrl: string;
-    description?: string;
+    description: string;
+    deviceModelName?: string;
 };
 
 export default function ImageDialog({
@@ -29,6 +30,7 @@ export default function ImageDialog({
     onClose,
     imageUrl,
     description,
+    deviceModelName = '',
 }: ImageDialogProps) {
     // const theme = useTheme();
 
@@ -45,13 +47,14 @@ export default function ImageDialog({
                     minWidth: isMobile ? '100%' : sizeConverter(800, 'width'),
                     borderRadius: isMobile ? 0 : sizeConverter(12, 'radius'),
                     maxHeight: isMobile ? '100%' : sizeConverter(1200, 'height'),
-                    // px:sizeConverter(16,'spaceX'),
+                    // pt:sizeConverter(16,'spaceX'),
                     ...(isMobile && {
                         position: 'fixed',
                         bottom: 0,
                         left: 0,
                         right: 0,
                         m: 0,
+                        top: 80
                     }),
                 },
             }}
@@ -63,11 +66,11 @@ export default function ImageDialog({
                     alignItems: 'center',
                 }}
             >
-                جزئیات
 
-                <IconButton onClick={onClose}>
+                 {deviceModelName} 
+                {!isMobile && <IconButton onClick={onClose}>
                     <HighlightOffOutlinedIcon />
-                </IconButton>
+                </IconButton>}
             </DialogTitle>
 
             <DialogContent
