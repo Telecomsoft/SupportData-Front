@@ -203,31 +203,34 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     },
   ]
   const KIOSKS_COLUMNS = [
-    { field: 'code', headerName: 'کد خطا', width: sizeConverter(100, 'width') },
+    { field: 'code', headerName: 'کد خطا', width: sizeConverter(80, 'width') },
     { field: 'title', headerName: 'عنوان خطا', width: sizeConverter(100, 'width') },
-    { field: 'deviceCode', headerName: 'کد قطعه ', width: sizeConverter(100, 'width') },
-    { field: 'deviceModelCode', headerName: 'کد مدل قطعه ', width: sizeConverter(100, 'width') },
-    { field: 'deviceName', headerName: 'قطعه ', width: sizeConverter(100, 'width') },
+    { field: 'deviceCode', headerName: 'کد قطعه ', width: sizeConverter(80, 'width') },
+    { field: 'deviceModelCode', headerName: 'کد مدل قطعه ', width: sizeConverter(60, 'width') },
+    { field: 'deviceName', headerName: 'قطعه ', width: sizeConverter(150, 'width') },
     {
-      field: 'deviceModelName', headerName: 'مدل قطعه ', width: sizeConverter(100, 'width'), renderCell: (params) => <Grid container alignItems={'center'} onClick={!!params?.row?.deviceModelDocument ? () => setIsImageDialogOpen(true) : null} >
-        {/* <Typography variant='caption' onClick={!!params?.row?.deviceModelDocument ? () => setIsImageDialogOpen(true) : null}>جزييات ...</Typography> */}
-        <DownloadForOfflineIcon sx={{ mr: sizeConverter(4, 'spaceX'), color: !!params?.row?.deviceModelDocument > 0 ? theme.palette.primary.main : theme.palette.black[7] }} />
-        <Typography variant='caption'>{params?.value}</Typography>
-      </Grid>
+      field: 'deviceModelName', headerName: 'مدل قطعه ', width: sizeConverter(120, 'width'), renderCell: (params) => {
+
+        return <Grid container alignItems={'center'} onClick={!!params?.row?.deviceModelDocument ? () => setIsImageDialogOpen(true) : null} >
+          {/* <Typography variant='caption' onClick={!!params?.row?.deviceModelDocument ? () => setIsImageDialogOpen(true) : null}>جزييات ...</Typography> */}
+          <DownloadForOfflineIcon sx={{ mr: sizeConverter(4, 'spaceX'), color: !!params?.row?.deviceModelDocument > 0 ? theme.palette.primary.main : theme.palette.black[4] }} />
+          <Typography variant='caption'>{params?.value}</Typography>
+        </Grid>
+      }
     },
     { field: 'banks', headerName: 'بانک ها ', width: sizeConverter(200), renderCell: (params) => <Typography variant='caption' > {params?.value?.length > 0 ? params?.value : 'همه بانک ها'} </Typography> },
     {
       field: 'attachedDocuments',
       headerName: 'فایل',
-      width: sizeConverter(80),
+      width: sizeConverter(60),
       align: 'center',
       renderCell: (params) =>
-        <DownloadForOfflineIcon sx={{ color: params?.row?.attachedDocuments?.length > 0 ? theme.palette.primary.main : theme.palette.black[7] }} onClick={params?.row?.attachedDocuments?.length > 0 ? () => setIsFilesDialogOpen(true) : null} />
+        <DownloadForOfflineIcon sx={{ mt:sizeConverter(8,'spaceY'), color: params?.row?.attachedDocuments?.length > 0 ? theme.palette.primary.main : theme.palette.black[4] }} onClick={params?.row?.attachedDocuments?.length > 0 ? () => setIsFilesDialogOpen(true) : null} />
     },
     {
       field: 'solution',
-      headerName: 'دستورالعمل',
-      width: sizeConverter(80, 'width'),
+      headerName: 'راهنما',
+      width: sizeConverter(60, 'width'),
       align: 'center',
       renderCell: (params) => (
         <IconButton onClick={() => handleShowInfo(params?.value)}>
@@ -347,7 +350,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             doubleClickFunc={(data) => handleShowInfo(data?.solution)}
             columns={KIOSKS_COLUMNS}
             setRows={(data) => data && setSelectedValue(data?.[0])}
-            defaultSortColumns={{ code: 'asc' }}
+            defaultSortColumns={{  code: 'asc', }}
             CustomToolBar={() => (
               accessCheck({ accessInfoId: 105, KindAccessInfo: 'writeAccess' }) && (
                 <Grid container size={'auto'} spacing={sizeConverter(4, 'spaceX')}>

@@ -69,7 +69,7 @@ export default function ImageDialog({
 
                  {deviceModelName} 
                 {!isMobile && <IconButton onClick={onClose}>
-                    <HighlightOffOutlinedIcon />
+                    <HighlightOffOutlinedIcon  fontSize='large'/>
                 </IconButton>}
             </DialogTitle>
 

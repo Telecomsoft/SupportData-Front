@@ -41,7 +41,6 @@ const AutoCompleteComp = ({
     const [searchResult, setSearchResult] = useState([])
 
     const searchPorts = usePostData(searchEndPoint!)
-console.log('autoCompleteOption',autoCompleteOption)
     const safeOptions = autoCompleteOption ?? []
 
     const handleOnChangeTextField = (newValue: string) => {

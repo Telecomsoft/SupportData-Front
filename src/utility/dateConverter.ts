@@ -12,7 +12,6 @@ export const convertToShamsi = (date: string): string => {
 }
 
 export const convertToGregorian = (shamsiDate: string): string => {
-   console.log(shamsiDate)
    const [jy, jm, jd] = shamsiDate.split('-').map(Number)
    const { gy, gm, gd } = jalaali.toGregorian(jy, jm, jd) // Convert using jalaali-js
    return `${gy}-${String(gm).padStart(2, '0')}-${String(gd).padStart(2, '0')}` // Pad month/day with zeros

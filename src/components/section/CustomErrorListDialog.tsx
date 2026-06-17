@@ -18,7 +18,7 @@ export const CustomErrorListDialog = ({
             value: 'deviceModelID',
             kind: 'combo',
             size: 12,
-            type: 'multiple',
+            type: 'single',
             disabled: !deviceId?.id,
             component: AutoCompleteComp,
         },

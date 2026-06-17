@@ -52,8 +52,6 @@ const FreeSoloAutoComplete = ({
             ? fieldValue.filter((v) => typeof v === 'string')
             : [];
 
-          console.log(`fieldValue for ${value}:`, safeValue);
-
           return (
             <Autocomplete
               multiple

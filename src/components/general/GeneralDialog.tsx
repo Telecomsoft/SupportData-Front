@@ -111,7 +111,7 @@ const GeneralDialog = ({
       handleSubmit,
       formState: { errors },
    } = useForm({})
-   console.log('defaultValue', defaultValue)
+
    const createItem = usePostData(createEndpoint ? createEndpoint : '')
    const editItem = usePutData(editEndpoint ? editEndpoint : '')
    const submitButton = (
@@ -168,7 +168,6 @@ const GeneralDialog = ({
             {} as Record<string, unknown>
          )
       }
-
       const FinalDataWithoutUndefined = Object.fromEntries(
          Object.entries(JSON.parse(JSON.stringify(finalData))).filter(([, v]: [string, unknown]) => v !== '')
       )
@@ -570,7 +569,7 @@ const GeneralDialog = ({
                         bgcolor: theme.palette.white[0],
                         borderTop: `1px solid ${theme.palette.black[6]}`,
                         p: 2,
-                        pb:8
+                        pb: 8
                      }),
                   }}
                >

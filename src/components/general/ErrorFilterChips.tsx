@@ -11,7 +11,6 @@ const filterTabs = [
 
 export const ErrorFilterChips = ({ activeTab, onTabChange }) => {
 
-  console.log('activeTab', activeTab)
   return (
     <Box
       sx={{

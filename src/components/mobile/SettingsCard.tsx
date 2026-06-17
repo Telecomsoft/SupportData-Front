@@ -7,7 +7,6 @@ import {
     IconButton,
     Divider,
 } from '@mui/material';
-
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DownloadOutlinedIcon from '@mui/icons-material/DownloadOutlined';
@@ -36,12 +35,10 @@ export default function SettingsCard({
     hasAccess,
     deviceName,
     deviceModelDocument,
-    isDeviceModelDocument,
     onShowDocument
 }: SettingsCardProps) {
+    const theme = useTheme();
 
-    const hasDocument = Boolean(deviceModelDocument && deviceModelDocument.trim().length > 0);
-    console.log('deviceModelDocument', deviceModelDocument)
     return (
         <Card
             sx={{
@@ -49,13 +46,13 @@ export default function SettingsCard({
                 overflow: 'hidden',
                 mb: sizeConverter(6, 'spaceY'),
                 borderRadius: 3,
-                border: '1px solid #EAEAEA',
                 boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
             }}
         >
             <Box
                 sx={{
-                    p: sizeConverter(32, 'spaceX'),
+                    px: 1,
+                    pt: 2,
                 }}
             >
                 {/* Title & Document Section */}
@@ -64,7 +61,7 @@ export default function SettingsCard({
                         sx={{
                             fontSize: sizeConverter(46),
                             fontWeight: 700,
-                            color: '#111',
+                            color: theme.palette.black[0],
                             lineHeight: 1.4,
                             wordBreak: 'break-word',
                             flex: 1
@@ -72,30 +69,15 @@ export default function SettingsCard({
                     >
                         {name}
                     </Typography>
-
-                    {/* دکمه دانلود/نمایش سند با شرط وجود فایل */}
-                    {/* {hasDocument && (
-                        <IconButton
-                            onClick={onShowDocument}
-                            sx={{
-                                p: 0.5,
-                                color: 'primary.main',
-                                backgroundColor: 'rgba(25, 118, 210, 0.08)',
-                                '&:hover': { backgroundColor: 'rgba(25, 118, 210, 0.15)' }
-                            }}
-                        >
-                            <DownloadForOfflineIcon sx={{ fontSize: sizeConverter(55) }} />
-                        </IconButton>
-                    )} */}
                 </Box>
 
                 {/* Code */}
                 {code && (
                     <Box sx={{ display: 'flex', mt: 0.5, gap: 0.5 }}>
-                        <Typography sx={{ fontWeight: 700, color: '#666', fontSize: sizeConverter(38), whiteSpace: 'nowrap' }}>
+                        <Typography sx={{ fontWeight: 700, color: theme.palette.black[3], fontSize: sizeConverter(38), whiteSpace: 'nowrap' }}>
                             کد :
                         </Typography>
-                        <Typography sx={{ color: '#666', fontSize: sizeConverter(38) }}>
+                        <Typography sx={{ color: theme.palette.black[3], fontSize: sizeConverter(38) }}>
                             {code ?? '-'}
                         </Typography>
                     </Box>
@@ -104,10 +86,10 @@ export default function SettingsCard({
                 {/* Device Name */}
                 {deviceName && (
                     <Box sx={{ display: 'flex', mt: 0.5, gap: 0.5 }}>
-                        <Typography sx={{ fontWeight: 700, color: '#666', fontSize: sizeConverter(38), whiteSpace: 'nowrap' }}>
+                        <Typography sx={{ fontWeight: 700, color: theme.palette.black[3], fontSize: sizeConverter(38), whiteSpace: 'nowrap' }}>
                             قطعه :
                         </Typography>
-                        <Typography sx={{ color: '#666', fontSize: sizeConverter(38) }}>
+                        <Typography sx={{ color: theme.palette.black[3], fontSize: sizeConverter(38) }}>
                             {deviceName ?? '-'}
                         </Typography>
                     </Box>
@@ -115,13 +97,13 @@ export default function SettingsCard({
 
                 {/* Description */}
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start', mt: 0.5, gap: 0.5 }}>
-                    <Typography sx={{ fontWeight: 700, color: '#666', fontSize: sizeConverter(38), whiteSpace: 'nowrap' }}>
+                    <Typography sx={{ fontWeight: 700, color: theme.palette.black[3], fontSize: sizeConverter(38), whiteSpace: 'nowrap' }}>
                         توضیحات :
                     </Typography>
                     <Typography
                         sx={{
                             flex: 1,
-                            color: '#666',
+                            color: theme.palette.black[3],
                             fontSize: sizeConverter(38),
                             wordBreak: 'break-word',
                             overflowWrap: 'anywhere',
@@ -133,10 +115,12 @@ export default function SettingsCard({
 
                 {/* Action Buttons */}
                 <>
-                    <Divider sx={{ my: sizeConverter(2, 'spaceY') }} />
+                    <Divider sx={{
+                        my: sizeConverter(2, 'spaceY'),
+                        borderColor: theme.palette.black[7],
+                    }} />
                     <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
                         {!!onShowDocument && (
-
                             <ActionButton
                                 icon={<DownloadOutlinedIcon />}
                                 label="تصویر مدل قطعه"
@@ -155,14 +139,13 @@ export default function SettingsCard({
                                     icon={<DeleteOutlineIcon />}
                                     label="حذف"
                                     onClick={onDelete}
-
                                 />
                             </>
                         )}
                     </Box>
                 </>
             </Box>
-        </Card >
+        </Card>
     );
 }
 
@@ -172,7 +155,6 @@ type ActionButtonProps = {
     onClick?: () => void;
     disabled?: boolean;
 };
-
 
 function ActionButton({ icon, label, onClick, disabled }: ActionButtonProps) {
     const theme = useTheme();
