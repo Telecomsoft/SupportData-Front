@@ -86,7 +86,6 @@ function mobileListSettings() {
                                 {IconComponent && <IconComponent fontSize="medium" />}
                             </Box>
 
-                            {/* عنوان و زیرعنوان */}
                             <Stack spacing={0.5}>
                                 <Typography variant="body1" fontWeight={700} color="text.primary">
                                     {child.name}

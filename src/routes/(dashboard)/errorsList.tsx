@@ -1,4 +1,4 @@
-//@ts-nocheck
+
 import Grid from '@mui/material/Grid2'
 import { createFileRoute } from '@tanstack/react-router'
 import { useGetData } from '@hooks/useGetData.ts'
@@ -12,7 +12,7 @@ import DataGridIconProvider from '@components/general/telecomDataGrid/components
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { Box, Fab, Grid2, useTheme, Zoom, InputAdornment, IconButton, Typography } from '@mui/material'
+import { Box, Fab, Grid2, useTheme, IconButton, Typography } from '@mui/material'
 import { REQUIRED_VALIDATOR } from '@src/data/validators/validators'
 import TextFieldComp from '@components/general/hookFromInputs/TextFieldComp'
 import AutoCompleteComp from '@components/general/hookFromInputs/AutoComplete'
@@ -22,27 +22,21 @@ import UploadFile from '@components/general/uploadFile'
 import { CustomErrorListDialog } from '@components/section/CustomErrorListDialog'
 import SimpleInfoDialog from '@components/general/SimpleInfoDialog'
 import getEndpoint from '@utility/getEndPoint.ts'
-import SvgComponent from '@src/utility/SvgComponent'
-import downloadIcon from 'public/icons/Download.svg'
+
 import MobileErrorCard from '@components/mobile/MobileErrorCard'
 import { useDevice } from '@src/hooks/useDevice'
 import CustomCircularProgress from '@components/general/CustomCircularProgress'
-import SearchIcon from '@mui/icons-material/Search'
-import CloseIcon from '@mui/icons-material/Close'
-import StyledTextField from '@components/general/input/StyledTextField'
+
 import FloatingSearch from '@components/mobile/FloatingSearch'
 import GeneralDeleteDialog from '@components/general/GeneralDeleteDialog'
 import { useMemo } from 'react';
-// import { Tabs, Tab } from '@mui/material';
-import { ToggleButton, ToggleButtonGroup, Chip } from '@mui/material';
-import MemoryIcon from '@mui/icons-material/Memory'; // آیکون سخت‌افزار
-import CodeIcon from '@mui/icons-material/Code';     // آیکون نرم‌افزار
-import ReportProblemIcon from '@mui/icons-material/ReportProblem';
+
 import { ErrorFilterChips } from '@components/general/ErrorFilterChips'
 import FileDialog from '@components/general/FileDialog'
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 import ImageDialog from '@components/general/ImageDialog'
-import MoreIcon from '@mui/icons-material/More'
+import { DialogArrayType } from '@src/data/type/dialogArrayType'
+import { TelecomColumnsType } from '@components/general/telecomDataGrid/staticData/TelecomDataGridType'
 
 export const Route = createFileRoute('/(dashboard)/errorsList')({
   component: withSnackbar(kioskErrors),
@@ -60,7 +54,6 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
   const listErrors = useGetData<any>('api/Error/ListErrors', 'list-errors')
   const listErrorGroups = useGetData<any>('api/Base/ErrorGroups', 'list-error-groups')
   const ListBanks = useGetData<any>('api/Error/ListBanks', 'List-banks')
-  const listDevices = useGetData<any>('api/Error/listDevices', 'List-devices')
   const ListDeviceModels = useGetData<any>('api/Error/ListDeviceModels', 'list-device-models')
   const ListDevices = useGetData<any>('api/Error/ListDevices', 'List-devices')
 
@@ -75,24 +68,12 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
   const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
 
 
-  const filteredErrors = listErrors?.data?.value?.filter((item: any) => {
-    if (!searchQuery) return true
-    return String(item?.code).includes(searchQuery) || String(item?.title).includes(searchQuery)
-  })
 
   const handleShowInfo = (msg: string) => {
     setSelectedMessage(msg)
     setOpenDialog('info')
   }
 
-  // const downloadHandler = (file) => {
-  //   if (!!file) {
-  //     const link = document.createElement('a')
-  //     link.setAttribute('target', '_blank')
-  //     link.href = `${getEndpoint()}${file}`
-  //     link.click()
-  //   }
-  // }
   const downloadHandler = (file: string) => {
     if (!file) return;
 
@@ -202,7 +183,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
       kind: 'uploadFile',
     },
   ]
-  const KIOSKS_COLUMNS = [
+  const KIOSKS_COLUMNS: TelecomColumnsType[] = [
     { field: 'code', headerName: 'کد خطا', width: sizeConverter(80, 'width') },
     { field: 'title', headerName: 'عنوان خطا', width: sizeConverter(100, 'width') },
     { field: 'deviceCode', headerName: 'کد قطعه ', width: sizeConverter(80, 'width') },
@@ -212,8 +193,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
       field: 'deviceModelName', headerName: 'مدل قطعه ', width: sizeConverter(120, 'width'), renderCell: (params) => {
 
         return <Grid container alignItems={'center'} onClick={!!params?.row?.deviceModelDocument ? () => setIsImageDialogOpen(true) : null} >
-          {/* <Typography variant='caption' onClick={!!params?.row?.deviceModelDocument ? () => setIsImageDialogOpen(true) : null}>جزييات ...</Typography> */}
-          <DownloadForOfflineIcon sx={{ mr: sizeConverter(4, 'spaceX'), color: !!params?.row?.deviceModelDocument > 0 ? theme.palette.primary.main : theme.palette.black[4] }} />
+          <DownloadForOfflineIcon sx={{ mr: sizeConverter(4, 'spaceX'), color: !!params?.row?.deviceModelDocument ? theme.palette.primary.main : theme.palette.black[4] }} />
           <Typography variant='caption'>{params?.value}</Typography>
         </Grid>
       }
@@ -225,7 +205,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
       width: sizeConverter(60),
       align: 'center',
       renderCell: (params) =>
-        <DownloadForOfflineIcon sx={{ mt:sizeConverter(8,'spaceY'), color: params?.row?.attachedDocuments?.length > 0 ? theme.palette.primary.main : theme.palette.black[4] }} onClick={params?.row?.attachedDocuments?.length > 0 ? () => setIsFilesDialogOpen(true) : null} />
+        <DownloadForOfflineIcon sx={{ mt: sizeConverter(8, 'spaceY'), color: params?.row?.attachedDocuments?.length > 0 ? theme.palette.primary.main : theme.palette.black[4] }} onClick={params?.row?.attachedDocuments?.length > 0 ? () => setIsFilesDialogOpen(true) : null} />
     },
     {
       field: 'solution',
@@ -350,7 +330,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             doubleClickFunc={(data) => handleShowInfo(data?.solution)}
             columns={KIOSKS_COLUMNS}
             setRows={(data) => data && setSelectedValue(data?.[0])}
-            defaultSortColumns={{  code: 'asc', }}
+            defaultSortColumns={{ code: 'asc', }}
             CustomToolBar={() => (
               accessCheck({ accessInfoId: 105, KindAccessInfo: 'writeAccess' }) && (
                 <Grid container size={'auto'} spacing={sizeConverter(4, 'spaceX')}>
@@ -425,8 +405,6 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             isDialogOpen={openDialog}
             customFunAfterSuccess={() => {
               listErrors?.refetch()
-              // queryClient?.refetchQueries({ queryKey: ['get-list-view'] })
-              // queryClient?.refetchQueries({ queryKey: ['kiosks-list'] })
               setSelectedValue(null)
             }}
             dialogCloseFun={() => setOpenDialog(null)}

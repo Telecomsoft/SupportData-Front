@@ -96,7 +96,7 @@ export default function SettingsCard({
                 )}
 
                 {/* Description */}
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start', mt: 0.5, gap: 0.5 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start', mt: 0.5, mb: 1, gap: 0.5 }}>
                     <Typography sx={{ fontWeight: 700, color: theme.palette.black[3], fontSize: sizeConverter(38), whiteSpace: 'nowrap' }}>
                         توضیحات :
                     </Typography>
@@ -115,10 +115,10 @@ export default function SettingsCard({
 
                 {/* Action Buttons */}
                 <>
-                    <Divider sx={{
+                    {(hasAccess || !!onShowDocument) && <Divider sx={{
                         my: sizeConverter(2, 'spaceY'),
                         borderColor: theme.palette.black[7],
-                    }} />
+                    }} />}
                     <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
                         {!!onShowDocument && (
                             <ActionButton
@@ -175,7 +175,7 @@ function ActionButton({ icon, label, onClick, disabled }: ActionButtonProps) {
             }}
         >
             {icon}
-            <Typography sx={{ fontSize: sizeConverter(36), fontWeight: 600 }}>
+            <Typography sx={{ fontSize: sizeConverter(24), fontWeight: 600 }}>
                 {label}
             </Typography>
         </IconButton>

@@ -1,4 +1,3 @@
-// src/components/systemManagement/users/Users.tsx
 import { createFileRoute } from '@tanstack/react-router'
 import Grid from '@mui/material/Grid2'
 import { lazy, Suspense, useState } from 'react'
@@ -23,7 +22,7 @@ import PasswordRoundedIcon from '@mui/icons-material/PasswordRounded'
 import GeneralConfirmDialog from '@components/general/GeneralConfirmDialog'
 import CircleIcon from '@mui/icons-material/Circle'
 import { useAccessCheck } from '@src/utility/accessCheck'
-import { useDevice } from '@hooks/useDevice' // <-- ایمپورت هوک تشخیص دستگاه
+import { useDevice } from '@hooks/useDevice' 
 import { MobileUserList } from '@components/mobile/MobileUserList'
 import CustomCircularProgress from '@components/general/CustomCircularProgress'
 
@@ -74,9 +73,8 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
         setAddKind(kind ?? null);
     };
 
-    // هندلر برای اکشن‌های موبایل (ابتدا کاربر انتخاب می‌شود سپس دیالوگ باز می‌شود)
     const handleMobileAction = (actionType: string, user: any) => {
-        setSelectedItem([user.id] as any); // شبیه‌سازی انتخاب گرید که آرایه‌ای از ID ها برمی‌گرداند
+        setSelectedItem([user.id] as any); 
         handleDialog(actionType);
     };
 
@@ -203,7 +201,6 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                     />
                 )}
 
-                {/* دیالوگ حذف */}
                 {openDialog === 'delete' && (
                     <GeneralDeleteDialog
                         dialogTitle={'کاربر'}
@@ -224,7 +221,6 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                     />
                 )}
 
-                {/* دیالوگ تغییر رمز عبور */}
                 {addKind === 'password' && (
                     <GeneralDialog
                         width={sizeConverter(350, 'width')}
@@ -243,7 +239,6 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                     />
                 )}
 
-                {/* دیالوگ بازنشانی رمز عبور */}
                 {addKind === 'reset' && (
                     <GeneralConfirmDialog
                         dialogWidth={sizeConverter(400, 'width')}

@@ -215,7 +215,7 @@ type deleteDialogProps = {
     dialogTitle: string
     deleteDescription: string
     snackbarOpen: snackbarOpenType
-    isDialogOpen: 'add' | 'edit' | null
+    isDialogOpen: 'add' | 'edit' | 'delete' | null
     dialogCloseFun: () => void
     isNotSendServer?: boolean
 }

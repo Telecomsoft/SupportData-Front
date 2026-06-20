@@ -69,11 +69,6 @@ function Permissions({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     'get-roles',
   )
 
-  // const permissionList = useGetData<Permissions[]>(
-  //   'api/Main/Permissions/List',
-  //   'get-permissions',
-  // )
-
   const handleClickCloseDialog = (key: string) => {
     setOpenDialog((prev) => ({
       ...prev,

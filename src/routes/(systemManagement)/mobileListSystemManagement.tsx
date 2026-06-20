@@ -58,15 +58,13 @@ function mobileListSettings() {
                             cursor: 'pointer',
                         }}
                     >
-                        {/* بخش راست: آیکون و متون */}
                         <Stack direction="row" spacing={2} alignItems="center">
-                            {/* کادر آیکون با پس‌زمینه قرمز روشن */}
                             <Box
                                 sx={{
                                     width: 50,
                                     height: 50,
                                     borderRadius: 2,
-                                    backgroundColor: theme.palette.white[1], // رنگ پس‌زمینه آیکون (قرمز بسیار روشن)
+                                    backgroundColor: theme.palette.white[1],
                                     color: theme.palette.primary.main,
                                     display: 'flex',
                                     alignItems: 'center',
@@ -76,7 +74,6 @@ function mobileListSettings() {
                                 {IconComponent && <IconComponent fontSize="medium" />}
                             </Box>
 
-                            {/* عنوان و زیرعنوان */}
                             <Stack spacing={0.5}>
                                 <Typography variant="body1" fontWeight={700} color="text.primary">
                                     {child.name}
@@ -86,8 +83,6 @@ function mobileListSettings() {
                                 </Typography>
                             </Stack>
                         </Stack>
-
-                        {/* بخش چپ: فلش */}
                         <KeyboardArrowLeftIcon sx={{ color: theme.palette.primary.main, }} />
                     </Box>
                 );
