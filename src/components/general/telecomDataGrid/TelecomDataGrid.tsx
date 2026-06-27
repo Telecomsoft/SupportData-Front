@@ -565,7 +565,7 @@ const TelecomDataGrid = ({
    //     Math.floor(scrollPosition / rowHeight) + visibleRows
    // )
 
-   const visibleData: any[] | undefined = filterAndSortDatas
+   const visibleData: any[] | undefined = filterAndSortData
 
    const PinStyle = (column, kind) => {
       return pinnedColumns[kind].indexOf(column.field) !== 0
