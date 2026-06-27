@@ -66,10 +66,12 @@ const areEqual = (prevProps, nextProps) => {
         return false
     }
 
-    if (!objectsAreEqual(prevProps.sortDirection, nextProps.sortDirection)) {
-        return false
+    // if (!objectsAreEqual(prevProps.sortDirection, nextProps.sortDirection)) {
+    //     return false
+    // }
+    if (!arraysAreEqual(prevProps.sortDirection, nextProps.sortDirection)) {
+        return false;
     }
-
     return arraysAreEqual(prevProps.groupByColList, nextProps.groupByColList) && prevProps.borderInner === nextProps.borderInner
 }
 
@@ -98,6 +100,9 @@ const HeaderCell = ({
 }) => {
     const [hoveredColumn, setHoveredColumn] = useState(null)
     const [cellSortView, setCellSortView] = useState<'asc' | 'desc' | null>(null)
+
+    const currentSortItem = sortDirection.find((s) => s.field === column.field);
+    const currentSort = currentSortItem ? currentSortItem.sort : null;
 
     const getColumnStyle = (column) => {
         const style: Record<any, any> = {
@@ -157,11 +162,17 @@ const HeaderCell = ({
             },
             {
                 id: 3,
-                conditionShow: (hoveredColumn === column.field || sortDirection[column.field]) && !column?.sortLock,
+                // conditionShow: (hoveredColumn === column.field || sortDirection[column.field]) && !column?.sortLock,
+                // icon: StraightRoundedIcon,
+                // color: sortDirection[column.field] ? theme.palette.dataGrid['main'] : theme.palette.dataGrid['actionDisable'],
+                // extraStyle: {
+                //     transform: sortDirection[column.field] === 'asc' ? 'rotate(180deg)' : 'rotate(0deg)',
+                // },
+                conditionShow: (hoveredColumn === column.field || currentSort) && !column?.sortLock,
                 icon: StraightRoundedIcon,
-                color: sortDirection[column.field] ? theme.palette.dataGrid['main'] : theme.palette.dataGrid['actionDisable'],
+                color: currentSort ? theme.palette.dataGrid['main'] : theme.palette.dataGrid['actionDisable'],
                 extraStyle: {
-                    transform: sortDirection[column.field] === 'asc' ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transform: currentSort === 'asc' ? 'rotate(180deg)' : 'rotate(0deg)',
                 },
                 onClick: () => {
                     toggleSort(column.field)
@@ -178,12 +189,12 @@ const HeaderCell = ({
                 toolTipText: TELECOM_DICTIONARY[DataGridLang]['Sort'],
                 ...(setServerCtrData
                     ? {
-                          conditionShow: (hoveredColumn === column.field || cellSortView) && !column?.sortLock,
-                          color: cellSortView ? theme.palette.dataGrid['main'] : theme.palette.dataGrid['actionDisable'],
-                          extraStyle: {
-                              transform: cellSortView === 'asc' ? 'rotate(180deg)' : 'rotate(0deg)',
-                          },
-                      }
+                        conditionShow: (hoveredColumn === column.field || cellSortView) && !column?.sortLock,
+                        color: cellSortView ? theme.palette.dataGrid['main'] : theme.palette.dataGrid['actionDisable'],
+                        extraStyle: {
+                            transform: cellSortView === 'asc' ? 'rotate(180deg)' : 'rotate(0deg)',
+                        },
+                    }
                     : {}),
             },
             {
@@ -238,7 +249,7 @@ const HeaderCell = ({
                             variant="normalBold"
                             noWrap
                             sx={{
-                                color:'white.0',
+                                color: 'white.0',
                                 lineHeight: 1.2,
                                 px: sizeConverter(10, 'space'),
                                 py: sizeConverter(3, 'space'),
@@ -254,7 +265,7 @@ const HeaderCell = ({
                             return (
                                 <DataGridIconProvider
                                     key={widget?.id}
-                                    color={!widget?.color ? theme?.palette?.white?.['0'] : widget?.color }
+                                    color={!widget?.color ? theme?.palette?.white?.['0'] : widget?.color}
                                     size={sizeConverter(12)}
                                     Icon={widget.icon}
                                     iconColor={'black.1'}
@@ -285,10 +296,10 @@ const HeaderCell = ({
                             transition: '0.2s all ease-in-out',
                             ...(!resizeLock
                                 ? {
-                                      '&:hover': {
-                                          backgroundColor: theme.palette.dataGrid['resizeArrowHoverColor'],
-                                      },
-                                  }
+                                    '&:hover': {
+                                        backgroundColor: theme.palette.dataGrid['resizeArrowHoverColor'],
+                                    },
+                                }
                                 : {}),
                         }}
                         onMouseDown={!resizeLock ? (e) => handleResizeStart(e, column) : undefined}
@@ -312,10 +323,10 @@ const HeaderCell = ({
                         transition: '0.2s all ease-in-out',
                         ...(!resizeLock
                             ? {
-                                  '&:hover': {
-                                      backgroundColor: theme.palette.dataGrid['resizeArrowHoverColor'],
-                                  },
-                              }
+                                '&:hover': {
+                                    backgroundColor: theme.palette.dataGrid['resizeArrowHoverColor'],
+                                },
+                            }
                             : {}),
                     }}
                     onMouseDown={!resizeLock ? (e) => handleResizeStart(e, column) : undefined}

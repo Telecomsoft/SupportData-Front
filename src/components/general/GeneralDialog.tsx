@@ -525,6 +525,7 @@ const GeneralDialog = ({
                                  rows={item?.rows}
                                  maxRows={item?.maxRows}
                                  ltr={item?.ltr}
+                                 dir={item?.dir}
                                  searchEndPoint={item?.searchEndPoint}
                                  searchBy={item?.searchBy}
                                  register={register}

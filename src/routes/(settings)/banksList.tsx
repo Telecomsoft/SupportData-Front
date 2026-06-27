@@ -148,6 +148,7 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 <TelecomDataGrid
                     data={listBanks?.data?.value}
                     loading={listBanks?.isLoading}
+                    doubleClickFunc={() => setOpenDialog('edit')}
                     CustomToolBar={() => {
                         return hasWriteAccess && (
                             <Grid container size={'auto'} spacing={sizeConverter(4, 'spaceX')}>

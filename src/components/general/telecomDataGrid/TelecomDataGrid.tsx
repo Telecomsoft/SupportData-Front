@@ -72,7 +72,8 @@ type TelecomDataGridProps = {
    SecondFooter?: FunctionComponent<any>
    rowLockSelectionCondition?: (row: any) => void
    visibleOrHiddenColumns?: { field: string; visible: boolean }[]
-   defaultSortColumns?: Record<string, 'desc' | 'asc'>
+   // defaultSortColumns?: Record<string, 'desc' | 'asc'>
+   defaultSortColumns?: { field: string; sort: 'asc' | 'desc' }[]
    sortFieldCustom?: {
       field: string
       func: (rowDataA: any, rowDataB: any, dir: 1 | -1) => number
@@ -168,7 +169,8 @@ const TelecomDataGrid = ({
    const [groupByColList, setGroupByColList] = useState<string[]>([])
    const [filterAnchorEl, setFilterAnchorEl] = useState(null)
    const [globalFilterValue, setGlobalFilterValue] = useState('')
-   const [sortDirection, setSortDirection] = useState({})
+   // const [sortDirection, setSortDirection] = useState({})
+   const [sortDirection, setSortDirection] = useState<{ field: string; sort: 'asc' | 'desc' }[]>(defaultSortColumns || [])
    const [filters, setFilters] = useState({})
    const [columnWidths, setColumnWidths] = useState({})
    const [isResizing, setIsResizing] = useState(false)
@@ -317,21 +319,47 @@ const TelecomDataGrid = ({
             }
          })
       } else {
+         // startTransition(() => {
+         //    setSortDirection((prev) => {
+         //       if (!prev[columnField] || prev[columnField] === 'desc') {
+         //          return {
+         //             ...(singleSort ? {} : defaultSortColumns),
+         //             [columnField]: 'asc',
+         //          }
+         //       } else if (prev[columnField] === 'asc') {
+         //          return {
+         //             ...(singleSort ? {} : defaultSortColumns),
+         //             [columnField]: 'desc',
+         //          }
+         //       }
+         //    })
+         // })
          startTransition(() => {
             setSortDirection((prev) => {
-               if (!prev[columnField] || prev[columnField] === 'desc') {
-                  return {
-                     ...(singleSort ? {} : defaultSortColumns),
-                     [columnField]: 'asc',
+               const existingIndex = prev.findIndex((item) => item.field === columnField);
+               let newSort = [...prev];
+
+               if (existingIndex >= 0) {
+                  // اگر قبلا سورت شده بود
+                  const currentSort = prev[existingIndex].sort;
+                  if (currentSort === 'asc') {
+                     // تغییر از صعودی به نزولی
+                     newSort[existingIndex] = { ...newSort[existingIndex], sort: 'desc' };
+                  } else {
+                     // حذف سورت اگر دوباره کلیک شد (حالت سوم)
+                     newSort.splice(existingIndex, 1);
                   }
-               } else if (prev[columnField] === 'asc') {
-                  return {
-                     ...(singleSort ? {} : defaultSortColumns),
-                     [columnField]: 'desc',
+               } else {
+                  // اگر ستون جدید بود
+                  if (singleSort) {
+                     newSort = [{ field: columnField, sort: 'asc' }];
+                  } else {
+                     newSort.push({ field: columnField, sort: 'asc' });
                   }
                }
-            })
-         })
+               return newSort;
+            });
+         });
       }
    }
 
@@ -398,6 +426,72 @@ const TelecomDataGrid = ({
          })
       }
 
+      // finalData = finalData
+      //    ?.filter(
+      //       (row) =>
+      //          Object.entries(filters).every(([field, value]) => {
+      //             const targetCol = columns.find((col) => col?.field === field)
+      //             if (!!targetCol?.valueGetter?.(row))
+      //                return (
+      //                   String(targetCol?.valueGetter?.(row)).trim().toLowerCase().includes(value.trim().toLowerCase()) ||
+      //                   !![...selectedRows]?.includes(row[dataGridKeyID])
+      //                )
+      //             else
+      //                return (
+      //                   String(row[field]).trim().toLowerCase().includes(value.trim().toLowerCase()) ||
+      //                   !![...selectedRows]?.includes(row[dataGridKeyID])
+      //                )
+      //          }) &&
+      //          (!globalFilterValue || globalFilter(row, globalFilterValue) || !![...selectedRows]?.includes(row[dataGridKeyID]))
+      //    )
+      //    ?.sort((a, b) => {
+      //       const sortFields = Object.keys(sortDirection).reverse()
+
+      //       for (const sortField of sortFields) {
+      //          const direction = sortDirection[sortField] === 'asc' ? 1 : -1
+
+      //          if (sortFieldCustom?.field === sortField) {
+      //             const customResult = sortFieldCustom.func(a, b, direction)
+      //             if (customResult !== 0) return customResult
+      //             continue
+      //          }
+
+      //          const valueA = a[sortField]
+      //          const valueB = b[sortField]
+
+      //          if (valueA === null || valueA === undefined) return -1 * direction
+      //          if (valueB === null || valueB === undefined) return 1 * direction
+
+      //          if (typeof valueA === 'boolean' && typeof valueB === 'boolean') {
+      //             const boolResult = (valueA === valueB ? 0 : valueA ? 1 : -1) * direction
+      //             if (boolResult !== 0) return boolResult
+      //             continue
+      //          }
+
+      //          if (typeof valueA === 'number' && typeof valueB === 'number') {
+      //             const numResult = (valueA - valueB) * direction
+      //             if (numResult !== 0) return numResult
+      //             continue
+      //          }
+
+      //          if (typeof valueA === 'string' && typeof valueB === 'string') {
+      //             const stringResult = valueA.localeCompare(valueB) * direction
+      //             if (stringResult !== 0) return stringResult
+      //             continue
+      //          }
+
+      //          if (valueA instanceof Date && valueB instanceof Date) {
+      //             const dateResult = (valueA.getTime() - valueB.getTime()) * direction
+      //             if (dateResult !== 0) return dateResult
+      //             continue
+      //          }
+
+      //          if (typeof valueA === 'number') return -1 * direction
+      //          if (typeof valueB === 'number') return 1 * direction
+      //       }
+
+      //       return 0
+      //    })
       finalData = finalData
          ?.filter(
             (row) =>
@@ -417,53 +511,47 @@ const TelecomDataGrid = ({
                (!globalFilterValue || globalFilter(row, globalFilterValue) || !![...selectedRows]?.includes(row[dataGridKeyID]))
          )
          ?.sort((a, b) => {
-            const sortFields = Object.keys(sortDirection).reverse()
-
-            for (const sortField of sortFields) {
-               const direction = sortDirection[sortField] === 'asc' ? 1 : -1
+            // حرکت روی آرایه سورت به ترتیب اولویت
+            for (const sortItem of sortDirection) {
+               const { field: sortField, sort: dir } = sortItem;
+               const direction = dir === 'asc' ? 1 : -1;
 
                if (sortFieldCustom?.field === sortField) {
-                  const customResult = sortFieldCustom.func(a, b, direction)
-                  if (customResult !== 0) return customResult
-                  continue
+                  const customResult = sortFieldCustom.func(a, b, direction);
+                  if (customResult !== 0) return customResult;
+                  continue;
                }
 
-               const valueA = a[sortField]
-               const valueB = b[sortField]
+               // در صورتی که فیلد تو در تو بود (اختیاری برای اطمینان)
+               const valueA = a[sortField];
+               const valueB = b[sortField];
 
-               if (valueA === null || valueA === undefined) return -1 * direction
-               if (valueB === null || valueB === undefined) return 1 * direction
+               // اگر برابر بودند، به سراغ قانون سورت بعدی (ستون بعدی) می‌رویم
+               if (valueA === valueB) continue;
+
+               if (valueA === null || valueA === undefined) return -1 * direction;
+               if (valueB === null || valueB === undefined) return 1 * direction;
 
                if (typeof valueA === 'boolean' && typeof valueB === 'boolean') {
-                  const boolResult = (valueA === valueB ? 0 : valueA ? 1 : -1) * direction
-                  if (boolResult !== 0) return boolResult
-                  continue
+                  return (valueA ? 1 : -1) * direction;
                }
 
                if (typeof valueA === 'number' && typeof valueB === 'number') {
-                  const numResult = (valueA - valueB) * direction
-                  if (numResult !== 0) return numResult
-                  continue
+                  return (valueA - valueB) * direction;
                }
 
                if (typeof valueA === 'string' && typeof valueB === 'string') {
-                  const stringResult = valueA.localeCompare(valueB) * direction
-                  if (stringResult !== 0) return stringResult
-                  continue
+                  // تغییر اصلی اینجاست: اضافه شدن { numeric: true }
+                  return valueA.localeCompare(valueB, undefined, { numeric: true }) * direction;
                }
 
                if (valueA instanceof Date && valueB instanceof Date) {
-                  const dateResult = (valueA.getTime() - valueB.getTime()) * direction
-                  if (dateResult !== 0) return dateResult
-                  continue
+                  return (valueA.getTime() - valueB.getTime()) * direction;
                }
-
-               if (typeof valueA === 'number') return -1 * direction
-               if (typeof valueB === 'number') return 1 * direction
             }
 
-            return 0
-         })
+            return 0;
+         });
 
       if (groupByColList.length > 0 && finalData) {
          return groupByArray(finalData, groupByColList, dataGridKeyID, DataGridLang)
@@ -477,22 +565,22 @@ const TelecomDataGrid = ({
    //     Math.floor(scrollPosition / rowHeight) + visibleRows
    // )
 
-   const visibleData: any[] | undefined = filterAndSortData
+   const visibleData: any[] | undefined = filterAndSortDatas
 
    const PinStyle = (column, kind) => {
       return pinnedColumns[kind].indexOf(column.field) !== 0
          ? columns
-              .filter((col) =>
-                 pinnedColumns[kind]
-                    .filter(
-                       (col1, index) => index < pinnedColumns[kind].indexOf(column.field)
-                       // && pinnedColumns[kind].some((pin) => visibleColumns.includes(pin))
-                    )
-                    .includes(col.field)
-              )
-              .reduce((sum, target) => {
-                 return sum + (columnWidths[target.field] || target.width || target.minWidth || sizeConverter(100, 'width'))
-              }, 0)
+            .filter((col) =>
+               pinnedColumns[kind]
+                  .filter(
+                     (col1, index) => index < pinnedColumns[kind].indexOf(column.field)
+                     // && pinnedColumns[kind].some((pin) => visibleColumns.includes(pin))
+                  )
+                  .includes(col.field)
+            )
+            .reduce((sum, target) => {
+               return sum + (columnWidths[target.field] || target.width || target.minWidth || sizeConverter(100, 'width'))
+            }, 0)
          : 0
    }
 
@@ -840,9 +928,9 @@ const TelecomDataGrid = ({
                            {renderPinnedRows('top')}
                            {(paginationConfig && !serverData
                               ? getRegularRows()?.slice(
-                                   currentPage === 1 ? 0 : (currentPage - 1) * maxRowInPage,
-                                   currentPage === 1 ? maxRowInPage : currentPage * maxRowInPage
-                                )
+                                 currentPage === 1 ? 0 : (currentPage - 1) * maxRowInPage,
+                                 currentPage === 1 ? maxRowInPage : currentPage * maxRowInPage
+                              )
                               : getRegularRows()
                            )?.map((row, rowIndex) => (
                               <Row

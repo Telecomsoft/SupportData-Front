@@ -93,6 +93,7 @@ function DeviceModelsList({
       value: 'name',
       kind: 'textField',
       size: isMobile ? 12 : 4.9,
+      dir: 'ltr',
       component: TextFieldComp,
       validators: { ...REQUIRED_VALIDATOR },
     },
@@ -119,12 +120,18 @@ function DeviceModelsList({
   const KIOSKS_COLUMNS: TelecomColumnsType[] = [
     {
       field: 'deviceID',
+      headerName: ' کد  قطعه ',
+      width: sizeConverter(120, 'width'),
+      align: 'center',
+    },
+    {
+      field: 'devicModleName',
       headerName: ' نام  قطعه ',
       width: sizeConverter(120, 'width'),
       align: 'center',
       renderCell: (param) => (
         <Typography variant="caption">
-          {ListDevices?.data?.value?.find((i) => i.id === param?.value)?.name}
+          {ListDevices?.data?.value?.find((i) => i.id === param?.row?.deviceID)?.name}
         </Typography>
       ),
     },
@@ -247,6 +254,7 @@ function DeviceModelsList({
         <TelecomDataGrid
           data={ListDeviceModels?.data?.value}
           loading={ListDeviceModels?.isLoading}
+          doubleClickFunc={() => setOpenDialog('edit')}
           CustomToolBar={() => {
             return (
               canWrite && (
@@ -282,6 +290,8 @@ function DeviceModelsList({
           multiSelect={false}
           disableRowSelection={false}
           columns={KIOSKS_COLUMNS}
+          defaultSortColumns={[{ field: 'deviceID', sort: 'asc', }, { field: 'code', sort: 'asc', }]}
+
         />
       )}
 

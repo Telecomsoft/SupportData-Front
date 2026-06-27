@@ -46,6 +46,7 @@ export type TextFieldCompProps = {
     validators?: RegisterOptions
     size?: GridSize
     label?: string
+    dir?: string
 } & formTypes
 const TextFieldComp = ({
     onKeyDown,
@@ -76,6 +77,7 @@ const TextFieldComp = ({
     ltr,
     label,
     validators,
+    dir = 'rtl'
 }: TextFieldCompProps) => {
     const isValueFilled = value && value !== ''
 
@@ -92,7 +94,7 @@ const TextFieldComp = ({
             }}
         >
             <StyledTextField
-                dir='rtl'
+                dir={dir}
                 onWheel={(event: any) => {
                     event.preventDefault()
                 }}

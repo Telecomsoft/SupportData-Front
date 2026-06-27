@@ -160,6 +160,7 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
         <TelecomDataGrid
           data={ListDevices?.data?.value}
           loading={ListDevices?.isLoading}
+          doubleClickFunc={() => setOpenDialog('edit')}
           CustomToolBar={() => {
             return canWrite && (
               <Grid container size={'auto'} spacing={sizeConverter(4, 'spaceX')}>
@@ -183,6 +184,8 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
           multiSelect={false}
           disableRowSelection={false}
           columns={KIOSKS_COLUMNS}
+          defaultSortColumns={[{ field: 'code', sort: 'asc', }]}
+
         />
       )
       }

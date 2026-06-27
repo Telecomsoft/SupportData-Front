@@ -22,7 +22,7 @@ import PasswordRoundedIcon from '@mui/icons-material/PasswordRounded'
 import GeneralConfirmDialog from '@components/general/GeneralConfirmDialog'
 import CircleIcon from '@mui/icons-material/Circle'
 import { useAccessCheck } from '@src/utility/accessCheck'
-import { useDevice } from '@hooks/useDevice' 
+import { useDevice } from '@hooks/useDevice'
 import { MobileUserList } from '@components/mobile/MobileUserList'
 import CustomCircularProgress from '@components/general/CustomCircularProgress'
 
@@ -74,7 +74,7 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     };
 
     const handleMobileAction = (actionType: string, user: any) => {
-        setSelectedItem([user.id] as any); 
+        setSelectedItem([user.id] as any);
         handleDialog(actionType);
     };
 
@@ -105,6 +105,7 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             title='لیست کاربران'
             data={users?.data?.value}
             loading={users?.isLoading}
+            doubleClickFunc={() => handleDialog('edit/user')}
             CustomToolBar={() => (
                 hasWriteAccess &&
                 <>

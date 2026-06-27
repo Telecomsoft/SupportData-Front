@@ -330,7 +330,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             doubleClickFunc={(data) => handleShowInfo(data?.solution)}
             columns={KIOSKS_COLUMNS}
             setRows={(data) => data && setSelectedValue(data?.[0])}
-            defaultSortColumns={{ code: 'asc', }}
+            defaultSortColumns={[{ field: 'code', sort: 'asc', }]}
             CustomToolBar={() => (
               accessCheck({ accessInfoId: 105, KindAccessInfo: 'writeAccess' }) && (
                 <Grid container size={'auto'} spacing={sizeConverter(4, 'spaceX')}>
@@ -344,7 +344,7 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
         </Grid>
       )
       }
-
+      field: string; sort: 'asc' | 'desc'
 
       {/* Dialogs */}
       {
