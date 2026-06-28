@@ -344,9 +344,6 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
         </Grid>
       )
       }
-      field: string; sort: 'asc' | 'desc'
-
-      {/* Dialogs */}
       {
         (openDialog === 'add' || openDialog === 'edit') && (
           <GeneralDialog
