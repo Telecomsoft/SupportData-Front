@@ -53,9 +53,9 @@ function kioskErrors({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
   // Queries
   const listErrors = useGetData<any>('api/Error/ListErrors', 'list-errors')
   const listErrorGroups = useGetData<any>('api/Base/ErrorGroups', 'list-error-groups')
-  const ListBanks = useGetData<any>('api/Error/ListBanks', 'List-banks')
-  const ListDeviceModels = useGetData<any>('api/Error/ListDeviceModels', 'list-device-models')
-  const ListDevices = useGetData<any>('api/Error/ListDevices', 'List-devices')
+  const ListBanks = useGetData<any>('api/Bank/ListBanks', 'List-banks')
+  const ListDeviceModels = useGetData<any>('api/Device/ListDeviceModels', 'list-device-models')
+  const ListDevices = useGetData<any>('api/Device/ListDevices', 'List-devices')
 
   // States
   const [selectedValue, setSelectedValue] = useState<number | undefined>(undefined)

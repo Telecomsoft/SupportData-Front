@@ -43,11 +43,11 @@ function DeviceModelsList({
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
   const ListDeviceModels = useGetData<User[]>(
-    'api/Error/ListDeviceModels',
+    'api/Device/ListDeviceModels',
     'list-device-models',
   )
   const ListDevices = useGetData<User[]>(
-    'api/Error/ListDevices',
+    'api/Device/ListDevices',
     'List-devices',
   )
   const [selectedValue, setSelectedValue] = useState<number | undefined>(
@@ -302,8 +302,8 @@ function DeviceModelsList({
           title={'قطعه'}
           close={() => setOpenDialog(null)}
           array={KIOSKS_ARRAY}
-          editEndpoint={'api/Error/UpdateDeviceModel'}
-          createEndpoint={'api/Error/AddDeviceModel'}
+          editEndpoint={'api/Device/UpdateDeviceModel'}
+          createEndpoint={'api/Device/AddDeviceModel'}
           staticServerData={openDialog === 'edit' ? { id: selectedValue } : {}}
           defaultValue={{
             ...ListDeviceModels?.data?.value?.find(
@@ -324,7 +324,7 @@ function DeviceModelsList({
           deleteID={selectedValue}
           deleteDescription={`آیا از حذف  ${ListDeviceModels?.data?.value?.find((item) => item?.id === selectedValue)?.name} اطمینان دارید؟`}
           snackbarOpen={snackbarOpen}
-          deleteEndPoint={'api/Error/DeleteDeviceModel/'}
+          deleteEndPoint={'api/Device/DeleteDeviceModel/'}
           isDialogOpen={openDialog}
           customFunAfterSuccess={() => {
             ListDeviceModels?.refetch()

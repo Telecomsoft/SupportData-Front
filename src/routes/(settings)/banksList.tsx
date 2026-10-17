@@ -33,7 +33,7 @@ export const Route = createFileRoute('/(settings)/banksList')({
 })
 
 function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
-    const listBanks = useGetData<User[]>('api/Error/ListBanks', 'list-bank')
+    const listBanks = useGetData<User[]>('api/Bank/ListBanks', 'list-bank')
     const { accessCheck } = useAccessCheck()
     const [selectedValue, setSelectedValue] = useState<number | undefined>(undefined)
     const [openDialog, setOpenDialog] = useState<'add' | 'delete' | 'edit' | null>(null)
@@ -181,8 +181,8 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                     title={'بانک'}
                     close={() => setOpenDialog(null)}
                     array={KIOSKS_ARRAY}
-                    editEndpoint={'api/Error/UpdateBank'}
-                    createEndpoint={'api/Error/AddBank'}
+                    editEndpoint={'api/Bank/UpdateBank'}
+                    createEndpoint={'api/Bank/AddBank'}
                     staticServerData={openDialog === 'edit' ? { id: selectedValue } : {}}
                     defaultValue={{ ...listBanks?.data?.value?.find((i) => i?.id === selectedValue) }}
                     wrapperFunc={() => listBanks.refetch()}
@@ -196,7 +196,7 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                     deleteID={selectedValue}
                     deleteDescription={`آیا از حذف  ${listBanks?.data?.value?.find((item: any) => item?.id === selectedValue)?.name} اطمینان دارید؟`}
                     snackbarOpen={snackbarOpen}
-                    deleteEndPoint={'api/Error/DeleteBank/'}
+                    deleteEndPoint={'api/Bank/DeleteBank/'}
                     isDialogOpen={openDialog}
                     customFunAfterSuccess={() => {
                         listBanks?.refetch()

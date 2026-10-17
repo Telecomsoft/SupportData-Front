@@ -32,7 +32,7 @@ export const Route = createFileRoute('/(settings)/devicesList')({
 })
 
 function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
-  const ListDevices = useGetData<User[]>('api/Error/ListDevices', 'List-devices')
+  const ListDevices = useGetData<User[]>('api/Device/ListDevices', 'List-devices')
   const { accessCheck } = useAccessCheck()
   const { isMobile } = useDevice()
 
@@ -196,8 +196,8 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             title={'قطعه'}
             close={() => setOpenDialog(null)}
             array={KIOSKS_ARRAY}
-            editEndpoint={'api/Error/UpdateDevice'}
-            createEndpoint={'api/Error/AddDevice'}
+            editEndpoint={'api/Device/UpdateDevice'}
+            createEndpoint={'api/Device/AddDevice'}
             staticServerData={openDialog === 'edit' ? { id: selectedValue } : {}}
             defaultValue={{ ...ListDevices?.data?.value?.find((i) => i?.id === selectedValue) }}
             wrapperFunc={() => ListDevices.refetch()}
@@ -213,7 +213,7 @@ function devicesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             deleteID={selectedValue}
             deleteDescription={`آیا از حذف  ${ListDevices?.data?.value?.find(item => item?.id === selectedValue)?.name} اطمینان دارید؟`}
             snackbarOpen={snackbarOpen}
-            deleteEndPoint={'api/Error/DeleteDevice/'}
+            deleteEndPoint={'api/Device/DeleteDevice/'}
             isDialogOpen={openDialog}
             customFunAfterSuccess={() => {
               ListDevices?.refetch()
