@@ -42,6 +42,9 @@ const LayoutTopHeader: FC = ({ }: any) => {
       Cookies.remove('userName')
       Cookies.remove('userImage')
       Cookies.remove('userId')
+      Cookies.remove('userType')
+      Cookies.remove('customerID')
+      Cookies.remove('personnelID')
       window.location.href = '/'
    }
 
@@ -69,8 +72,8 @@ const LayoutTopHeader: FC = ({ }: any) => {
                borderRadius: sizeConverter(4, 'radius'),
                position: 'relative',
             }}
-         // onClick={handleMenuClick}
-          onClick={handleLogout}
+            // onClick={handleMenuClick}
+            onClick={handleLogout}
          >
             <Grid
                container

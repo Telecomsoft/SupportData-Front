@@ -20,6 +20,9 @@ export function MobileLayout({ children }: Props) {
         Cookies.remove('userName')
         Cookies.remove('userImage')
         Cookies.remove('userId')
+        Cookies.remove('userType')
+        Cookies.remove('customerID')
+        Cookies.remove('personnelID')
         window.location.href = '/'
     }
     return (

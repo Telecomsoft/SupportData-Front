@@ -38,3 +38,15 @@ export const formatDateString = (date: string): string => {
    // Replace slashes with dashes
    return englishDate?.replace(/\//g, '-')
 }
+
+export const dateFn = (value?: string | null) => {
+   const shamsi = new Date(value as string).toLocaleDateString('fa-IR', {
+      year: 'numeric',
+      month: 'short',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      formatMatcher: 'best fit',
+   })
+   return !value || undefined ? '-' : shamsi
+}

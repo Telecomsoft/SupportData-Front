@@ -17,5 +17,8 @@ export type Value = {
    roleID: number
    expiredTime: Date
    pictureURL: string
-   accessInfo: null
+   accessInfo: Record<string, { id: number; name: string; readAccess: boolean; writeAccess: boolean }> | null
+   userType: number            // 1 staff, 2 supporter, 3 repairman, 4 contractor, 5 customer
+   customerID: number | null   // set only for customer users
+   personnelID: number | null  // set when the user is linked to a personnel record
 }

@@ -130,11 +130,13 @@ export default function SettingsCard({
                         )}
                         {hasAccess && (
                             <>
-                                <ActionButton
-                                    icon={<EditOutlinedIcon />}
-                                    label="ویرایش"
-                                    onClick={onEdit}
-                                />
+                                {onEdit && (
+                                    <ActionButton
+                                        icon={<EditOutlinedIcon />}
+                                        label="ویرایش"
+                                        onClick={onEdit}
+                                    />
+                                )}
                                 <ActionButton
                                     icon={<DeleteOutlineIcon />}
                                     label="حذف"

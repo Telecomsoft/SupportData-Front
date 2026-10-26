@@ -12,7 +12,7 @@ export type DialogArrayType = {
     label?: string
     value: string
     kind: 'combo' | 'textField' | 'checkbox' | 'uploadFile' | 'custom' | 'datePicker'
-    type?: 'multiple' | 'number' | 'freeSolo' | 'name' | 'string' | 'searchable' | 'date' | 'password' | 'choice'
+    type?: 'multiple' | 'number' | 'freeSolo' | 'name' | 'string' | 'searchable' | 'date' | 'password' | 'choice' | 'natural' | 'float'
     options?: option[]
     disable?: boolean
     ltr?: boolean,

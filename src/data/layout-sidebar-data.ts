@@ -9,6 +9,12 @@ import SupervisedUserCircleRoundedIcon from '@mui/icons-material/SupervisedUserC
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt'
 import MemoryIcon from '@mui/icons-material/Memory';
 import ComputerIcon from '@mui/icons-material/Computer';
+import StorageIcon from '@mui/icons-material/Storage'
+import BuildIcon from '@mui/icons-material/Build'
+import EventBusyIcon from '@mui/icons-material/EventBusy'
+import MapIcon from '@mui/icons-material/Map'
+import LocationCityIcon from '@mui/icons-material/LocationCity'
+import PointOfSaleIcon from '@mui/icons-material/PointOfSale'
 
 export type DataType = {
    name: string
@@ -79,6 +85,20 @@ export const LAYOUT_SIDEBAR_DATA: (DataType & { children?: DataType[] })[] = [
             icon: SupervisedUserCircleRoundedIcon,
             accessID: 102,
          },
+      ],
+   },
+   {
+      name: 'اطلاعات پایه',
+      value: 'baseData',
+      mobileLink: '/mobileListBaseData',
+      icon: StorageIcon,
+      accessID: 106,
+      children: [
+         { name: 'کارهای انجام‌شده', value: 'workItemsList', link: '/workItemsList', icon: BuildIcon, accessID: 106 },
+         { name: 'تعطیلات رسمی', value: 'holidaysList', link: '/holidaysList', icon: EventBusyIcon, accessID: 106 },
+         { name: 'استان‌ها', value: 'provincesList', link: '/provincesList', icon: MapIcon, accessID: 106 },
+         { name: 'شهرها', value: 'citiesList', link: '/citiesList', icon: LocationCityIcon, accessID: 106 },
+         { name: 'مدل‌های کیوسک', value: 'kioskModelsList', link: '/kioskModelsList', icon: PointOfSaleIcon, accessID: 106 },
       ],
    },
 ]

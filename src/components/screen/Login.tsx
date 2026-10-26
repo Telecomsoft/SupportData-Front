@@ -45,10 +45,24 @@ const Login = (props: Partial<LoginProps>) => {
 
             if (res?.data?.value) {
 
-               Cookies.set('accessInfo', JSON.stringify(res.data.value.accessInfo), { expires: 15 })
+               // ذخیره اطلاعات حجیم دسترسی‌ها در localStorage به جای کوکی (بدون محدودیت حجمی)
+               localStorage.setItem('accessInfo', JSON.stringify(res.data.value.accessInfo))
+
+               // ذخیره توکن و اطلاعات سبک در کوکی
                Cookies.set('auth_token', res.data.value.token, { expires: 15, path: '/' })
                Cookies.set('userName', res.data.value.userName, { expires: 15, path: '/' })
                Cookies.set('userId', String(res.data.value.userID), { expires: 15, path: '/' })
+               Cookies.set('userType', String(res.data.value.userType ?? 1), { expires: 15, path: '/' })
+               
+               if (res.data.value.customerID != null) 
+                  Cookies.set('customerID', String(res.data.value.customerID), { expires: 15, path: '/' })
+               else 
+                  Cookies.remove('customerID', { path: '/' })
+
+               if (res.data.value.personnelID != null) 
+                  Cookies.set('personnelID', String(res.data.value.personnelID), { expires: 15, path: '/' })
+               else 
+                  Cookies.remove('personnelID', { path: '/' })
 
                navigate({ to: '/errorsList' })
 
@@ -99,7 +113,6 @@ const Login = (props: Partial<LoginProps>) => {
             variant={isMobile ? "confirmMobile" : 'main'}
             disabled={signIn.isPending}
             sx={{
-
                height: sizeConverter(44, 'height'),
             }}
          >

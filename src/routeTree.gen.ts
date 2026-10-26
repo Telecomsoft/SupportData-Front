@@ -20,6 +20,12 @@ import { Route as settingsDevicesListImport } from './routes/(settings)/devicesL
 import { Route as settingsDeviceModelsListImport } from './routes/(settings)/deviceModelsList'
 import { Route as settingsBanksListImport } from './routes/(settings)/banksList'
 import { Route as dashboardErrorsListImport } from './routes/(dashboard)/errorsList'
+import { Route as baseDataWorkItemsListImport } from './routes/(baseData)/workItemsList'
+import { Route as baseDataProvincesListImport } from './routes/(baseData)/provincesList'
+import { Route as baseDataMobileListBaseDataImport } from './routes/(baseData)/mobileListBaseData'
+import { Route as baseDataKioskModelsListImport } from './routes/(baseData)/kioskModelsList'
+import { Route as baseDataHolidaysListImport } from './routes/(baseData)/holidaysList'
+import { Route as baseDataCitiesListImport } from './routes/(baseData)/citiesList'
 
 // Create/Update Routes
 
@@ -81,6 +87,44 @@ const dashboardErrorsListRoute = dashboardErrorsListImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const baseDataWorkItemsListRoute = baseDataWorkItemsListImport.update({
+  id: '/(baseData)/workItemsList',
+  path: '/workItemsList',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const baseDataProvincesListRoute = baseDataProvincesListImport.update({
+  id: '/(baseData)/provincesList',
+  path: '/provincesList',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const baseDataMobileListBaseDataRoute = baseDataMobileListBaseDataImport.update(
+  {
+    id: '/(baseData)/mobileListBaseData',
+    path: '/mobileListBaseData',
+    getParentRoute: () => rootRoute,
+  } as any,
+)
+
+const baseDataKioskModelsListRoute = baseDataKioskModelsListImport.update({
+  id: '/(baseData)/kioskModelsList',
+  path: '/kioskModelsList',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const baseDataHolidaysListRoute = baseDataHolidaysListImport.update({
+  id: '/(baseData)/holidaysList',
+  path: '/holidaysList',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const baseDataCitiesListRoute = baseDataCitiesListImport.update({
+  id: '/(baseData)/citiesList',
+  path: '/citiesList',
+  getParentRoute: () => rootRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -90,6 +134,48 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/(baseData)/citiesList': {
+      id: '/(baseData)/citiesList'
+      path: '/citiesList'
+      fullPath: '/citiesList'
+      preLoaderRoute: typeof baseDataCitiesListImport
+      parentRoute: typeof rootRoute
+    }
+    '/(baseData)/holidaysList': {
+      id: '/(baseData)/holidaysList'
+      path: '/holidaysList'
+      fullPath: '/holidaysList'
+      preLoaderRoute: typeof baseDataHolidaysListImport
+      parentRoute: typeof rootRoute
+    }
+    '/(baseData)/kioskModelsList': {
+      id: '/(baseData)/kioskModelsList'
+      path: '/kioskModelsList'
+      fullPath: '/kioskModelsList'
+      preLoaderRoute: typeof baseDataKioskModelsListImport
+      parentRoute: typeof rootRoute
+    }
+    '/(baseData)/mobileListBaseData': {
+      id: '/(baseData)/mobileListBaseData'
+      path: '/mobileListBaseData'
+      fullPath: '/mobileListBaseData'
+      preLoaderRoute: typeof baseDataMobileListBaseDataImport
+      parentRoute: typeof rootRoute
+    }
+    '/(baseData)/provincesList': {
+      id: '/(baseData)/provincesList'
+      path: '/provincesList'
+      fullPath: '/provincesList'
+      preLoaderRoute: typeof baseDataProvincesListImport
+      parentRoute: typeof rootRoute
+    }
+    '/(baseData)/workItemsList': {
+      id: '/(baseData)/workItemsList'
+      path: '/workItemsList'
+      fullPath: '/workItemsList'
+      preLoaderRoute: typeof baseDataWorkItemsListImport
       parentRoute: typeof rootRoute
     }
     '/(dashboard)/errorsList': {
@@ -155,6 +241,12 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/citiesList': typeof baseDataCitiesListRoute
+  '/holidaysList': typeof baseDataHolidaysListRoute
+  '/kioskModelsList': typeof baseDataKioskModelsListRoute
+  '/mobileListBaseData': typeof baseDataMobileListBaseDataRoute
+  '/provincesList': typeof baseDataProvincesListRoute
+  '/workItemsList': typeof baseDataWorkItemsListRoute
   '/errorsList': typeof dashboardErrorsListRoute
   '/banksList': typeof settingsBanksListRoute
   '/deviceModelsList': typeof settingsDeviceModelsListRoute
@@ -167,6 +259,12 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/citiesList': typeof baseDataCitiesListRoute
+  '/holidaysList': typeof baseDataHolidaysListRoute
+  '/kioskModelsList': typeof baseDataKioskModelsListRoute
+  '/mobileListBaseData': typeof baseDataMobileListBaseDataRoute
+  '/provincesList': typeof baseDataProvincesListRoute
+  '/workItemsList': typeof baseDataWorkItemsListRoute
   '/errorsList': typeof dashboardErrorsListRoute
   '/banksList': typeof settingsBanksListRoute
   '/deviceModelsList': typeof settingsDeviceModelsListRoute
@@ -180,6 +278,12 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/(baseData)/citiesList': typeof baseDataCitiesListRoute
+  '/(baseData)/holidaysList': typeof baseDataHolidaysListRoute
+  '/(baseData)/kioskModelsList': typeof baseDataKioskModelsListRoute
+  '/(baseData)/mobileListBaseData': typeof baseDataMobileListBaseDataRoute
+  '/(baseData)/provincesList': typeof baseDataProvincesListRoute
+  '/(baseData)/workItemsList': typeof baseDataWorkItemsListRoute
   '/(dashboard)/errorsList': typeof dashboardErrorsListRoute
   '/(settings)/banksList': typeof settingsBanksListRoute
   '/(settings)/deviceModelsList': typeof settingsDeviceModelsListRoute
@@ -194,6 +298,12 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/citiesList'
+    | '/holidaysList'
+    | '/kioskModelsList'
+    | '/mobileListBaseData'
+    | '/provincesList'
+    | '/workItemsList'
     | '/errorsList'
     | '/banksList'
     | '/deviceModelsList'
@@ -205,6 +315,12 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/citiesList'
+    | '/holidaysList'
+    | '/kioskModelsList'
+    | '/mobileListBaseData'
+    | '/provincesList'
+    | '/workItemsList'
     | '/errorsList'
     | '/banksList'
     | '/deviceModelsList'
@@ -216,6 +332,12 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/(baseData)/citiesList'
+    | '/(baseData)/holidaysList'
+    | '/(baseData)/kioskModelsList'
+    | '/(baseData)/mobileListBaseData'
+    | '/(baseData)/provincesList'
+    | '/(baseData)/workItemsList'
     | '/(dashboard)/errorsList'
     | '/(settings)/banksList'
     | '/(settings)/deviceModelsList'
@@ -229,6 +351,12 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  baseDataCitiesListRoute: typeof baseDataCitiesListRoute
+  baseDataHolidaysListRoute: typeof baseDataHolidaysListRoute
+  baseDataKioskModelsListRoute: typeof baseDataKioskModelsListRoute
+  baseDataMobileListBaseDataRoute: typeof baseDataMobileListBaseDataRoute
+  baseDataProvincesListRoute: typeof baseDataProvincesListRoute
+  baseDataWorkItemsListRoute: typeof baseDataWorkItemsListRoute
   dashboardErrorsListRoute: typeof dashboardErrorsListRoute
   settingsBanksListRoute: typeof settingsBanksListRoute
   settingsDeviceModelsListRoute: typeof settingsDeviceModelsListRoute
@@ -241,6 +369,12 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  baseDataCitiesListRoute: baseDataCitiesListRoute,
+  baseDataHolidaysListRoute: baseDataHolidaysListRoute,
+  baseDataKioskModelsListRoute: baseDataKioskModelsListRoute,
+  baseDataMobileListBaseDataRoute: baseDataMobileListBaseDataRoute,
+  baseDataProvincesListRoute: baseDataProvincesListRoute,
+  baseDataWorkItemsListRoute: baseDataWorkItemsListRoute,
   dashboardErrorsListRoute: dashboardErrorsListRoute,
   settingsBanksListRoute: settingsBanksListRoute,
   settingsDeviceModelsListRoute: settingsDeviceModelsListRoute,
@@ -265,6 +399,12 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/(baseData)/citiesList",
+        "/(baseData)/holidaysList",
+        "/(baseData)/kioskModelsList",
+        "/(baseData)/mobileListBaseData",
+        "/(baseData)/provincesList",
+        "/(baseData)/workItemsList",
         "/(dashboard)/errorsList",
         "/(settings)/banksList",
         "/(settings)/deviceModelsList",
@@ -277,6 +417,24 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/(baseData)/citiesList": {
+      "filePath": "(baseData)/citiesList.tsx"
+    },
+    "/(baseData)/holidaysList": {
+      "filePath": "(baseData)/holidaysList.tsx"
+    },
+    "/(baseData)/kioskModelsList": {
+      "filePath": "(baseData)/kioskModelsList.tsx"
+    },
+    "/(baseData)/mobileListBaseData": {
+      "filePath": "(baseData)/mobileListBaseData.tsx"
+    },
+    "/(baseData)/provincesList": {
+      "filePath": "(baseData)/provincesList.tsx"
+    },
+    "/(baseData)/workItemsList": {
+      "filePath": "(baseData)/workItemsList.tsx"
     },
     "/(dashboard)/errorsList": {
       "filePath": "(dashboard)/errorsList.tsx"
