@@ -15,6 +15,10 @@ import EventBusyIcon from '@mui/icons-material/EventBusy'
 import MapIcon from '@mui/icons-material/Map'
 import LocationCityIcon from '@mui/icons-material/LocationCity'
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale'
+import BusinessIcon from '@mui/icons-material/Business'
+import GroupsIcon from '@mui/icons-material/Groups'
+import DescriptionIcon from '@mui/icons-material/Description'
+import HandshakeIcon from '@mui/icons-material/Handshake'
 
 export type DataType = {
    name: string
@@ -99,6 +103,18 @@ export const LAYOUT_SIDEBAR_DATA: (DataType & { children?: DataType[] })[] = [
          { name: 'استان‌ها', value: 'provincesList', link: '/provincesList', icon: MapIcon, accessID: 106 },
          { name: 'شهرها', value: 'citiesList', link: '/citiesList', icon: LocationCityIcon, accessID: 106 },
          { name: 'مدل‌های کیوسک', value: 'kioskModelsList', link: '/kioskModelsList', icon: PointOfSaleIcon, accessID: 106 },
+      ],
+   },
+   {
+      name: 'مشتریان و قراردادها',
+      value: 'customers',
+      mobileLink: '/mobileListCustomers',
+      icon: HandshakeIcon,
+      accessID: [107, 108, 109],
+      children: [
+         { name: 'مشتریان', value: 'customersList', link: '/customersList', icon: BusinessIcon, accessID: 107 },
+         { name: 'پرسنل', value: 'personnelList', link: '/personnelList', icon: GroupsIcon, accessID: 108 },
+         { name: 'قراردادها', value: 'contractsList', link: '/contractsList', icon: DescriptionIcon, accessID: 109 },
       ],
    },
 ]

@@ -11,7 +11,7 @@ import { useDevice } from '@hooks/useDevice'
 import AutoCompleteComp from '@components/general/hookFromInputs/AutoComplete'
 import CheckboxComponent from '@components/general/hookFromInputs/CheckboxComp'
 import { useGetData } from '@hooks/useGetData'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import CircleIcon from '@mui/icons-material/Circle'
 import Grid from '@mui/material/Grid2'
 
 export const Route = createFileRoute('/(baseData)/citiesList')({
@@ -36,15 +36,8 @@ function CitiesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     { field: 'provinceName', headerName: 'استان', width: sizeConverter(160, 'width') },
     {
       field: 'isProvinceCenter', headerName: 'مرکز استان', width: sizeConverter(100, 'width'), valueGetter: (r) => (r.isProvinceCenter ? 'بله' : 'خیر'),
-      renderCell: (params) => <Grid justifyContent="center" alignItems="center" container>
-
-        <CheckCircleIcon sx={{
-          alignSelf: 'center',
-          color: params.value ? 'dataGrid.main' : 'black.6',
-          width: sizeConverter(20),
-          height: sizeConverter(20),
-        }}
-        />
+      renderCell: (param) => <Grid justifyContent="center" alignItems="center" container>
+        <CircleIcon sx={{ color: param?.value ? 'primary.main' : 'gray' }} />
       </Grid>
     },
   ]

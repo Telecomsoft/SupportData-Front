@@ -25,6 +25,8 @@ import { useAccessCheck } from '@src/utility/accessCheck'
 import { useDevice } from '@hooks/useDevice'
 import { MobileUserList } from '@components/mobile/MobileUserList'
 import CustomCircularProgress from '@components/general/CustomCircularProgress'
+import LockOpenIcon from '@mui/icons-material/LockOpen'
+import { nameOf, USER_TYPES } from '@src/data/type/lookups'
 
 const GeneralDeleteDialog = lazy(
     () => import('@components/general/GeneralDeleteDialog.tsx'),
@@ -58,6 +60,9 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
 
     const users = useGetData<any>('api/User/List', 'get-users')
     const permissionRoles = useGetData<PermissionRole[]>('api/Role/List', 'get-roles-user')
+    const customers = useGetData<{ id: number; name: string }[]>('api/Customer/ListCustomers', 'list-customers-for-users')
+    const personnel = useGetData<{ id: number; firstName: string; lastName: string }[]>('api/Personnel/ListPersonnel', 'list-personnel-for-users')
+    const personnelOptions = (personnel.data?.value ?? []).map((p) => ({ id: p.id, name: `${p.firstName} ${p.lastName}`.trim() }))
 
     const [selectedItem, setSelectedItem] = useState<User | undefined | null>(null)
     const [addKind, setAddKind] = useState(null)
@@ -90,14 +95,24 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             field: 'disabled', headerName: 'وضعیت', width: sizeConverter(120, 'width'), align: 'center',
             renderCell: (param) => <CircleIcon sx={{ color: !param?.value ? 'primary.main' : 'gray' }} />
         },
+        {
+            field: 'userType', headerName: 'نوع کاربر', width: sizeConverter(120, 'width'), align: 'center',
+            renderCell: (param) => <Typography>{nameOf(USER_TYPES, param?.value)}</Typography>
+        },
         ...(hasWriteAccess ? [{
             field: 'password', headerName: 'تغییر رمز عبور', width: sizeConverter(120, 'width'), align: 'center' as const,
             renderCell: () => <PasswordRoundedIcon onClick={() => handleDialog('add/password')} />
         }] : []),
         ...(hasWriteAccess ? [{
+            field: 'lockedUntil', headerName: 'قفل شده', width: sizeConverter(100, 'width'), align: 'center' as const,
+            renderCell: (param: any) => param?.value && new Date(param.value) > new Date()
+                ? <LockOpenIcon sx={{ cursor: 'pointer' }} onClick={() => handleDialog('add/unlock')} />
+                : <Typography>-</Typography>
+        }] : []),
+        ...(hasWriteAccess ? [{
             field: 'reset', headerName: 'باز نشانی رمز عبور', width: sizeConverter(120, 'width'), align: 'center' as const,
             renderCell: () => <LockResetIcon onClick={() => handleDialog('add/reset')} />
-        }] : [])
+        }] : []),
     ]
 
     const renderDesktop = () => (
@@ -173,7 +188,7 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             }}
             columnGap={sizeConverter(6, 'spaceX')}
         >
-            {permissionRoles?.isLoading ?
+            {customers?.isLoading || permissionRoles?.isLoading ?
                 <Grid sx={{ m: 'auto', mt: isMobile ? '50%' : '20%' }}>
                     <CustomCircularProgress thickness={2} size={60} />
                 </Grid>
@@ -189,7 +204,12 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                         editEndpoint={'api/User/Edit'}
                         createEndpoint={'api/User/Create'}
                         snackbarOpen={snackbarOpen}
-                        autoCompleteOption={{ roleID: permissionRoles?.data?.value ?? [] }}
+                        autoCompleteOption={{
+                            roleID: permissionRoles?.data?.value ?? [],
+                            userType: USER_TYPES,
+                            customerID: customers.data?.value ?? [],
+                            personnelID: personnelOptions,
+                        }}
                         open={openDialog}
                         wrapperFunc={() => {
                             users?.refetch();
@@ -237,6 +257,24 @@ function Users({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                             setOpenDialog(null);
                             setSelectedItem(null);
                         }}
+                    />
+                )}
+                {addKind === 'unlock' && (
+                    <GeneralConfirmDialog
+                        dialogWidth={sizeConverter(400, 'width')}
+                        snackbarOpen={snackbarOpen}
+                        dialogCloseFun={() => {
+                            setAddKind(null);
+                            setOpenDialog(null);
+                            setSelectedItem(null);
+                        }}
+                        dialogTitle={'باز کردن قفل حساب'}
+                        isDialogOpen={addKind}
+                        confirmMessage={'قفل این حساب کاربری باز شود؟'}
+                        snackBarSuccessMessage={'قفل حساب باز شد'}
+                        customFunAfterSuccess={() => users?.refetch()}
+                        endPoint={`api/User/Unlock/${selectedItem?.[0]}`}
+                        apiMethod="put"
                     />
                 )}
 

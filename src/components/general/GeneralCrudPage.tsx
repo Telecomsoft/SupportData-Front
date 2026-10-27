@@ -46,6 +46,7 @@ export type CrudPageProps = {
     snackbarOpen: snackbarOpenType
     /** an extra list the page needs to wait for (e.g. the provinces for the cities page) */
     isLoadingExtra?: boolean
+    dialogWidth?: number
 }
 
 type Mode = 'add' | 'edit' | 'delete' | null
@@ -56,7 +57,7 @@ type Mode = 'add' | 'edit' | 'delete' | null
  */
 const GeneralCrudPage = ({
     title, queryKey, listEndpoint, createEndpoint, updateEndpoint, deleteEndpoint, accessID, columns, dialogArray,
-    autoCompleteOption, addDefaultValue, cardTitle, cardDescription, deleteDescription, snackbarOpen, isLoadingExtra,
+    autoCompleteOption, addDefaultValue, cardTitle, cardDescription, deleteDescription, snackbarOpen, isLoadingExtra,dialogWidth,
 }: CrudPageProps) => {
     const list = useGetData<any[]>(listEndpoint, queryKey)
     const { accessCheck } = useAccessCheck()
@@ -73,7 +74,7 @@ const GeneralCrudPage = ({
         setSelectedID(id)
         setOpenDialog(mode)
     }
-console.log('hasWriteAccess',hasWriteAccess)
+
     return (
         <Grid
             container
@@ -141,6 +142,7 @@ console.log('hasWriteAccess',hasWriteAccess)
                 <GeneralDialog
                     open={openDialog}
                     title={title}
+                    width={dialogWidth ? sizeConverter(dialogWidth, 'width') : undefined}
                     close={() => setOpenDialog(null)}
                     array={dialogArray}
                     createEndpoint={createEndpoint}

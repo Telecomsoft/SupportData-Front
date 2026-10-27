@@ -11,7 +11,7 @@ import { useDevice } from '@hooks/useDevice'
 import AutoCompleteComp from '@components/general/hookFromInputs/AutoComplete'
 import CheckboxComponent from '@components/general/hookFromInputs/CheckboxComp'
 import { useGetData } from '@hooks/useGetData'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import CircleIcon from '@mui/icons-material/Circle'
 import Grid from '@mui/material/Grid2'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -60,8 +60,8 @@ function KioskModelsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     { field: 'series', headerName: 'سری', width: sizeConverter(120, 'width') },
     { field: 'description', headerName: 'توضیحات', width: sizeConverter(220, 'width') },
     {
-      field: 'defaultDeviceModelIDs', 
-      headerName: 'قطعات پیش فرض', 
+      field: 'defaultDeviceModelIDs',
+      headerName: 'قطعات پیش فرض',
       width: sizeConverter(220, 'width'),
       renderCell: (params) => {
         return (
@@ -72,21 +72,13 @@ function KioskModelsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
       }
     },
     {
-      field: 'isActive', 
-      headerName: 'وضعیت', 
-      width: sizeConverter(80, 'width'), 
+      field: 'isActive',
+      headerName: 'وضعیت',
+      width: sizeConverter(80, 'width'),
       valueGetter: (r) => (r.isActive ? 'فعال' : 'غیرفعال'),
-      renderCell: (params) => (
-        <Grid justifyContent="center" alignItems="center" container>
-          <CheckCircleIcon sx={{
-            alignSelf: 'center',
-            color: params.value === 'فعال' || params.value === true ? 'dataGrid.main' : 'black.6',
-            width: sizeConverter(20),
-            height: sizeConverter(20),
-          }}
-          />
-        </Grid>
-      )
+      renderCell: (param) => <Grid justifyContent="center" alignItems="center" container>
+        <CircleIcon sx={{ color: param?.value ? 'primary.main' : 'gray' }} />
+      </Grid>
     },
   ]
 
@@ -96,14 +88,14 @@ function KioskModelsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
   return (
     <Box sx={{ width: '100%' }}>
       {/* فیلتر وضعیت مینیمال و Curve */}
-      <Grid 
-        container 
-        spacing={2} 
-        sx={{ 
-          p: 2.5, 
-          alignItems: 'center', 
-          bgcolor: 'background.paper', 
-          mb: 2, 
+      <Grid
+        container
+        spacing={2}
+        sx={{
+          p: 2.5,
+          alignItems: 'center',
+          bgcolor: 'background.paper',
+          mb: 2,
           borderRadius: sizeConverter(16, 'radius'),
           boxShadow: '0 4px 20px rgba(0,0,0,0.05)'
         }}
@@ -115,10 +107,10 @@ function KioskModelsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             value={activeOptions.find((opt) => opt.id === selectedIsActive) || activeOptions[0]}
             onChange={(_, newValue) => setSelectedIsActive(newValue ? newValue.id : 'all')}
             renderInput={(params) => (
-              <StyledTextField 
-                {...params} 
-                label="وضعیت مدل" 
-                fullWidth 
+              <StyledTextField
+                {...params}
+                label="وضعیت مدل"
+                fullWidth
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: sizeConverter(12, 'radius') } }}
               />
             )}
@@ -126,12 +118,12 @@ function KioskModelsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
         </Grid>
 
         <Grid size={{ xs: 12, md: 4 }}>
-          <Button 
-            variant="contained" 
-            onClick={handleApplyFilter} 
-            fullWidth 
-            sx={{ 
-              height: '56px', 
+          <Button
+            variant="contained"
+            onClick={handleApplyFilter}
+            fullWidth
+            sx={{
+              height: '56px',
               borderRadius: sizeConverter(12, 'radius'),
               fontWeight: 'bold',
               boxShadow: 'none',

@@ -11,7 +11,7 @@ import { useDevice } from '@hooks/useDevice'
 import AutoCompleteComp from '@components/general/hookFromInputs/AutoComplete'
 import CheckboxComponent from '@components/general/hookFromInputs/CheckboxComp'
 import { useGetData } from '@hooks/useGetData'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import CircleIcon from '@mui/icons-material/Circle'
 import Grid from '@mui/material/Grid2'
 import Button from '@mui/material/Button'
 import { useState } from 'react'
@@ -38,7 +38,7 @@ function WorkItemsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
 
   // دریافت لیست دسته‌بندی‌ها (پشتیبانی از ساختار value یا آرایه مستقیم)
   const categoriesData = useGetData<any>('api/BaseData/ListWorkItems', 'list-work-items')
-  
+
   // استخراج صحیح لیست دسته‌بندی‌ها
 
   // گزینه‌های دسته‌بندی فیلتر بالا (همراه با گزینه همه / 0)
@@ -69,14 +69,14 @@ function WorkItemsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
   // اصلاح دیالوگ افزودن و ویرایش (ارسال صحیح گزینه‌ها و مقادیر)
   const dialogArray: DialogArrayType[] = [
     { label: 'عنوان کار', value: 'name', kind: 'textField', size: isMobile ? 12 : 5.9, component: TextFieldComp, validators: { ...REQUIRED_VALIDATOR } },
-    { 
-      label: 'دسته‌بندی', 
-      value: 'category', 
-      kind: 'combo', 
-      size: isMobile ? 12 : 5.9, 
-      component: AutoCompleteComp, 
+    {
+      label: 'دسته‌بندی',
+      value: 'category',
+      kind: 'combo',
+      size: isMobile ? 12 : 5.9,
+      component: AutoCompleteComp,
       autocompleteType: 'single',
-      autoCompleteOption: categoryOptions 
+      autoCompleteOption: categoryOptions
     },
     { label: 'توضیحات', value: 'description', kind: 'textField', multiline: true, maxRows: 2, size: 12, component: TextFieldComp },
     { title: 'فعال', value: 'isActive', kind: 'checkbox', size: 12, component: CheckboxComponent },
@@ -84,9 +84,9 @@ function WorkItemsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
 
   const columns: TelecomColumnsType[] = [
     { field: 'name', headerName: 'عنوان کار', width: sizeConverter(160, 'width') },
-    { 
-      field: 'category', 
-      headerName: 'دسته‌بندی', 
+    {
+      field: 'category',
+      headerName: 'دسته‌بندی',
       width: sizeConverter(140, 'width'),
       valueGetter: (r) => {
         const found = categoryOptions.find((c: any) => c.id === r.category)
@@ -96,14 +96,8 @@ function WorkItemsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     { field: 'description', headerName: 'توضیحات', width: sizeConverter(220, 'width') },
     {
       field: 'isActive', headerName: 'وضعیت', width: sizeConverter(80, 'width'), valueGetter: (r) => (r.isActive ? 'فعال' : 'غیرفعال'),
-      renderCell: (params) => <Grid justifyContent="center" alignItems="center" container>
-        <CheckCircleIcon sx={{
-          alignSelf: 'center',
-          color: params.value === 'فعال' || params.value === true ? 'dataGrid.main' : 'black.6',
-          width: sizeConverter(20),
-          height: sizeConverter(20),
-        }}
-        />
+      renderCell: (param) => <Grid justifyContent="center" alignItems="center" container>
+        <CircleIcon sx={{ color: param?.value ? 'primary.main' : 'gray' }} />
       </Grid>
     },
   ]
@@ -114,14 +108,14 @@ function WorkItemsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
   return (
     <Box sx={{ width: '100%' }}>
       {/* بخش فیلترهای مینیمال و Curve (گرد) */}
-      <Grid 
-        container 
-        spacing={2} 
-        sx={{ 
-          p: 2.5, 
-          alignItems: 'center', 
-          bgcolor: 'background.paper', 
-          mb: 2, 
+      <Grid
+        container
+        spacing={2}
+        sx={{
+          p: 2.5,
+          alignItems: 'center',
+          bgcolor: 'background.paper',
+          mb: 2,
           borderRadius: sizeConverter(16, 'radius'),
           boxShadow: '0 4px 20px rgba(0,0,0,0.05)'
         }}
@@ -133,10 +127,10 @@ function WorkItemsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             value={categoryOptions.find((opt) => opt.id === selectedCategory) || categoryOptions[0]}
             onChange={(_, newValue) => setSelectedCategory(newValue ? newValue.id : 0)}
             renderInput={(params) => (
-              <StyledTextField 
-                {...params} 
-                label="دسته‌بندی" 
-                fullWidth 
+              <StyledTextField
+                {...params}
+                label="دسته‌بندی"
+                fullWidth
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: sizeConverter(12, 'radius') } }}
               />
             )}
@@ -150,10 +144,10 @@ function WorkItemsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             value={activeOptions.find((opt) => opt.id === selectedIsActive) || activeOptions[0]}
             onChange={(_, newValue) => setSelectedIsActive(newValue ? newValue.id : 'all')}
             renderInput={(params) => (
-              <StyledTextField 
-                {...params} 
-                label="وضعیت" 
-                fullWidth 
+              <StyledTextField
+                {...params}
+                label="وضعیت"
+                fullWidth
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: sizeConverter(12, 'radius') } }}
               />
             )}
@@ -161,12 +155,12 @@ function WorkItemsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
         </Grid>
 
         <Grid size={{ xs: 12, md: 4 }}>
-          <Button 
-            variant="contained" 
-            onClick={handleApplyFilter} 
-            fullWidth 
-            sx={{ 
-              height: '56px', 
+          <Button
+            variant="contained"
+            onClick={handleApplyFilter}
+            fullWidth
+            sx={{
+              height: '56px',
               borderRadius: sizeConverter(12, 'radius'),
               fontWeight: 'bold',
               boxShadow: 'none',

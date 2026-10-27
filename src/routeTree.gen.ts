@@ -20,6 +20,10 @@ import { Route as settingsDevicesListImport } from './routes/(settings)/devicesL
 import { Route as settingsDeviceModelsListImport } from './routes/(settings)/deviceModelsList'
 import { Route as settingsBanksListImport } from './routes/(settings)/banksList'
 import { Route as dashboardErrorsListImport } from './routes/(dashboard)/errorsList'
+import { Route as customersPersonnelListImport } from './routes/(customers)/personnelList'
+import { Route as customersMobileListCustomersImport } from './routes/(customers)/mobileListCustomers'
+import { Route as customersCustomersListImport } from './routes/(customers)/customersList'
+import { Route as customersContractsListImport } from './routes/(customers)/contractsList'
 import { Route as baseDataWorkItemsListImport } from './routes/(baseData)/workItemsList'
 import { Route as baseDataProvincesListImport } from './routes/(baseData)/provincesList'
 import { Route as baseDataMobileListBaseDataImport } from './routes/(baseData)/mobileListBaseData'
@@ -84,6 +88,31 @@ const settingsBanksListRoute = settingsBanksListImport.update({
 const dashboardErrorsListRoute = dashboardErrorsListImport.update({
   id: '/(dashboard)/errorsList',
   path: '/errorsList',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const customersPersonnelListRoute = customersPersonnelListImport.update({
+  id: '/(customers)/personnelList',
+  path: '/personnelList',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const customersMobileListCustomersRoute =
+  customersMobileListCustomersImport.update({
+    id: '/(customers)/mobileListCustomers',
+    path: '/mobileListCustomers',
+    getParentRoute: () => rootRoute,
+  } as any)
+
+const customersCustomersListRoute = customersCustomersListImport.update({
+  id: '/(customers)/customersList',
+  path: '/customersList',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const customersContractsListRoute = customersContractsListImport.update({
+  id: '/(customers)/contractsList',
+  path: '/contractsList',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -178,6 +207,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof baseDataWorkItemsListImport
       parentRoute: typeof rootRoute
     }
+    '/(customers)/contractsList': {
+      id: '/(customers)/contractsList'
+      path: '/contractsList'
+      fullPath: '/contractsList'
+      preLoaderRoute: typeof customersContractsListImport
+      parentRoute: typeof rootRoute
+    }
+    '/(customers)/customersList': {
+      id: '/(customers)/customersList'
+      path: '/customersList'
+      fullPath: '/customersList'
+      preLoaderRoute: typeof customersCustomersListImport
+      parentRoute: typeof rootRoute
+    }
+    '/(customers)/mobileListCustomers': {
+      id: '/(customers)/mobileListCustomers'
+      path: '/mobileListCustomers'
+      fullPath: '/mobileListCustomers'
+      preLoaderRoute: typeof customersMobileListCustomersImport
+      parentRoute: typeof rootRoute
+    }
+    '/(customers)/personnelList': {
+      id: '/(customers)/personnelList'
+      path: '/personnelList'
+      fullPath: '/personnelList'
+      preLoaderRoute: typeof customersPersonnelListImport
+      parentRoute: typeof rootRoute
+    }
     '/(dashboard)/errorsList': {
       id: '/(dashboard)/errorsList'
       path: '/errorsList'
@@ -247,6 +304,10 @@ export interface FileRoutesByFullPath {
   '/mobileListBaseData': typeof baseDataMobileListBaseDataRoute
   '/provincesList': typeof baseDataProvincesListRoute
   '/workItemsList': typeof baseDataWorkItemsListRoute
+  '/contractsList': typeof customersContractsListRoute
+  '/customersList': typeof customersCustomersListRoute
+  '/mobileListCustomers': typeof customersMobileListCustomersRoute
+  '/personnelList': typeof customersPersonnelListRoute
   '/errorsList': typeof dashboardErrorsListRoute
   '/banksList': typeof settingsBanksListRoute
   '/deviceModelsList': typeof settingsDeviceModelsListRoute
@@ -265,6 +326,10 @@ export interface FileRoutesByTo {
   '/mobileListBaseData': typeof baseDataMobileListBaseDataRoute
   '/provincesList': typeof baseDataProvincesListRoute
   '/workItemsList': typeof baseDataWorkItemsListRoute
+  '/contractsList': typeof customersContractsListRoute
+  '/customersList': typeof customersCustomersListRoute
+  '/mobileListCustomers': typeof customersMobileListCustomersRoute
+  '/personnelList': typeof customersPersonnelListRoute
   '/errorsList': typeof dashboardErrorsListRoute
   '/banksList': typeof settingsBanksListRoute
   '/deviceModelsList': typeof settingsDeviceModelsListRoute
@@ -284,6 +349,10 @@ export interface FileRoutesById {
   '/(baseData)/mobileListBaseData': typeof baseDataMobileListBaseDataRoute
   '/(baseData)/provincesList': typeof baseDataProvincesListRoute
   '/(baseData)/workItemsList': typeof baseDataWorkItemsListRoute
+  '/(customers)/contractsList': typeof customersContractsListRoute
+  '/(customers)/customersList': typeof customersCustomersListRoute
+  '/(customers)/mobileListCustomers': typeof customersMobileListCustomersRoute
+  '/(customers)/personnelList': typeof customersPersonnelListRoute
   '/(dashboard)/errorsList': typeof dashboardErrorsListRoute
   '/(settings)/banksList': typeof settingsBanksListRoute
   '/(settings)/deviceModelsList': typeof settingsDeviceModelsListRoute
@@ -304,6 +373,10 @@ export interface FileRouteTypes {
     | '/mobileListBaseData'
     | '/provincesList'
     | '/workItemsList'
+    | '/contractsList'
+    | '/customersList'
+    | '/mobileListCustomers'
+    | '/personnelList'
     | '/errorsList'
     | '/banksList'
     | '/deviceModelsList'
@@ -321,6 +394,10 @@ export interface FileRouteTypes {
     | '/mobileListBaseData'
     | '/provincesList'
     | '/workItemsList'
+    | '/contractsList'
+    | '/customersList'
+    | '/mobileListCustomers'
+    | '/personnelList'
     | '/errorsList'
     | '/banksList'
     | '/deviceModelsList'
@@ -338,6 +415,10 @@ export interface FileRouteTypes {
     | '/(baseData)/mobileListBaseData'
     | '/(baseData)/provincesList'
     | '/(baseData)/workItemsList'
+    | '/(customers)/contractsList'
+    | '/(customers)/customersList'
+    | '/(customers)/mobileListCustomers'
+    | '/(customers)/personnelList'
     | '/(dashboard)/errorsList'
     | '/(settings)/banksList'
     | '/(settings)/deviceModelsList'
@@ -357,6 +438,10 @@ export interface RootRouteChildren {
   baseDataMobileListBaseDataRoute: typeof baseDataMobileListBaseDataRoute
   baseDataProvincesListRoute: typeof baseDataProvincesListRoute
   baseDataWorkItemsListRoute: typeof baseDataWorkItemsListRoute
+  customersContractsListRoute: typeof customersContractsListRoute
+  customersCustomersListRoute: typeof customersCustomersListRoute
+  customersMobileListCustomersRoute: typeof customersMobileListCustomersRoute
+  customersPersonnelListRoute: typeof customersPersonnelListRoute
   dashboardErrorsListRoute: typeof dashboardErrorsListRoute
   settingsBanksListRoute: typeof settingsBanksListRoute
   settingsDeviceModelsListRoute: typeof settingsDeviceModelsListRoute
@@ -375,6 +460,10 @@ const rootRouteChildren: RootRouteChildren = {
   baseDataMobileListBaseDataRoute: baseDataMobileListBaseDataRoute,
   baseDataProvincesListRoute: baseDataProvincesListRoute,
   baseDataWorkItemsListRoute: baseDataWorkItemsListRoute,
+  customersContractsListRoute: customersContractsListRoute,
+  customersCustomersListRoute: customersCustomersListRoute,
+  customersMobileListCustomersRoute: customersMobileListCustomersRoute,
+  customersPersonnelListRoute: customersPersonnelListRoute,
   dashboardErrorsListRoute: dashboardErrorsListRoute,
   settingsBanksListRoute: settingsBanksListRoute,
   settingsDeviceModelsListRoute: settingsDeviceModelsListRoute,
@@ -405,6 +494,10 @@ export const routeTree = rootRoute
         "/(baseData)/mobileListBaseData",
         "/(baseData)/provincesList",
         "/(baseData)/workItemsList",
+        "/(customers)/contractsList",
+        "/(customers)/customersList",
+        "/(customers)/mobileListCustomers",
+        "/(customers)/personnelList",
         "/(dashboard)/errorsList",
         "/(settings)/banksList",
         "/(settings)/deviceModelsList",
@@ -435,6 +528,18 @@ export const routeTree = rootRoute
     },
     "/(baseData)/workItemsList": {
       "filePath": "(baseData)/workItemsList.tsx"
+    },
+    "/(customers)/contractsList": {
+      "filePath": "(customers)/contractsList.tsx"
+    },
+    "/(customers)/customersList": {
+      "filePath": "(customers)/customersList.tsx"
+    },
+    "/(customers)/mobileListCustomers": {
+      "filePath": "(customers)/mobileListCustomers.tsx"
+    },
+    "/(customers)/personnelList": {
+      "filePath": "(customers)/personnelList.tsx"
     },
     "/(dashboard)/errorsList": {
       "filePath": "(dashboard)/errorsList.tsx"
