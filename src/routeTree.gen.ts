@@ -19,6 +19,7 @@ import { Route as settingsMobileListSettingsImport } from './routes/(settings)/m
 import { Route as settingsDevicesListImport } from './routes/(settings)/devicesList'
 import { Route as settingsDeviceModelsListImport } from './routes/(settings)/deviceModelsList'
 import { Route as settingsBanksListImport } from './routes/(settings)/banksList'
+import { Route as kiosksKiosksListImport } from './routes/(kiosks)/kiosksList'
 import { Route as dashboardErrorsListImport } from './routes/(dashboard)/errorsList'
 import { Route as customersPersonnelListImport } from './routes/(customers)/personnelList'
 import { Route as customersMobileListCustomersImport } from './routes/(customers)/mobileListCustomers'
@@ -30,6 +31,7 @@ import { Route as baseDataMobileListBaseDataImport } from './routes/(baseData)/m
 import { Route as baseDataKioskModelsListImport } from './routes/(baseData)/kioskModelsList'
 import { Route as baseDataHolidaysListImport } from './routes/(baseData)/holidaysList'
 import { Route as baseDataCitiesListImport } from './routes/(baseData)/citiesList'
+import { Route as kiosksKioskDetailKioskIdImport } from './routes/(kiosks)/kioskDetail.$kioskId'
 
 // Create/Update Routes
 
@@ -82,6 +84,12 @@ const settingsDeviceModelsListRoute = settingsDeviceModelsListImport.update({
 const settingsBanksListRoute = settingsBanksListImport.update({
   id: '/(settings)/banksList',
   path: '/banksList',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const kiosksKiosksListRoute = kiosksKiosksListImport.update({
+  id: '/(kiosks)/kiosksList',
+  path: '/kiosksList',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -151,6 +159,12 @@ const baseDataHolidaysListRoute = baseDataHolidaysListImport.update({
 const baseDataCitiesListRoute = baseDataCitiesListImport.update({
   id: '/(baseData)/citiesList',
   path: '/citiesList',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const kiosksKioskDetailKioskIdRoute = kiosksKioskDetailKioskIdImport.update({
+  id: '/(kiosks)/kioskDetail/$kioskId',
+  path: '/kioskDetail/$kioskId',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -242,6 +256,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof dashboardErrorsListImport
       parentRoute: typeof rootRoute
     }
+    '/(kiosks)/kiosksList': {
+      id: '/(kiosks)/kiosksList'
+      path: '/kiosksList'
+      fullPath: '/kiosksList'
+      preLoaderRoute: typeof kiosksKiosksListImport
+      parentRoute: typeof rootRoute
+    }
     '/(settings)/banksList': {
       id: '/(settings)/banksList'
       path: '/banksList'
@@ -291,6 +312,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof systemManagementUsersImport
       parentRoute: typeof rootRoute
     }
+    '/(kiosks)/kioskDetail/$kioskId': {
+      id: '/(kiosks)/kioskDetail/$kioskId'
+      path: '/kioskDetail/$kioskId'
+      fullPath: '/kioskDetail/$kioskId'
+      preLoaderRoute: typeof kiosksKioskDetailKioskIdImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -309,6 +337,7 @@ export interface FileRoutesByFullPath {
   '/mobileListCustomers': typeof customersMobileListCustomersRoute
   '/personnelList': typeof customersPersonnelListRoute
   '/errorsList': typeof dashboardErrorsListRoute
+  '/kiosksList': typeof kiosksKiosksListRoute
   '/banksList': typeof settingsBanksListRoute
   '/deviceModelsList': typeof settingsDeviceModelsListRoute
   '/devicesList': typeof settingsDevicesListRoute
@@ -316,6 +345,7 @@ export interface FileRoutesByFullPath {
   '/mobileListSystemManagement': typeof systemManagementMobileListSystemManagementRoute
   '/permissions': typeof systemManagementPermissionsRoute
   '/users': typeof systemManagementUsersRoute
+  '/kioskDetail/$kioskId': typeof kiosksKioskDetailKioskIdRoute
 }
 
 export interface FileRoutesByTo {
@@ -331,6 +361,7 @@ export interface FileRoutesByTo {
   '/mobileListCustomers': typeof customersMobileListCustomersRoute
   '/personnelList': typeof customersPersonnelListRoute
   '/errorsList': typeof dashboardErrorsListRoute
+  '/kiosksList': typeof kiosksKiosksListRoute
   '/banksList': typeof settingsBanksListRoute
   '/deviceModelsList': typeof settingsDeviceModelsListRoute
   '/devicesList': typeof settingsDevicesListRoute
@@ -338,6 +369,7 @@ export interface FileRoutesByTo {
   '/mobileListSystemManagement': typeof systemManagementMobileListSystemManagementRoute
   '/permissions': typeof systemManagementPermissionsRoute
   '/users': typeof systemManagementUsersRoute
+  '/kioskDetail/$kioskId': typeof kiosksKioskDetailKioskIdRoute
 }
 
 export interface FileRoutesById {
@@ -354,6 +386,7 @@ export interface FileRoutesById {
   '/(customers)/mobileListCustomers': typeof customersMobileListCustomersRoute
   '/(customers)/personnelList': typeof customersPersonnelListRoute
   '/(dashboard)/errorsList': typeof dashboardErrorsListRoute
+  '/(kiosks)/kiosksList': typeof kiosksKiosksListRoute
   '/(settings)/banksList': typeof settingsBanksListRoute
   '/(settings)/deviceModelsList': typeof settingsDeviceModelsListRoute
   '/(settings)/devicesList': typeof settingsDevicesListRoute
@@ -361,6 +394,7 @@ export interface FileRoutesById {
   '/(systemManagement)/mobileListSystemManagement': typeof systemManagementMobileListSystemManagementRoute
   '/(systemManagement)/permissions': typeof systemManagementPermissionsRoute
   '/(systemManagement)/users': typeof systemManagementUsersRoute
+  '/(kiosks)/kioskDetail/$kioskId': typeof kiosksKioskDetailKioskIdRoute
 }
 
 export interface FileRouteTypes {
@@ -378,6 +412,7 @@ export interface FileRouteTypes {
     | '/mobileListCustomers'
     | '/personnelList'
     | '/errorsList'
+    | '/kiosksList'
     | '/banksList'
     | '/deviceModelsList'
     | '/devicesList'
@@ -385,6 +420,7 @@ export interface FileRouteTypes {
     | '/mobileListSystemManagement'
     | '/permissions'
     | '/users'
+    | '/kioskDetail/$kioskId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -399,6 +435,7 @@ export interface FileRouteTypes {
     | '/mobileListCustomers'
     | '/personnelList'
     | '/errorsList'
+    | '/kiosksList'
     | '/banksList'
     | '/deviceModelsList'
     | '/devicesList'
@@ -406,6 +443,7 @@ export interface FileRouteTypes {
     | '/mobileListSystemManagement'
     | '/permissions'
     | '/users'
+    | '/kioskDetail/$kioskId'
   id:
     | '__root__'
     | '/'
@@ -420,6 +458,7 @@ export interface FileRouteTypes {
     | '/(customers)/mobileListCustomers'
     | '/(customers)/personnelList'
     | '/(dashboard)/errorsList'
+    | '/(kiosks)/kiosksList'
     | '/(settings)/banksList'
     | '/(settings)/deviceModelsList'
     | '/(settings)/devicesList'
@@ -427,6 +466,7 @@ export interface FileRouteTypes {
     | '/(systemManagement)/mobileListSystemManagement'
     | '/(systemManagement)/permissions'
     | '/(systemManagement)/users'
+    | '/(kiosks)/kioskDetail/$kioskId'
   fileRoutesById: FileRoutesById
 }
 
@@ -443,6 +483,7 @@ export interface RootRouteChildren {
   customersMobileListCustomersRoute: typeof customersMobileListCustomersRoute
   customersPersonnelListRoute: typeof customersPersonnelListRoute
   dashboardErrorsListRoute: typeof dashboardErrorsListRoute
+  kiosksKiosksListRoute: typeof kiosksKiosksListRoute
   settingsBanksListRoute: typeof settingsBanksListRoute
   settingsDeviceModelsListRoute: typeof settingsDeviceModelsListRoute
   settingsDevicesListRoute: typeof settingsDevicesListRoute
@@ -450,6 +491,7 @@ export interface RootRouteChildren {
   systemManagementMobileListSystemManagementRoute: typeof systemManagementMobileListSystemManagementRoute
   systemManagementPermissionsRoute: typeof systemManagementPermissionsRoute
   systemManagementUsersRoute: typeof systemManagementUsersRoute
+  kiosksKioskDetailKioskIdRoute: typeof kiosksKioskDetailKioskIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -465,6 +507,7 @@ const rootRouteChildren: RootRouteChildren = {
   customersMobileListCustomersRoute: customersMobileListCustomersRoute,
   customersPersonnelListRoute: customersPersonnelListRoute,
   dashboardErrorsListRoute: dashboardErrorsListRoute,
+  kiosksKiosksListRoute: kiosksKiosksListRoute,
   settingsBanksListRoute: settingsBanksListRoute,
   settingsDeviceModelsListRoute: settingsDeviceModelsListRoute,
   settingsDevicesListRoute: settingsDevicesListRoute,
@@ -473,6 +516,7 @@ const rootRouteChildren: RootRouteChildren = {
     systemManagementMobileListSystemManagementRoute,
   systemManagementPermissionsRoute: systemManagementPermissionsRoute,
   systemManagementUsersRoute: systemManagementUsersRoute,
+  kiosksKioskDetailKioskIdRoute: kiosksKioskDetailKioskIdRoute,
 }
 
 export const routeTree = rootRoute
@@ -499,13 +543,15 @@ export const routeTree = rootRoute
         "/(customers)/mobileListCustomers",
         "/(customers)/personnelList",
         "/(dashboard)/errorsList",
+        "/(kiosks)/kiosksList",
         "/(settings)/banksList",
         "/(settings)/deviceModelsList",
         "/(settings)/devicesList",
         "/(settings)/mobileListSettings",
         "/(systemManagement)/mobileListSystemManagement",
         "/(systemManagement)/permissions",
-        "/(systemManagement)/users"
+        "/(systemManagement)/users",
+        "/(kiosks)/kioskDetail/$kioskId"
       ]
     },
     "/": {
@@ -544,6 +590,9 @@ export const routeTree = rootRoute
     "/(dashboard)/errorsList": {
       "filePath": "(dashboard)/errorsList.tsx"
     },
+    "/(kiosks)/kiosksList": {
+      "filePath": "(kiosks)/kiosksList.tsx"
+    },
     "/(settings)/banksList": {
       "filePath": "(settings)/banksList.tsx"
     },
@@ -564,6 +613,9 @@ export const routeTree = rootRoute
     },
     "/(systemManagement)/users": {
       "filePath": "(systemManagement)/users.tsx"
+    },
+    "/(kiosks)/kioskDetail/$kioskId": {
+      "filePath": "(kiosks)/kioskDetail.$kioskId.tsx"
     }
   }
 }

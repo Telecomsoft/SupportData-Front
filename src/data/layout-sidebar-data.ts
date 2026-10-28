@@ -19,6 +19,7 @@ import BusinessIcon from '@mui/icons-material/Business'
 import GroupsIcon from '@mui/icons-material/Groups'
 import DescriptionIcon from '@mui/icons-material/Description'
 import HandshakeIcon from '@mui/icons-material/Handshake'
+import AtmIcon from '@mui/icons-material/Atm'
 
 export type DataType = {
    name: string
@@ -117,4 +118,5 @@ export const LAYOUT_SIDEBAR_DATA: (DataType & { children?: DataType[] })[] = [
          { name: 'قراردادها', value: 'contractsList', link: '/contractsList', icon: DescriptionIcon, accessID: 109 },
       ],
    },
+   { name: 'کیوسک‌ها', value: 'kiosksList', link: '/kiosksList', icon: AtmIcon, accessID: 110 },
 ]

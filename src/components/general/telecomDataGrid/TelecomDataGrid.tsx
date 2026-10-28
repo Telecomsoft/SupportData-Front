@@ -82,6 +82,7 @@ type TelecomDataGridProps = {
    serverData?: {
       totalDataCount: number
       maxRowInPage: number
+      currentPage?: number
    }
    setServerCtrData?: Dispatch<SetStateAction<ServerCtrDataType | null>>
    isShadowMount?: boolean
@@ -180,7 +181,8 @@ const TelecomDataGrid = ({
    const [expandedTree, setExpandedTree] = useState<Set<number | string>>(new Set())
    const [visibleColumns, setVisibleColumns] = useState([])
    const [fadeKey, setFadeKey] = useState<number | null>(null)
-   const [currentPage, setCurrentPage] = useState(serverData ? serverData.currentPage : 1)
+   // const [currentPage, setCurrentPage] = useState(serverData ? serverData.currentPage : 1)
+   const [currentPage, setCurrentPage] = useState(serverData ? (serverData.currentPage ?? 1) : 1)
    const [isColumnManagerOpen, setIsColumnManagerOpen] = useState<boolean>(false)
    const [pinnedRows, setPinnedRows] = useState({ top: [], bottom: [] })
    const [borderInner, setBorderInner] = useState<boolean>(defaultBorderInner ? defaultBorderInner : false)
@@ -200,6 +202,10 @@ const TelecomDataGrid = ({
          }))
       )
    }, [columns])
+
+   useEffect(() => {
+      if (serverData?.currentPage) setCurrentPage(serverData.currentPage)
+   }, [serverData?.currentPage])
 
    useEffect(() => {
       const savedWidths = localStorage.getItem(`columnWidths-${dataGridKey}`)
