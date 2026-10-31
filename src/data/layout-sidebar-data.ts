@@ -20,6 +20,7 @@ import GroupsIcon from '@mui/icons-material/Groups'
 import DescriptionIcon from '@mui/icons-material/Description'
 import HandshakeIcon from '@mui/icons-material/Handshake'
 import AtmIcon from '@mui/icons-material/Atm'
+import AssignmentIcon from '@mui/icons-material/Assignment'
 
 export type DataType = {
    name: string
@@ -119,4 +120,5 @@ export const LAYOUT_SIDEBAR_DATA: (DataType & { children?: DataType[] })[] = [
       ],
    },
    { name: 'کیوسک‌ها', value: 'kiosksList', link: '/kiosksList', icon: AtmIcon, accessID: 110 },
+   { name: 'دستورکارها', value: 'workTasksList', link: '/workTasksList', icon: AssignmentIcon, accessID: 111 },
 ]

@@ -168,7 +168,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { memo, useEffect, useState } from 'react'
-import { DataType } from '@data/layout-sidebar-data'
+import { DataType } from '@src/data/layout-sidebar-data'
 import TreeWrapperItem from '@components/general/tree/TreeWrapperItem'
 import findInTree, { SearchResult } from '@utility/findInTree'
 import Typography from '@mui/material/Typography'

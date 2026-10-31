@@ -116,7 +116,7 @@ import Grid from '@mui/material/Grid2';
 import { Typography } from '@mui/material';
 import HeadsetMicIcon from '@mui/icons-material/HeadsetMic';
 import { sizeConverter } from '@utility/sizeConverter';
-import { LAYOUT_SIDEBAR_DATA } from '@data/layout-sidebar-data';
+import { LAYOUT_SIDEBAR_DATA } from '@src/data/layout-sidebar-data';
 import TreeWrapper from '@components/general/tree/TreeWrapper';
 import { useAccessCheck } from '@src/utility/accessCheck';
 import { filterNavigationByAccess } from '@components/mobile/utils/navigationAccess';
