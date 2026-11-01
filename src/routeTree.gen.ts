@@ -20,6 +20,7 @@ import { Route as settingsMobileListSettingsImport } from './routes/(settings)/m
 import { Route as settingsDevicesListImport } from './routes/(settings)/devicesList'
 import { Route as settingsDeviceModelsListImport } from './routes/(settings)/deviceModelsList'
 import { Route as settingsBanksListImport } from './routes/(settings)/banksList'
+import { Route as repairsRepairsListImport } from './routes/(repairs)/repairsList'
 import { Route as kiosksKiosksListImport } from './routes/(kiosks)/kiosksList'
 import { Route as dashboardErrorsListImport } from './routes/(dashboard)/errorsList'
 import { Route as customersPersonnelListImport } from './routes/(customers)/personnelList'
@@ -33,6 +34,7 @@ import { Route as baseDataKioskModelsListImport } from './routes/(baseData)/kios
 import { Route as baseDataHolidaysListImport } from './routes/(baseData)/holidaysList'
 import { Route as baseDataCitiesListImport } from './routes/(baseData)/citiesList'
 import { Route as workTasksWorkTaskDetailWorkTaskIdImport } from './routes/(workTasks)/workTaskDetail.$workTaskId'
+import { Route as repairsRepairDetailRepairIdImport } from './routes/(repairs)/repairDetail.$repairId'
 import { Route as kiosksKioskDetailKioskIdImport } from './routes/(kiosks)/kioskDetail.$kioskId'
 
 // Create/Update Routes
@@ -92,6 +94,12 @@ const settingsDeviceModelsListRoute = settingsDeviceModelsListImport.update({
 const settingsBanksListRoute = settingsBanksListImport.update({
   id: '/(settings)/banksList',
   path: '/banksList',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const repairsRepairsListRoute = repairsRepairsListImport.update({
+  id: '/(repairs)/repairsList',
+  path: '/repairsList',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -174,6 +182,13 @@ const workTasksWorkTaskDetailWorkTaskIdRoute =
   workTasksWorkTaskDetailWorkTaskIdImport.update({
     id: '/(workTasks)/workTaskDetail/$workTaskId',
     path: '/workTaskDetail/$workTaskId',
+    getParentRoute: () => rootRoute,
+  } as any)
+
+const repairsRepairDetailRepairIdRoute =
+  repairsRepairDetailRepairIdImport.update({
+    id: '/(repairs)/repairDetail/$repairId',
+    path: '/repairDetail/$repairId',
     getParentRoute: () => rootRoute,
   } as any)
 
@@ -278,6 +293,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof kiosksKiosksListImport
       parentRoute: typeof rootRoute
     }
+    '/(repairs)/repairsList': {
+      id: '/(repairs)/repairsList'
+      path: '/repairsList'
+      fullPath: '/repairsList'
+      preLoaderRoute: typeof repairsRepairsListImport
+      parentRoute: typeof rootRoute
+    }
     '/(settings)/banksList': {
       id: '/(settings)/banksList'
       path: '/banksList'
@@ -341,6 +363,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof kiosksKioskDetailKioskIdImport
       parentRoute: typeof rootRoute
     }
+    '/(repairs)/repairDetail/$repairId': {
+      id: '/(repairs)/repairDetail/$repairId'
+      path: '/repairDetail/$repairId'
+      fullPath: '/repairDetail/$repairId'
+      preLoaderRoute: typeof repairsRepairDetailRepairIdImport
+      parentRoute: typeof rootRoute
+    }
     '/(workTasks)/workTaskDetail/$workTaskId': {
       id: '/(workTasks)/workTaskDetail/$workTaskId'
       path: '/workTaskDetail/$workTaskId'
@@ -367,6 +396,7 @@ export interface FileRoutesByFullPath {
   '/personnelList': typeof customersPersonnelListRoute
   '/errorsList': typeof dashboardErrorsListRoute
   '/kiosksList': typeof kiosksKiosksListRoute
+  '/repairsList': typeof repairsRepairsListRoute
   '/banksList': typeof settingsBanksListRoute
   '/deviceModelsList': typeof settingsDeviceModelsListRoute
   '/devicesList': typeof settingsDevicesListRoute
@@ -376,6 +406,7 @@ export interface FileRoutesByFullPath {
   '/users': typeof systemManagementUsersRoute
   '/workTasksList': typeof workTasksWorkTasksListRoute
   '/kioskDetail/$kioskId': typeof kiosksKioskDetailKioskIdRoute
+  '/repairDetail/$repairId': typeof repairsRepairDetailRepairIdRoute
   '/workTaskDetail/$workTaskId': typeof workTasksWorkTaskDetailWorkTaskIdRoute
 }
 
@@ -393,6 +424,7 @@ export interface FileRoutesByTo {
   '/personnelList': typeof customersPersonnelListRoute
   '/errorsList': typeof dashboardErrorsListRoute
   '/kiosksList': typeof kiosksKiosksListRoute
+  '/repairsList': typeof repairsRepairsListRoute
   '/banksList': typeof settingsBanksListRoute
   '/deviceModelsList': typeof settingsDeviceModelsListRoute
   '/devicesList': typeof settingsDevicesListRoute
@@ -402,6 +434,7 @@ export interface FileRoutesByTo {
   '/users': typeof systemManagementUsersRoute
   '/workTasksList': typeof workTasksWorkTasksListRoute
   '/kioskDetail/$kioskId': typeof kiosksKioskDetailKioskIdRoute
+  '/repairDetail/$repairId': typeof repairsRepairDetailRepairIdRoute
   '/workTaskDetail/$workTaskId': typeof workTasksWorkTaskDetailWorkTaskIdRoute
 }
 
@@ -420,6 +453,7 @@ export interface FileRoutesById {
   '/(customers)/personnelList': typeof customersPersonnelListRoute
   '/(dashboard)/errorsList': typeof dashboardErrorsListRoute
   '/(kiosks)/kiosksList': typeof kiosksKiosksListRoute
+  '/(repairs)/repairsList': typeof repairsRepairsListRoute
   '/(settings)/banksList': typeof settingsBanksListRoute
   '/(settings)/deviceModelsList': typeof settingsDeviceModelsListRoute
   '/(settings)/devicesList': typeof settingsDevicesListRoute
@@ -429,6 +463,7 @@ export interface FileRoutesById {
   '/(systemManagement)/users': typeof systemManagementUsersRoute
   '/(workTasks)/workTasksList': typeof workTasksWorkTasksListRoute
   '/(kiosks)/kioskDetail/$kioskId': typeof kiosksKioskDetailKioskIdRoute
+  '/(repairs)/repairDetail/$repairId': typeof repairsRepairDetailRepairIdRoute
   '/(workTasks)/workTaskDetail/$workTaskId': typeof workTasksWorkTaskDetailWorkTaskIdRoute
 }
 
@@ -448,6 +483,7 @@ export interface FileRouteTypes {
     | '/personnelList'
     | '/errorsList'
     | '/kiosksList'
+    | '/repairsList'
     | '/banksList'
     | '/deviceModelsList'
     | '/devicesList'
@@ -457,6 +493,7 @@ export interface FileRouteTypes {
     | '/users'
     | '/workTasksList'
     | '/kioskDetail/$kioskId'
+    | '/repairDetail/$repairId'
     | '/workTaskDetail/$workTaskId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -473,6 +510,7 @@ export interface FileRouteTypes {
     | '/personnelList'
     | '/errorsList'
     | '/kiosksList'
+    | '/repairsList'
     | '/banksList'
     | '/deviceModelsList'
     | '/devicesList'
@@ -482,6 +520,7 @@ export interface FileRouteTypes {
     | '/users'
     | '/workTasksList'
     | '/kioskDetail/$kioskId'
+    | '/repairDetail/$repairId'
     | '/workTaskDetail/$workTaskId'
   id:
     | '__root__'
@@ -498,6 +537,7 @@ export interface FileRouteTypes {
     | '/(customers)/personnelList'
     | '/(dashboard)/errorsList'
     | '/(kiosks)/kiosksList'
+    | '/(repairs)/repairsList'
     | '/(settings)/banksList'
     | '/(settings)/deviceModelsList'
     | '/(settings)/devicesList'
@@ -507,6 +547,7 @@ export interface FileRouteTypes {
     | '/(systemManagement)/users'
     | '/(workTasks)/workTasksList'
     | '/(kiosks)/kioskDetail/$kioskId'
+    | '/(repairs)/repairDetail/$repairId'
     | '/(workTasks)/workTaskDetail/$workTaskId'
   fileRoutesById: FileRoutesById
 }
@@ -525,6 +566,7 @@ export interface RootRouteChildren {
   customersPersonnelListRoute: typeof customersPersonnelListRoute
   dashboardErrorsListRoute: typeof dashboardErrorsListRoute
   kiosksKiosksListRoute: typeof kiosksKiosksListRoute
+  repairsRepairsListRoute: typeof repairsRepairsListRoute
   settingsBanksListRoute: typeof settingsBanksListRoute
   settingsDeviceModelsListRoute: typeof settingsDeviceModelsListRoute
   settingsDevicesListRoute: typeof settingsDevicesListRoute
@@ -534,6 +576,7 @@ export interface RootRouteChildren {
   systemManagementUsersRoute: typeof systemManagementUsersRoute
   workTasksWorkTasksListRoute: typeof workTasksWorkTasksListRoute
   kiosksKioskDetailKioskIdRoute: typeof kiosksKioskDetailKioskIdRoute
+  repairsRepairDetailRepairIdRoute: typeof repairsRepairDetailRepairIdRoute
   workTasksWorkTaskDetailWorkTaskIdRoute: typeof workTasksWorkTaskDetailWorkTaskIdRoute
 }
 
@@ -551,6 +594,7 @@ const rootRouteChildren: RootRouteChildren = {
   customersPersonnelListRoute: customersPersonnelListRoute,
   dashboardErrorsListRoute: dashboardErrorsListRoute,
   kiosksKiosksListRoute: kiosksKiosksListRoute,
+  repairsRepairsListRoute: repairsRepairsListRoute,
   settingsBanksListRoute: settingsBanksListRoute,
   settingsDeviceModelsListRoute: settingsDeviceModelsListRoute,
   settingsDevicesListRoute: settingsDevicesListRoute,
@@ -561,6 +605,7 @@ const rootRouteChildren: RootRouteChildren = {
   systemManagementUsersRoute: systemManagementUsersRoute,
   workTasksWorkTasksListRoute: workTasksWorkTasksListRoute,
   kiosksKioskDetailKioskIdRoute: kiosksKioskDetailKioskIdRoute,
+  repairsRepairDetailRepairIdRoute: repairsRepairDetailRepairIdRoute,
   workTasksWorkTaskDetailWorkTaskIdRoute:
     workTasksWorkTaskDetailWorkTaskIdRoute,
 }
@@ -590,6 +635,7 @@ export const routeTree = rootRoute
         "/(customers)/personnelList",
         "/(dashboard)/errorsList",
         "/(kiosks)/kiosksList",
+        "/(repairs)/repairsList",
         "/(settings)/banksList",
         "/(settings)/deviceModelsList",
         "/(settings)/devicesList",
@@ -599,6 +645,7 @@ export const routeTree = rootRoute
         "/(systemManagement)/users",
         "/(workTasks)/workTasksList",
         "/(kiosks)/kioskDetail/$kioskId",
+        "/(repairs)/repairDetail/$repairId",
         "/(workTasks)/workTaskDetail/$workTaskId"
       ]
     },
@@ -641,6 +688,9 @@ export const routeTree = rootRoute
     "/(kiosks)/kiosksList": {
       "filePath": "(kiosks)/kiosksList.tsx"
     },
+    "/(repairs)/repairsList": {
+      "filePath": "(repairs)/repairsList.tsx"
+    },
     "/(settings)/banksList": {
       "filePath": "(settings)/banksList.tsx"
     },
@@ -667,6 +717,9 @@ export const routeTree = rootRoute
     },
     "/(kiosks)/kioskDetail/$kioskId": {
       "filePath": "(kiosks)/kioskDetail.$kioskId.tsx"
+    },
+    "/(repairs)/repairDetail/$repairId": {
+      "filePath": "(repairs)/repairDetail.$repairId.tsx"
     },
     "/(workTasks)/workTaskDetail/$workTaskId": {
       "filePath": "(workTasks)/workTaskDetail.$workTaskId.tsx"

@@ -88,3 +88,34 @@ export const TASK_TRANSITIONS: { from: number; to: number; permission: number; l
     { from: 7, to: 4, permission: 206, label: 'بازگشت برای اصلاح', confirm: 'دستورکار برای اصلاح به «در حال انجام» برگردد؟' },
     { from: 8, to: 7, permission: 206, label: 'لغو تایید نهایی', confirm: 'تایید نهایی برداشته شود؟' },
 ]
+
+
+// ─── Repairs (SDConstants._REPAIRSTATE_*) ───────────────────────────────────────────────────────
+export const REPAIR_STATE = { RECEIVED: 1, ASSIGNED: 2, IN_REPAIR: 3, REPAIRED: 8, NOT_REPAIRABLE: 9, RETURNED: 10 } as const
+
+// built-in copy of GET api/Repair/Lookups -> states; the page uses the server's list and falls back to this one
+export const REPAIR_STATES: Option[] = [
+    { id: 1, name: 'دریافت شده' },
+    { id: 2, name: 'ارجاع شده' },
+    { id: 3, name: 'در حال تعمیر' },
+    { id: 8, name: 'تعمیر شد' },
+    { id: 9, name: 'غیرقابل تعمیر' },
+    { id: 10, name: 'برگشت داده شد' },
+]
+
+export const isRepairClosed = (state?: number | null) => state === 8 || state === 9 || state === 10
+
+export const REPAIR_STATE_COLOR: Record<number, ChipColor> = { 1: 'info', 2: 'primary', 3: 'warning', 8: 'success', 9: 'error', 10: 'default' }
+
+/**
+ * Mirrors RepairWorkflow.Transitions on the server (From, To, operation permission; 0 = only the module's write access).
+ * The server decides for real. The move to "assigned" is not here: it needs a technician, so it goes through the assign dialog.
+ */
+export const REPAIR_TRANSITIONS: { from: number; to: number; permission: number; label: string; confirm: string }[] = [
+    { from: 2, to: 3, permission: 0, label: 'شروع تعمیر', confirm: 'تعمیر قطعه شروع شود؟' },
+    { from: 3, to: 8, permission: 241, label: 'تعمیر شد', confirm: 'قطعه تعمیر‌شده ثبت شود؟' },
+    { from: 3, to: 9, permission: 241, label: 'غیرقابل تعمیر', confirm: 'قطعه غیرقابل تعمیر ثبت شود؟' },
+    { from: 3, to: 10, permission: 241, label: 'برگشت بدون تعمیر', confirm: 'قطعه بدون تعمیر برگردانده شود؟' },
+    { from: 1, to: 10, permission: 241, label: 'برگشت بدون تعمیر', confirm: 'قطعه بدون تعمیر برگردانده شود؟' },
+    { from: 2, to: 10, permission: 241, label: 'برگشت بدون تعمیر', confirm: 'قطعه بدون تعمیر برگردانده شود؟' },
+]
