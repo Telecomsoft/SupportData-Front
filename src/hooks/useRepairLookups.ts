@@ -1,5 +1,5 @@
 import { useGetData } from '@hooks/useGetData'
-import { REPAIR_STATES } from '@src/data/type/lookups'
+import { REPAIR_STATES } from '@src/data/type/lookups';
 
 type Named = { id: number; name: string }
 type Person = { id: number; firstName: string; lastName: string }

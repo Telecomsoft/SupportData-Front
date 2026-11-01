@@ -119,3 +119,41 @@ export const REPAIR_TRANSITIONS: { from: number; to: number; permission: number;
     { from: 1, to: 10, permission: 241, label: 'برگشت بدون تعمیر', confirm: 'قطعه بدون تعمیر برگردانده شود؟' },
     { from: 2, to: 10, permission: 241, label: 'برگشت بدون تعمیر', confirm: 'قطعه بدون تعمیر برگردانده شود؟' },
 ]
+
+
+// ─── Part transfers (SDConstants._PARTMOVE_*, _PARTSTATE_*, _PARTLOC_*) ──────────────────────────
+export const PART_STATE = { PENDING: 1, DONE: 2, CANCELLED: 3 } as const
+
+// built-in copies of GET api/PartTransfer/Lookups; the pages use the server's lists and fall back to these
+export const PART_STATES: Option[] = [
+    { id: 1, name: 'در انتظار' },
+    { id: 2, name: 'انجام شده' },
+    { id: 3, name: 'لغو شده' },
+]
+export const PART_KINDS: Option[] = [
+    { id: 1, name: 'خرید' },
+    { id: 2, name: 'تحویل به تکنسین' },
+    { id: 3, name: 'بازگشت سالم به انبار' },
+    { id: 4, name: 'نصب در کیوسک' },
+    { id: 5, name: 'خارج کردن از کیوسک' },
+    { id: 6, name: 'ارسال به تعمیرگاه' },
+    { id: 7, name: 'بازگشت از تعمیرگاه' },
+    { id: 8, name: 'اسقاط از انبار' },
+    { id: 9, name: 'اسقاط از تعمیرگاه' },
+]
+export const PART_LOCATIONS: Option[] = [
+    { id: 1, name: 'انبار' },
+    { id: 2, name: 'تکنسین' },
+    { id: 3, name: 'کیوسک' },
+    { id: 4, name: 'تعمیرگاه' },
+    { id: 5, name: 'خارج از سیستم' },
+]
+
+export const PART_STATE_COLOR: Record<number, ChipColor> = { 1: 'warning', 2: 'success', 3: 'default' }
+
+// Fitting into / taking out of a kiosk (4, 5) is done only by "replace part" on a work task, never as a loose movement.
+export const PART_KINDS_CREATABLE = [1, 2, 3, 6, 7, 8, 9]
+// movements with a technician on one side: the technician field matters (and a field technician may create only these)
+export const PART_KINDS_WITH_TECHNICIAN = [2, 3, 6]
+// movements that release or destroy stock need the "Parts - Approve transfer" permission (230) to be completed
+export const PART_KINDS_NEED_APPROVAL = [2, 8, 9]

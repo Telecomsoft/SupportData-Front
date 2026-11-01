@@ -21,6 +21,7 @@ import { Route as settingsDevicesListImport } from './routes/(settings)/devicesL
 import { Route as settingsDeviceModelsListImport } from './routes/(settings)/deviceModelsList'
 import { Route as settingsBanksListImport } from './routes/(settings)/banksList'
 import { Route as repairsRepairsListImport } from './routes/(repairs)/repairsList'
+import { Route as partTransfersPartTransfersListImport } from './routes/(partTransfers)/partTransfersList'
 import { Route as kiosksKiosksListImport } from './routes/(kiosks)/kiosksList'
 import { Route as dashboardErrorsListImport } from './routes/(dashboard)/errorsList'
 import { Route as customersPersonnelListImport } from './routes/(customers)/personnelList'
@@ -35,6 +36,7 @@ import { Route as baseDataHolidaysListImport } from './routes/(baseData)/holiday
 import { Route as baseDataCitiesListImport } from './routes/(baseData)/citiesList'
 import { Route as workTasksWorkTaskDetailWorkTaskIdImport } from './routes/(workTasks)/workTaskDetail.$workTaskId'
 import { Route as repairsRepairDetailRepairIdImport } from './routes/(repairs)/repairDetail.$repairId'
+import { Route as partTransfersPartTransferDetailPartTransferIdImport } from './routes/(partTransfers)/partTransferDetail.$partTransferId'
 import { Route as kiosksKioskDetailKioskIdImport } from './routes/(kiosks)/kioskDetail.$kioskId'
 
 // Create/Update Routes
@@ -102,6 +104,13 @@ const repairsRepairsListRoute = repairsRepairsListImport.update({
   path: '/repairsList',
   getParentRoute: () => rootRoute,
 } as any)
+
+const partTransfersPartTransfersListRoute =
+  partTransfersPartTransfersListImport.update({
+    id: '/(partTransfers)/partTransfersList',
+    path: '/partTransfersList',
+    getParentRoute: () => rootRoute,
+  } as any)
 
 const kiosksKiosksListRoute = kiosksKiosksListImport.update({
   id: '/(kiosks)/kiosksList',
@@ -189,6 +198,13 @@ const repairsRepairDetailRepairIdRoute =
   repairsRepairDetailRepairIdImport.update({
     id: '/(repairs)/repairDetail/$repairId',
     path: '/repairDetail/$repairId',
+    getParentRoute: () => rootRoute,
+  } as any)
+
+const partTransfersPartTransferDetailPartTransferIdRoute =
+  partTransfersPartTransferDetailPartTransferIdImport.update({
+    id: '/(partTransfers)/partTransferDetail/$partTransferId',
+    path: '/partTransferDetail/$partTransferId',
     getParentRoute: () => rootRoute,
   } as any)
 
@@ -293,6 +309,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof kiosksKiosksListImport
       parentRoute: typeof rootRoute
     }
+    '/(partTransfers)/partTransfersList': {
+      id: '/(partTransfers)/partTransfersList'
+      path: '/partTransfersList'
+      fullPath: '/partTransfersList'
+      preLoaderRoute: typeof partTransfersPartTransfersListImport
+      parentRoute: typeof rootRoute
+    }
     '/(repairs)/repairsList': {
       id: '/(repairs)/repairsList'
       path: '/repairsList'
@@ -363,6 +386,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof kiosksKioskDetailKioskIdImport
       parentRoute: typeof rootRoute
     }
+    '/(partTransfers)/partTransferDetail/$partTransferId': {
+      id: '/(partTransfers)/partTransferDetail/$partTransferId'
+      path: '/partTransferDetail/$partTransferId'
+      fullPath: '/partTransferDetail/$partTransferId'
+      preLoaderRoute: typeof partTransfersPartTransferDetailPartTransferIdImport
+      parentRoute: typeof rootRoute
+    }
     '/(repairs)/repairDetail/$repairId': {
       id: '/(repairs)/repairDetail/$repairId'
       path: '/repairDetail/$repairId'
@@ -396,6 +426,7 @@ export interface FileRoutesByFullPath {
   '/personnelList': typeof customersPersonnelListRoute
   '/errorsList': typeof dashboardErrorsListRoute
   '/kiosksList': typeof kiosksKiosksListRoute
+  '/partTransfersList': typeof partTransfersPartTransfersListRoute
   '/repairsList': typeof repairsRepairsListRoute
   '/banksList': typeof settingsBanksListRoute
   '/deviceModelsList': typeof settingsDeviceModelsListRoute
@@ -406,6 +437,7 @@ export interface FileRoutesByFullPath {
   '/users': typeof systemManagementUsersRoute
   '/workTasksList': typeof workTasksWorkTasksListRoute
   '/kioskDetail/$kioskId': typeof kiosksKioskDetailKioskIdRoute
+  '/partTransferDetail/$partTransferId': typeof partTransfersPartTransferDetailPartTransferIdRoute
   '/repairDetail/$repairId': typeof repairsRepairDetailRepairIdRoute
   '/workTaskDetail/$workTaskId': typeof workTasksWorkTaskDetailWorkTaskIdRoute
 }
@@ -424,6 +456,7 @@ export interface FileRoutesByTo {
   '/personnelList': typeof customersPersonnelListRoute
   '/errorsList': typeof dashboardErrorsListRoute
   '/kiosksList': typeof kiosksKiosksListRoute
+  '/partTransfersList': typeof partTransfersPartTransfersListRoute
   '/repairsList': typeof repairsRepairsListRoute
   '/banksList': typeof settingsBanksListRoute
   '/deviceModelsList': typeof settingsDeviceModelsListRoute
@@ -434,6 +467,7 @@ export interface FileRoutesByTo {
   '/users': typeof systemManagementUsersRoute
   '/workTasksList': typeof workTasksWorkTasksListRoute
   '/kioskDetail/$kioskId': typeof kiosksKioskDetailKioskIdRoute
+  '/partTransferDetail/$partTransferId': typeof partTransfersPartTransferDetailPartTransferIdRoute
   '/repairDetail/$repairId': typeof repairsRepairDetailRepairIdRoute
   '/workTaskDetail/$workTaskId': typeof workTasksWorkTaskDetailWorkTaskIdRoute
 }
@@ -453,6 +487,7 @@ export interface FileRoutesById {
   '/(customers)/personnelList': typeof customersPersonnelListRoute
   '/(dashboard)/errorsList': typeof dashboardErrorsListRoute
   '/(kiosks)/kiosksList': typeof kiosksKiosksListRoute
+  '/(partTransfers)/partTransfersList': typeof partTransfersPartTransfersListRoute
   '/(repairs)/repairsList': typeof repairsRepairsListRoute
   '/(settings)/banksList': typeof settingsBanksListRoute
   '/(settings)/deviceModelsList': typeof settingsDeviceModelsListRoute
@@ -463,6 +498,7 @@ export interface FileRoutesById {
   '/(systemManagement)/users': typeof systemManagementUsersRoute
   '/(workTasks)/workTasksList': typeof workTasksWorkTasksListRoute
   '/(kiosks)/kioskDetail/$kioskId': typeof kiosksKioskDetailKioskIdRoute
+  '/(partTransfers)/partTransferDetail/$partTransferId': typeof partTransfersPartTransferDetailPartTransferIdRoute
   '/(repairs)/repairDetail/$repairId': typeof repairsRepairDetailRepairIdRoute
   '/(workTasks)/workTaskDetail/$workTaskId': typeof workTasksWorkTaskDetailWorkTaskIdRoute
 }
@@ -483,6 +519,7 @@ export interface FileRouteTypes {
     | '/personnelList'
     | '/errorsList'
     | '/kiosksList'
+    | '/partTransfersList'
     | '/repairsList'
     | '/banksList'
     | '/deviceModelsList'
@@ -493,6 +530,7 @@ export interface FileRouteTypes {
     | '/users'
     | '/workTasksList'
     | '/kioskDetail/$kioskId'
+    | '/partTransferDetail/$partTransferId'
     | '/repairDetail/$repairId'
     | '/workTaskDetail/$workTaskId'
   fileRoutesByTo: FileRoutesByTo
@@ -510,6 +548,7 @@ export interface FileRouteTypes {
     | '/personnelList'
     | '/errorsList'
     | '/kiosksList'
+    | '/partTransfersList'
     | '/repairsList'
     | '/banksList'
     | '/deviceModelsList'
@@ -520,6 +559,7 @@ export interface FileRouteTypes {
     | '/users'
     | '/workTasksList'
     | '/kioskDetail/$kioskId'
+    | '/partTransferDetail/$partTransferId'
     | '/repairDetail/$repairId'
     | '/workTaskDetail/$workTaskId'
   id:
@@ -537,6 +577,7 @@ export interface FileRouteTypes {
     | '/(customers)/personnelList'
     | '/(dashboard)/errorsList'
     | '/(kiosks)/kiosksList'
+    | '/(partTransfers)/partTransfersList'
     | '/(repairs)/repairsList'
     | '/(settings)/banksList'
     | '/(settings)/deviceModelsList'
@@ -547,6 +588,7 @@ export interface FileRouteTypes {
     | '/(systemManagement)/users'
     | '/(workTasks)/workTasksList'
     | '/(kiosks)/kioskDetail/$kioskId'
+    | '/(partTransfers)/partTransferDetail/$partTransferId'
     | '/(repairs)/repairDetail/$repairId'
     | '/(workTasks)/workTaskDetail/$workTaskId'
   fileRoutesById: FileRoutesById
@@ -566,6 +608,7 @@ export interface RootRouteChildren {
   customersPersonnelListRoute: typeof customersPersonnelListRoute
   dashboardErrorsListRoute: typeof dashboardErrorsListRoute
   kiosksKiosksListRoute: typeof kiosksKiosksListRoute
+  partTransfersPartTransfersListRoute: typeof partTransfersPartTransfersListRoute
   repairsRepairsListRoute: typeof repairsRepairsListRoute
   settingsBanksListRoute: typeof settingsBanksListRoute
   settingsDeviceModelsListRoute: typeof settingsDeviceModelsListRoute
@@ -576,6 +619,7 @@ export interface RootRouteChildren {
   systemManagementUsersRoute: typeof systemManagementUsersRoute
   workTasksWorkTasksListRoute: typeof workTasksWorkTasksListRoute
   kiosksKioskDetailKioskIdRoute: typeof kiosksKioskDetailKioskIdRoute
+  partTransfersPartTransferDetailPartTransferIdRoute: typeof partTransfersPartTransferDetailPartTransferIdRoute
   repairsRepairDetailRepairIdRoute: typeof repairsRepairDetailRepairIdRoute
   workTasksWorkTaskDetailWorkTaskIdRoute: typeof workTasksWorkTaskDetailWorkTaskIdRoute
 }
@@ -594,6 +638,7 @@ const rootRouteChildren: RootRouteChildren = {
   customersPersonnelListRoute: customersPersonnelListRoute,
   dashboardErrorsListRoute: dashboardErrorsListRoute,
   kiosksKiosksListRoute: kiosksKiosksListRoute,
+  partTransfersPartTransfersListRoute: partTransfersPartTransfersListRoute,
   repairsRepairsListRoute: repairsRepairsListRoute,
   settingsBanksListRoute: settingsBanksListRoute,
   settingsDeviceModelsListRoute: settingsDeviceModelsListRoute,
@@ -605,6 +650,8 @@ const rootRouteChildren: RootRouteChildren = {
   systemManagementUsersRoute: systemManagementUsersRoute,
   workTasksWorkTasksListRoute: workTasksWorkTasksListRoute,
   kiosksKioskDetailKioskIdRoute: kiosksKioskDetailKioskIdRoute,
+  partTransfersPartTransferDetailPartTransferIdRoute:
+    partTransfersPartTransferDetailPartTransferIdRoute,
   repairsRepairDetailRepairIdRoute: repairsRepairDetailRepairIdRoute,
   workTasksWorkTaskDetailWorkTaskIdRoute:
     workTasksWorkTaskDetailWorkTaskIdRoute,
@@ -635,6 +682,7 @@ export const routeTree = rootRoute
         "/(customers)/personnelList",
         "/(dashboard)/errorsList",
         "/(kiosks)/kiosksList",
+        "/(partTransfers)/partTransfersList",
         "/(repairs)/repairsList",
         "/(settings)/banksList",
         "/(settings)/deviceModelsList",
@@ -645,6 +693,7 @@ export const routeTree = rootRoute
         "/(systemManagement)/users",
         "/(workTasks)/workTasksList",
         "/(kiosks)/kioskDetail/$kioskId",
+        "/(partTransfers)/partTransferDetail/$partTransferId",
         "/(repairs)/repairDetail/$repairId",
         "/(workTasks)/workTaskDetail/$workTaskId"
       ]
@@ -688,6 +737,9 @@ export const routeTree = rootRoute
     "/(kiosks)/kiosksList": {
       "filePath": "(kiosks)/kiosksList.tsx"
     },
+    "/(partTransfers)/partTransfersList": {
+      "filePath": "(partTransfers)/partTransfersList.tsx"
+    },
     "/(repairs)/repairsList": {
       "filePath": "(repairs)/repairsList.tsx"
     },
@@ -717,6 +769,9 @@ export const routeTree = rootRoute
     },
     "/(kiosks)/kioskDetail/$kioskId": {
       "filePath": "(kiosks)/kioskDetail.$kioskId.tsx"
+    },
+    "/(partTransfers)/partTransferDetail/$partTransferId": {
+      "filePath": "(partTransfers)/partTransferDetail.$partTransferId.tsx"
     },
     "/(repairs)/repairDetail/$repairId": {
       "filePath": "(repairs)/repairDetail.$repairId.tsx"
