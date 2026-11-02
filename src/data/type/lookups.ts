@@ -157,3 +157,31 @@ export const PART_KINDS_CREATABLE = [1, 2, 3, 6, 7, 8, 9]
 export const PART_KINDS_WITH_TECHNICIAN = [2, 3, 6]
 // movements that release or destroy stock need the "Parts - Approve transfer" permission (230) to be completed
 export const PART_KINDS_NEED_APPROVAL = [2, 8, 9]
+
+
+// ─── Statements (SDConstants._STATEMENTSTATE_*) ─────────────────────────────────────────────────
+// The statement controller has no Lookups endpoint, so these names are the only copy on the front.
+export const STATEMENT_STATE = { NEW: 1, CALCULATED: 2, SENT: 3, APPROVED: 4, SETTLED: 5 } as const
+
+export const STATEMENT_STATES: Option[] = [
+    { id: 1, name: 'جدید' },
+    { id: 2, name: 'محاسبه شده' },
+    { id: 3, name: 'ارسال شده' },
+    { id: 4, name: 'تایید شده' },
+    { id: 5, name: 'تسویه شده' },
+]
+
+export const STATEMENT_STATE_COLOR: Record<number, ChipColor> = { 1: 'info', 2: 'primary', 3: 'warning', 4: 'success', 5: 'default' }
+
+/**
+ * Mirrors StatementWorkflow.CanChangeState on the server (From, To, operation permission; 0 = only the module's write access).
+ * "New" is never a target (editing resets to New) and "Calculated" is reached by CalculateStatement, so they are not
+ * here, except taking a Sent statement back. The server decides for real; this only decides which buttons to show.
+ */
+export const STATEMENT_TRANSITIONS: { from: number; to: number; permission: number; label: string; confirm: string }[] = [
+    { from: 2, to: 3, permission: 0, label: 'ارسال', confirm: 'صورت‌حساب برای پیمانکار ارسال شود؟' },
+    { from: 2, to: 4, permission: 250, label: 'تایید', confirm: 'صورت‌حساب تایید شود؟ با تایید، همه‌ی دستورکارهای آن قفل می‌شوند و راه برگشتی نیست.' },
+    { from: 3, to: 2, permission: 0, label: 'بازگشت به محاسبه‌شده', confirm: 'صورت‌حساب به «محاسبه شده» برگردد؟' },
+    { from: 3, to: 4, permission: 250, label: 'تایید', confirm: 'صورت‌حساب تایید شود؟ با تایید، همه‌ی دستورکارهای آن قفل می‌شوند و راه برگشتی نیست.' },
+    { from: 4, to: 5, permission: 251, label: 'تسویه', confirm: 'صورت‌حساب تسویه شود؟ بعد از تسویه هیچ تغییری ممکن نیست.' },
+]

@@ -16,6 +16,7 @@ import { Route as workTasksWorkTasksListImport } from './routes/(workTasks)/work
 import { Route as systemManagementUsersImport } from './routes/(systemManagement)/users'
 import { Route as systemManagementPermissionsImport } from './routes/(systemManagement)/permissions'
 import { Route as systemManagementMobileListSystemManagementImport } from './routes/(systemManagement)/mobileListSystemManagement'
+import { Route as statementsStatementsListImport } from './routes/(statements)/statementsList'
 import { Route as settingsMobileListSettingsImport } from './routes/(settings)/mobileListSettings'
 import { Route as settingsDevicesListImport } from './routes/(settings)/devicesList'
 import { Route as settingsDeviceModelsListImport } from './routes/(settings)/deviceModelsList'
@@ -35,6 +36,7 @@ import { Route as baseDataKioskModelsListImport } from './routes/(baseData)/kios
 import { Route as baseDataHolidaysListImport } from './routes/(baseData)/holidaysList'
 import { Route as baseDataCitiesListImport } from './routes/(baseData)/citiesList'
 import { Route as workTasksWorkTaskDetailWorkTaskIdImport } from './routes/(workTasks)/workTaskDetail.$workTaskId'
+import { Route as statementsStatementDetailStatementIdImport } from './routes/(statements)/statementDetail.$statementId'
 import { Route as repairsRepairDetailRepairIdImport } from './routes/(repairs)/repairDetail.$repairId'
 import { Route as partTransfersPartTransferDetailPartTransferIdImport } from './routes/(partTransfers)/partTransferDetail.$partTransferId'
 import { Route as kiosksKioskDetailKioskIdImport } from './routes/(kiosks)/kioskDetail.$kioskId'
@@ -72,6 +74,12 @@ const systemManagementMobileListSystemManagementRoute =
     path: '/mobileListSystemManagement',
     getParentRoute: () => rootRoute,
   } as any)
+
+const statementsStatementsListRoute = statementsStatementsListImport.update({
+  id: '/(statements)/statementsList',
+  path: '/statementsList',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const settingsMobileListSettingsRoute = settingsMobileListSettingsImport.update(
   {
@@ -191,6 +199,13 @@ const workTasksWorkTaskDetailWorkTaskIdRoute =
   workTasksWorkTaskDetailWorkTaskIdImport.update({
     id: '/(workTasks)/workTaskDetail/$workTaskId',
     path: '/workTaskDetail/$workTaskId',
+    getParentRoute: () => rootRoute,
+  } as any)
+
+const statementsStatementDetailStatementIdRoute =
+  statementsStatementDetailStatementIdImport.update({
+    id: '/(statements)/statementDetail/$statementId',
+    path: '/statementDetail/$statementId',
     getParentRoute: () => rootRoute,
   } as any)
 
@@ -351,6 +366,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof settingsMobileListSettingsImport
       parentRoute: typeof rootRoute
     }
+    '/(statements)/statementsList': {
+      id: '/(statements)/statementsList'
+      path: '/statementsList'
+      fullPath: '/statementsList'
+      preLoaderRoute: typeof statementsStatementsListImport
+      parentRoute: typeof rootRoute
+    }
     '/(systemManagement)/mobileListSystemManagement': {
       id: '/(systemManagement)/mobileListSystemManagement'
       path: '/mobileListSystemManagement'
@@ -400,6 +422,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof repairsRepairDetailRepairIdImport
       parentRoute: typeof rootRoute
     }
+    '/(statements)/statementDetail/$statementId': {
+      id: '/(statements)/statementDetail/$statementId'
+      path: '/statementDetail/$statementId'
+      fullPath: '/statementDetail/$statementId'
+      preLoaderRoute: typeof statementsStatementDetailStatementIdImport
+      parentRoute: typeof rootRoute
+    }
     '/(workTasks)/workTaskDetail/$workTaskId': {
       id: '/(workTasks)/workTaskDetail/$workTaskId'
       path: '/workTaskDetail/$workTaskId'
@@ -432,6 +461,7 @@ export interface FileRoutesByFullPath {
   '/deviceModelsList': typeof settingsDeviceModelsListRoute
   '/devicesList': typeof settingsDevicesListRoute
   '/mobileListSettings': typeof settingsMobileListSettingsRoute
+  '/statementsList': typeof statementsStatementsListRoute
   '/mobileListSystemManagement': typeof systemManagementMobileListSystemManagementRoute
   '/permissions': typeof systemManagementPermissionsRoute
   '/users': typeof systemManagementUsersRoute
@@ -439,6 +469,7 @@ export interface FileRoutesByFullPath {
   '/kioskDetail/$kioskId': typeof kiosksKioskDetailKioskIdRoute
   '/partTransferDetail/$partTransferId': typeof partTransfersPartTransferDetailPartTransferIdRoute
   '/repairDetail/$repairId': typeof repairsRepairDetailRepairIdRoute
+  '/statementDetail/$statementId': typeof statementsStatementDetailStatementIdRoute
   '/workTaskDetail/$workTaskId': typeof workTasksWorkTaskDetailWorkTaskIdRoute
 }
 
@@ -462,6 +493,7 @@ export interface FileRoutesByTo {
   '/deviceModelsList': typeof settingsDeviceModelsListRoute
   '/devicesList': typeof settingsDevicesListRoute
   '/mobileListSettings': typeof settingsMobileListSettingsRoute
+  '/statementsList': typeof statementsStatementsListRoute
   '/mobileListSystemManagement': typeof systemManagementMobileListSystemManagementRoute
   '/permissions': typeof systemManagementPermissionsRoute
   '/users': typeof systemManagementUsersRoute
@@ -469,6 +501,7 @@ export interface FileRoutesByTo {
   '/kioskDetail/$kioskId': typeof kiosksKioskDetailKioskIdRoute
   '/partTransferDetail/$partTransferId': typeof partTransfersPartTransferDetailPartTransferIdRoute
   '/repairDetail/$repairId': typeof repairsRepairDetailRepairIdRoute
+  '/statementDetail/$statementId': typeof statementsStatementDetailStatementIdRoute
   '/workTaskDetail/$workTaskId': typeof workTasksWorkTaskDetailWorkTaskIdRoute
 }
 
@@ -493,6 +526,7 @@ export interface FileRoutesById {
   '/(settings)/deviceModelsList': typeof settingsDeviceModelsListRoute
   '/(settings)/devicesList': typeof settingsDevicesListRoute
   '/(settings)/mobileListSettings': typeof settingsMobileListSettingsRoute
+  '/(statements)/statementsList': typeof statementsStatementsListRoute
   '/(systemManagement)/mobileListSystemManagement': typeof systemManagementMobileListSystemManagementRoute
   '/(systemManagement)/permissions': typeof systemManagementPermissionsRoute
   '/(systemManagement)/users': typeof systemManagementUsersRoute
@@ -500,6 +534,7 @@ export interface FileRoutesById {
   '/(kiosks)/kioskDetail/$kioskId': typeof kiosksKioskDetailKioskIdRoute
   '/(partTransfers)/partTransferDetail/$partTransferId': typeof partTransfersPartTransferDetailPartTransferIdRoute
   '/(repairs)/repairDetail/$repairId': typeof repairsRepairDetailRepairIdRoute
+  '/(statements)/statementDetail/$statementId': typeof statementsStatementDetailStatementIdRoute
   '/(workTasks)/workTaskDetail/$workTaskId': typeof workTasksWorkTaskDetailWorkTaskIdRoute
 }
 
@@ -525,6 +560,7 @@ export interface FileRouteTypes {
     | '/deviceModelsList'
     | '/devicesList'
     | '/mobileListSettings'
+    | '/statementsList'
     | '/mobileListSystemManagement'
     | '/permissions'
     | '/users'
@@ -532,6 +568,7 @@ export interface FileRouteTypes {
     | '/kioskDetail/$kioskId'
     | '/partTransferDetail/$partTransferId'
     | '/repairDetail/$repairId'
+    | '/statementDetail/$statementId'
     | '/workTaskDetail/$workTaskId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -554,6 +591,7 @@ export interface FileRouteTypes {
     | '/deviceModelsList'
     | '/devicesList'
     | '/mobileListSettings'
+    | '/statementsList'
     | '/mobileListSystemManagement'
     | '/permissions'
     | '/users'
@@ -561,6 +599,7 @@ export interface FileRouteTypes {
     | '/kioskDetail/$kioskId'
     | '/partTransferDetail/$partTransferId'
     | '/repairDetail/$repairId'
+    | '/statementDetail/$statementId'
     | '/workTaskDetail/$workTaskId'
   id:
     | '__root__'
@@ -583,6 +622,7 @@ export interface FileRouteTypes {
     | '/(settings)/deviceModelsList'
     | '/(settings)/devicesList'
     | '/(settings)/mobileListSettings'
+    | '/(statements)/statementsList'
     | '/(systemManagement)/mobileListSystemManagement'
     | '/(systemManagement)/permissions'
     | '/(systemManagement)/users'
@@ -590,6 +630,7 @@ export interface FileRouteTypes {
     | '/(kiosks)/kioskDetail/$kioskId'
     | '/(partTransfers)/partTransferDetail/$partTransferId'
     | '/(repairs)/repairDetail/$repairId'
+    | '/(statements)/statementDetail/$statementId'
     | '/(workTasks)/workTaskDetail/$workTaskId'
   fileRoutesById: FileRoutesById
 }
@@ -614,6 +655,7 @@ export interface RootRouteChildren {
   settingsDeviceModelsListRoute: typeof settingsDeviceModelsListRoute
   settingsDevicesListRoute: typeof settingsDevicesListRoute
   settingsMobileListSettingsRoute: typeof settingsMobileListSettingsRoute
+  statementsStatementsListRoute: typeof statementsStatementsListRoute
   systemManagementMobileListSystemManagementRoute: typeof systemManagementMobileListSystemManagementRoute
   systemManagementPermissionsRoute: typeof systemManagementPermissionsRoute
   systemManagementUsersRoute: typeof systemManagementUsersRoute
@@ -621,6 +663,7 @@ export interface RootRouteChildren {
   kiosksKioskDetailKioskIdRoute: typeof kiosksKioskDetailKioskIdRoute
   partTransfersPartTransferDetailPartTransferIdRoute: typeof partTransfersPartTransferDetailPartTransferIdRoute
   repairsRepairDetailRepairIdRoute: typeof repairsRepairDetailRepairIdRoute
+  statementsStatementDetailStatementIdRoute: typeof statementsStatementDetailStatementIdRoute
   workTasksWorkTaskDetailWorkTaskIdRoute: typeof workTasksWorkTaskDetailWorkTaskIdRoute
 }
 
@@ -644,6 +687,7 @@ const rootRouteChildren: RootRouteChildren = {
   settingsDeviceModelsListRoute: settingsDeviceModelsListRoute,
   settingsDevicesListRoute: settingsDevicesListRoute,
   settingsMobileListSettingsRoute: settingsMobileListSettingsRoute,
+  statementsStatementsListRoute: statementsStatementsListRoute,
   systemManagementMobileListSystemManagementRoute:
     systemManagementMobileListSystemManagementRoute,
   systemManagementPermissionsRoute: systemManagementPermissionsRoute,
@@ -653,6 +697,8 @@ const rootRouteChildren: RootRouteChildren = {
   partTransfersPartTransferDetailPartTransferIdRoute:
     partTransfersPartTransferDetailPartTransferIdRoute,
   repairsRepairDetailRepairIdRoute: repairsRepairDetailRepairIdRoute,
+  statementsStatementDetailStatementIdRoute:
+    statementsStatementDetailStatementIdRoute,
   workTasksWorkTaskDetailWorkTaskIdRoute:
     workTasksWorkTaskDetailWorkTaskIdRoute,
 }
@@ -688,6 +734,7 @@ export const routeTree = rootRoute
         "/(settings)/deviceModelsList",
         "/(settings)/devicesList",
         "/(settings)/mobileListSettings",
+        "/(statements)/statementsList",
         "/(systemManagement)/mobileListSystemManagement",
         "/(systemManagement)/permissions",
         "/(systemManagement)/users",
@@ -695,6 +742,7 @@ export const routeTree = rootRoute
         "/(kiosks)/kioskDetail/$kioskId",
         "/(partTransfers)/partTransferDetail/$partTransferId",
         "/(repairs)/repairDetail/$repairId",
+        "/(statements)/statementDetail/$statementId",
         "/(workTasks)/workTaskDetail/$workTaskId"
       ]
     },
@@ -755,6 +803,9 @@ export const routeTree = rootRoute
     "/(settings)/mobileListSettings": {
       "filePath": "(settings)/mobileListSettings.tsx"
     },
+    "/(statements)/statementsList": {
+      "filePath": "(statements)/statementsList.tsx"
+    },
     "/(systemManagement)/mobileListSystemManagement": {
       "filePath": "(systemManagement)/mobileListSystemManagement.tsx"
     },
@@ -775,6 +826,9 @@ export const routeTree = rootRoute
     },
     "/(repairs)/repairDetail/$repairId": {
       "filePath": "(repairs)/repairDetail.$repairId.tsx"
+    },
+    "/(statements)/statementDetail/$statementId": {
+      "filePath": "(statements)/statementDetail.$statementId.tsx"
     },
     "/(workTasks)/workTaskDetail/$workTaskId": {
       "filePath": "(workTasks)/workTaskDetail.$workTaskId.tsx"

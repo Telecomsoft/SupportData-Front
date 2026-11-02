@@ -23,6 +23,7 @@ import AtmIcon from '@mui/icons-material/Atm'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import HandymanIcon from '@mui/icons-material/Handyman'
 import Inventory2Icon from '@mui/icons-material/Inventory2'
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong'
 
 export type DataType = {
    name: string
@@ -125,4 +126,5 @@ export const LAYOUT_SIDEBAR_DATA: (DataType & { children?: DataType[] })[] = [
    { name: 'دستورکارها', value: 'workTasksList', link: '/workTasksList', icon: AssignmentIcon, accessID: 111 },
    { name: 'تعمیرات', value: 'repairsList', link: '/repairsList', icon: HandymanIcon, accessID: 113 },
    { name: 'انبار قطعات', value: 'partTransfersList', link: '/partTransfersList', icon: Inventory2Icon, accessID: 112 },
+   { name: 'صورت‌حساب‌ها', value: 'statementsList', link: '/statementsList', icon: ReceiptLongIcon, accessID: 114 },
 ]
