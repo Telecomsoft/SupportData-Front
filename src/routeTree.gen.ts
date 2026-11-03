@@ -21,6 +21,8 @@ import { Route as settingsMobileListSettingsImport } from './routes/(settings)/m
 import { Route as settingsDevicesListImport } from './routes/(settings)/devicesList'
 import { Route as settingsDeviceModelsListImport } from './routes/(settings)/deviceModelsList'
 import { Route as settingsBanksListImport } from './routes/(settings)/banksList'
+import { Route as reportsReportsListImport } from './routes/(reports)/reportsList'
+import { Route as reportsDashboardImport } from './routes/(reports)/dashboard'
 import { Route as repairsRepairsListImport } from './routes/(repairs)/repairsList'
 import { Route as partTransfersPartTransfersListImport } from './routes/(partTransfers)/partTransfersList'
 import { Route as kiosksKiosksListImport } from './routes/(kiosks)/kiosksList'
@@ -104,6 +106,18 @@ const settingsDeviceModelsListRoute = settingsDeviceModelsListImport.update({
 const settingsBanksListRoute = settingsBanksListImport.update({
   id: '/(settings)/banksList',
   path: '/banksList',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const reportsReportsListRoute = reportsReportsListImport.update({
+  id: '/(reports)/reportsList',
+  path: '/reportsList',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const reportsDashboardRoute = reportsDashboardImport.update({
+  id: '/(reports)/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -338,6 +352,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof repairsRepairsListImport
       parentRoute: typeof rootRoute
     }
+    '/(reports)/dashboard': {
+      id: '/(reports)/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof reportsDashboardImport
+      parentRoute: typeof rootRoute
+    }
+    '/(reports)/reportsList': {
+      id: '/(reports)/reportsList'
+      path: '/reportsList'
+      fullPath: '/reportsList'
+      preLoaderRoute: typeof reportsReportsListImport
+      parentRoute: typeof rootRoute
+    }
     '/(settings)/banksList': {
       id: '/(settings)/banksList'
       path: '/banksList'
@@ -457,6 +485,8 @@ export interface FileRoutesByFullPath {
   '/kiosksList': typeof kiosksKiosksListRoute
   '/partTransfersList': typeof partTransfersPartTransfersListRoute
   '/repairsList': typeof repairsRepairsListRoute
+  '/dashboard': typeof reportsDashboardRoute
+  '/reportsList': typeof reportsReportsListRoute
   '/banksList': typeof settingsBanksListRoute
   '/deviceModelsList': typeof settingsDeviceModelsListRoute
   '/devicesList': typeof settingsDevicesListRoute
@@ -489,6 +519,8 @@ export interface FileRoutesByTo {
   '/kiosksList': typeof kiosksKiosksListRoute
   '/partTransfersList': typeof partTransfersPartTransfersListRoute
   '/repairsList': typeof repairsRepairsListRoute
+  '/dashboard': typeof reportsDashboardRoute
+  '/reportsList': typeof reportsReportsListRoute
   '/banksList': typeof settingsBanksListRoute
   '/deviceModelsList': typeof settingsDeviceModelsListRoute
   '/devicesList': typeof settingsDevicesListRoute
@@ -522,6 +554,8 @@ export interface FileRoutesById {
   '/(kiosks)/kiosksList': typeof kiosksKiosksListRoute
   '/(partTransfers)/partTransfersList': typeof partTransfersPartTransfersListRoute
   '/(repairs)/repairsList': typeof repairsRepairsListRoute
+  '/(reports)/dashboard': typeof reportsDashboardRoute
+  '/(reports)/reportsList': typeof reportsReportsListRoute
   '/(settings)/banksList': typeof settingsBanksListRoute
   '/(settings)/deviceModelsList': typeof settingsDeviceModelsListRoute
   '/(settings)/devicesList': typeof settingsDevicesListRoute
@@ -556,6 +590,8 @@ export interface FileRouteTypes {
     | '/kiosksList'
     | '/partTransfersList'
     | '/repairsList'
+    | '/dashboard'
+    | '/reportsList'
     | '/banksList'
     | '/deviceModelsList'
     | '/devicesList'
@@ -587,6 +623,8 @@ export interface FileRouteTypes {
     | '/kiosksList'
     | '/partTransfersList'
     | '/repairsList'
+    | '/dashboard'
+    | '/reportsList'
     | '/banksList'
     | '/deviceModelsList'
     | '/devicesList'
@@ -618,6 +656,8 @@ export interface FileRouteTypes {
     | '/(kiosks)/kiosksList'
     | '/(partTransfers)/partTransfersList'
     | '/(repairs)/repairsList'
+    | '/(reports)/dashboard'
+    | '/(reports)/reportsList'
     | '/(settings)/banksList'
     | '/(settings)/deviceModelsList'
     | '/(settings)/devicesList'
@@ -651,6 +691,8 @@ export interface RootRouteChildren {
   kiosksKiosksListRoute: typeof kiosksKiosksListRoute
   partTransfersPartTransfersListRoute: typeof partTransfersPartTransfersListRoute
   repairsRepairsListRoute: typeof repairsRepairsListRoute
+  reportsDashboardRoute: typeof reportsDashboardRoute
+  reportsReportsListRoute: typeof reportsReportsListRoute
   settingsBanksListRoute: typeof settingsBanksListRoute
   settingsDeviceModelsListRoute: typeof settingsDeviceModelsListRoute
   settingsDevicesListRoute: typeof settingsDevicesListRoute
@@ -683,6 +725,8 @@ const rootRouteChildren: RootRouteChildren = {
   kiosksKiosksListRoute: kiosksKiosksListRoute,
   partTransfersPartTransfersListRoute: partTransfersPartTransfersListRoute,
   repairsRepairsListRoute: repairsRepairsListRoute,
+  reportsDashboardRoute: reportsDashboardRoute,
+  reportsReportsListRoute: reportsReportsListRoute,
   settingsBanksListRoute: settingsBanksListRoute,
   settingsDeviceModelsListRoute: settingsDeviceModelsListRoute,
   settingsDevicesListRoute: settingsDevicesListRoute,
@@ -730,6 +774,8 @@ export const routeTree = rootRoute
         "/(kiosks)/kiosksList",
         "/(partTransfers)/partTransfersList",
         "/(repairs)/repairsList",
+        "/(reports)/dashboard",
+        "/(reports)/reportsList",
         "/(settings)/banksList",
         "/(settings)/deviceModelsList",
         "/(settings)/devicesList",
@@ -790,6 +836,12 @@ export const routeTree = rootRoute
     },
     "/(repairs)/repairsList": {
       "filePath": "(repairs)/repairsList.tsx"
+    },
+    "/(reports)/dashboard": {
+      "filePath": "(reports)/dashboard.tsx"
+    },
+    "/(reports)/reportsList": {
+      "filePath": "(reports)/reportsList.tsx"
     },
     "/(settings)/banksList": {
       "filePath": "(settings)/banksList.tsx"

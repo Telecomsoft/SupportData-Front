@@ -24,6 +24,8 @@ import AssignmentIcon from '@mui/icons-material/Assignment'
 import HandymanIcon from '@mui/icons-material/Handyman'
 import Inventory2Icon from '@mui/icons-material/Inventory2'
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong'
+import DashboardIcon from '@mui/icons-material/Dashboard'
+import AssessmentIcon from '@mui/icons-material/Assessment'
 
 export type DataType = {
    name: string
@@ -35,6 +37,7 @@ export type DataType = {
 }
 
 export const LAYOUT_SIDEBAR_DATA: (DataType & { children?: DataType[] })[] = [
+   { name: 'داشبورد', value: 'dashboard', link: '/dashboard', icon: DashboardIcon, accessID: 115 },
    {
       name: 'لیست خطا ها',
       value: 'errorsList',
@@ -127,4 +130,5 @@ export const LAYOUT_SIDEBAR_DATA: (DataType & { children?: DataType[] })[] = [
    { name: 'تعمیرات', value: 'repairsList', link: '/repairsList', icon: HandymanIcon, accessID: 113 },
    { name: 'انبار قطعات', value: 'partTransfersList', link: '/partTransfersList', icon: Inventory2Icon, accessID: 112 },
    { name: 'صورت‌حساب‌ها', value: 'statementsList', link: '/statementsList', icon: ReceiptLongIcon, accessID: 114 },
+   { name: 'گزارش‌ها', value: 'reportsList', link: '/reportsList', icon: AssessmentIcon, accessID: 115 },
 ]
