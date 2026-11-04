@@ -13,6 +13,7 @@ import { useReportExport } from '@hooks/useReportExport'
 import { usePostQuery } from '@hooks/usePostQuery'
 import { useUserScope } from '@hooks/useUserScope'
 import { day, num, rial } from '@components/section/statements/statementFormat'
+import StyledTextField from '@components/general/input/StyledTextField'
 
 type Opt = { id: number; name: string }
 
@@ -70,18 +71,18 @@ const CustomerBillingTab = ({ snackbarOpen }: { snackbarOpen: snackbarOpenType }
         <DatePicker
             calendar={persian} locale={persian_fa} value={current ? new Date(current) : ''}
             onChange={(d: DateObject | null) => set(d instanceof DateObject ? toIsoDay(d) : null)}
-            render={<TextField size="small" label={label} sx={{ width: 150 }} InputLabelProps={{ shrink: !!current || undefined }} />}
+            render={<StyledTextField size="small" label={label} sx={{ width: 150 }} InputLabelProps={{ shrink: !!current || undefined }} />}
         />
     )
 
     return (
         <Box>
-            <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap" sx={{ mb: 2 }}>
+            <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap" sx={{ mb: 1, p: 1, bgcolor: 'background.paper', borderRadius: 2, boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
                 {!isCustomer && (
                     <Autocomplete
                         size="small" sx={{ minWidth: 220 }} options={lookups.options.customerID} value={customer}
                         getOptionLabel={(o) => o.name} isOptionEqualToValue={(a, b) => a.id === b.id}
-                        onChange={(_, o) => setCustomer(o)} renderInput={(p) => <TextField {...p} label="مشتری" required />}
+                        onChange={(_, o) => setCustomer(o)} renderInput={(p) => <StyledTextField {...p} label="مشتری" required />}
                     />
                 )}
                 {date('اتمام از', from, setFrom)}

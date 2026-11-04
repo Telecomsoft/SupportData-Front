@@ -97,8 +97,8 @@ const PartTransferListTab = ({ snackbarOpen }: { snackbarOpen: snackbarOpenType 
         { field: 'technicianName', headerName: 'تکنسین', width: sizeConverter(130, 'width') },
         { field: 'workTaskID', headerName: 'دستورکار', width: sizeConverter(90, 'width') },
         { field: 'repairID', headerName: 'تعمیر', width: sizeConverter(80, 'width') },
-        { field: 'createdAt', headerName: 'زمان ثبت', width: sizeConverter(150, 'width'), valueGetter: (r) => (r.createdAt ? dateFn(r.createdAt) : '') },
-        { field: 'doneAt', headerName: 'زمان انجام', width: sizeConverter(150, 'width'), valueGetter: (r) => (r.doneAt ? dateFn(r.doneAt) : '') },
+        { field: 'createdAt', headerName: 'زمان ثبت', width: sizeConverter(150, 'width'), valueGetter: (r) => (r.createdAt ? dateFn(r.createdAt) : ''),renderCell: (p) => <Grid container justifyContent="center" size={'auto'}><Typography variant="body2">{p.row.createdAt ? dateFn(p.row.createdAt) : ''}</Typography></Grid >},
+        { field: 'doneAt', headerName: 'زمان انجام', width: sizeConverter(150, 'width'), valueGetter: (r) => (r.doneAt ? dateFn(r.doneAt) : '') ,renderCell: (p) => <Grid container justifyContent="center" size={'auto'}><Typography variant="body2">{p.row.doneAt ? dateFn(p.row.doneAt) : ''}</Typography></Grid>},
         { field: 'description', headerName: 'توضیحات', width: sizeConverter(220, 'width') },
     ]
 

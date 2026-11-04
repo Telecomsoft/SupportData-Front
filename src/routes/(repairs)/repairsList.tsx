@@ -100,9 +100,32 @@ function RepairsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
         { field: 'customerName', headerName: 'مشتری', width: sizeConverter(140, 'width') },
         { field: 'kioskSerial', headerName: 'کیوسک', width: sizeConverter(130, 'width') },
         { field: 'workTaskID', headerName: 'دستورکار', width: sizeConverter(90, 'width') },
-        { field: 'assignedToName', headerName: 'ارجاع‌شده به', width: sizeConverter(130, 'width') },
-        { field: 'receivedAt', headerName: 'زمان دریافت', width: sizeConverter(150, 'width'), valueGetter: (r) => (r.receivedAt ? dateFn(r.receivedAt) : '') },
-        { field: 'repairedAt', headerName: 'زمان تعمیر', width: sizeConverter(150, 'width'), valueGetter: (r) => (r.repairedAt ? dateFn(r.repairedAt) : '') },
+        { field: 'assignedToName', headerName: 'ارجاع‌شده به', width: sizeConverter(130, 'width') }, {
+            field: 'receivedAt',
+            headerName: 'زمان دریافت',
+            width: sizeConverter(150, 'width'),
+            valueGetter: (r) => (r.receivedAt ? dateFn(r.receivedAt) : ''),
+            renderCell: (p) => (
+                <Grid container alignItems="center" justifyContent="center">
+                    <Typography variant="body2">
+                        {p.row.receivedAt ? dateFn(p.row.receivedAt) : ''}
+                    </Typography>
+                </Grid>
+            )
+        },
+        {
+            field: 'repairedAt',
+            headerName: 'زمان تعمیر',
+            width: sizeConverter(150, 'width'),
+            valueGetter: (r) => (r.repairedAt ? dateFn(r.repairedAt) : ''),
+            renderCell: (p) => (
+                <Grid container alignItems="center" justifyContent="center">
+                    <Typography variant="body2">
+                        {p.row.repairedAt ? dateFn(p.row.repairedAt) : ''}
+                    </Typography>
+                </Grid>
+            )
+        },
         { field: 'repairCost', headerName: 'هزینه‌ی تعمیر', width: sizeConverter(120, 'width'), valueGetter: (r) => rial(r.repairCost) },
         { field: 'chargedAmount', headerName: 'مبلغ دریافتی', width: sizeConverter(120, 'width'), valueGetter: (r) => rial(r.chargedAmount) },
         { field: 'description', headerName: 'توضیحات', width: sizeConverter(240, 'width') },

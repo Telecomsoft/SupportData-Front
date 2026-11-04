@@ -15,7 +15,7 @@ import CustomCircularProgress from '@components/general/CustomCircularProgress'
 import StatementFilterBar, { EMPTY_STATEMENT_FILTER, StatementFilterState } from '@components/section/statements/StatementFilterBar'
 import StatementMobileCard from '@components/section/statements/StatementMobileCard'
 import StatementStateChip from '@components/section/statements/StatementStateChip'
-import { day, num } from '@components/section/statements/statementFormat'
+import {  num } from '@components/section/statements/statementFormat'
 import { buildStatementCreateForm } from '@src/data/dialogArrays/statementForm'
 import { useStatementLookups } from '@hooks/useStatementLookups'
 import { useStatementRules } from '@hooks/useStatementRules'
@@ -85,14 +85,14 @@ function StatementsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
         { field: 'id', headerName: 'شماره', width: sizeConverter(70, 'width') },
         { field: 'caption', headerName: 'عنوان', width: sizeConverter(180, 'width') },
         { field: 'contractorName', headerName: 'پیمانکار', width: sizeConverter(170, 'width') },
-        { field: 'fromDate', headerName: 'از تاریخ', width: sizeConverter(110, 'width'), valueGetter: (r) => day(r.fromDate) },
-        { field: 'toDate', headerName: 'تا تاریخ', width: sizeConverter(110, 'width'), valueGetter: (r) => day(r.toDate) },
+        { field: 'fromDate', headerName: 'از تاریخ', width: sizeConverter(110, 'width'), valueGetter: (r) => dateFn(r.fromDate), renderCell: (p) =><Grid container justifyContent="center"><Typography variant="body2">{p.row.fromDate ? dateFn(p.row.fromDate) : ''}</Typography></Grid> },
+        { field: 'toDate', headerName: 'تا تاریخ', width: sizeConverter(110, 'width'), valueGetter: (r) => dateFn(r.toDate), renderCell: (p) => <Grid container justifyContent="center"><Typography variant="body2">{p.row.toDate ? dateFn(p.row.toDate) : ''}</Typography></Grid> },
         { field: 'stateName', headerName: 'وضعیت', width: sizeConverter(120, 'width'), renderCell: (p) => <StatementStateChip statement={p.row} /> },
         { field: 'lineCount', headerName: 'ردیف', width: sizeConverter(70, 'width') },
         { field: 'total', headerName: 'جمع کل (ریال)', width: sizeConverter(140, 'width'), valueGetter: (r) => num(r.total) },
         { field: 'otherCosts', headerName: 'هزینه‌ی اضافی', width: sizeConverter(120, 'width'), valueGetter: (r) => (r.otherCosts ? num(r.otherCosts) : '') },
         { field: 'otherPenalties', headerName: 'جریمه‌ی اضافی', width: sizeConverter(120, 'width'), valueGetter: (r) => (r.otherPenalties ? num(r.otherPenalties) : '') },
-        { field: 'calculatedAt', headerName: 'زمان محاسبه', width: sizeConverter(150, 'width'), valueGetter: (r) => (r.calculatedAt ? dateFn(r.calculatedAt) : '') },
+        { field: 'calculatedAt', headerName: 'زمان محاسبه', width: sizeConverter(150, 'width'), valueGetter: (r) => (r.calculatedAt ? dateFn(r.calculatedAt) : ''), renderCell: (p) => <Grid container justifyContent="center"><Typography variant="body2">{p.row.calculatedAt ? dateFn(p.row.calculatedAt) : ''}</Typography></Grid> },
         { field: 'description', headerName: 'توضیحات', width: sizeConverter(220, 'width') },
     ]
 
@@ -123,6 +123,7 @@ function StatementsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 <Box sx={{ width: '100%' }}>
                     {filterBar}
                     <TelecomDataGrid
+                        height={sizeConverter(540, 'height')}
                         data={items}
                         loading={list.isFetching}
                         serverData={{ totalDataCount: total, maxRowInPage: PAGE_SIZE, currentPage: page }}

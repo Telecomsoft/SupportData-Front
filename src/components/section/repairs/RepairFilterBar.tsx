@@ -3,6 +3,7 @@ import { Autocomplete, Stack, TextField } from '@mui/material'
 import DatePicker, { DateObject } from 'react-multi-date-picker'
 import persian from 'react-date-object/calendars/persian'
 import persian_fa from 'react-date-object/locales/persian_fa'
+import StyledTextField from '@components/general/input/StyledTextField'
 
 type Opt = { id: number; name: string }
 
@@ -59,7 +60,7 @@ const RepairFilterBar = ({ value, onChange, states, deviceModels, customers, tec
             getOptionLabel={(o) => o.name}
             isOptionEqualToValue={(a, b) => a.id === b.id}
             onChange={(_, o) => set(o)}
-            renderInput={(p) => <TextField {...p} label={label} />}
+            renderInput={(p) => <StyledTextField {...p} label={label} />}
         />
     )
     const date = (label: string, current: string | null, set: (iso: string | null) => void, end: boolean) => (
@@ -68,12 +69,12 @@ const RepairFilterBar = ({ value, onChange, states, deviceModels, customers, tec
             locale={persian_fa}
             value={current ? new Date(current) : ''}
             onChange={(d: DateObject | null) => set(d instanceof DateObject ? toIsoDay(d, end) : null)}
-            render={<TextField size="small" label={label} sx={{ width: 140 }} InputLabelProps={{ shrink: !!current || undefined }} />}
+            render={<StyledTextField size="small" label={label} sx={{ width: 140 }} InputLabelProps={{ shrink: !!current || undefined }} />}
         />
     )
 
     return (
-        <Stack direction="row" gap={1} flexWrap="wrap" alignItems="center" sx={{ mb: 1 }}>
+        <Stack direction="row" gap={1} flexWrap="wrap" alignItems="center" sx={{ mb: 1, p: 1, bgcolor: 'background.paper', borderRadius: 2, boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
             <Autocomplete
                 multiple
                 size="small"
@@ -84,13 +85,13 @@ const RepairFilterBar = ({ value, onChange, states, deviceModels, customers, tec
                 getOptionLabel={(o) => o.name}
                 isOptionEqualToValue={(a, b) => a.id === b.id}
                 onChange={(_, o) => onChange({ ...value, states: o })}
-                renderInput={(p) => <TextField {...p} label="وضعیت" />}
+                renderInput={(p) => <StyledTextField {...p} label="وضعیت" />}
             />
             {combo('مدل قطعه', deviceModels, value.deviceModel, (deviceModel) => onChange({ ...value, deviceModel }))}
             {combo('مشتری', customers, value.customer, (customer) => onChange({ ...value, customer }))}
             {combo('ارجاع‌شده به', technicians, value.assignedTo, (assignedTo) => onChange({ ...value, assignedTo }))}
-            <TextField size="small" label="سریال قطعه" value={serial} onChange={(e) => setSerial(e.target.value)} sx={{ width: 150 }} />
-            <TextField size="small" label="شماره دستورکار" value={taskID} onChange={(e) => setTaskID(e.target.value.replace(/\D/g, ''))} sx={{ width: 130 }} />
+            <StyledTextField size="small" label="سریال قطعه" value={serial} onChange={(e) => setSerial(e.target.value)} sx={{ width: 150 }} />
+            <StyledTextField size="small" label="شماره دستورکار" value={taskID} onChange={(e) => setTaskID(e.target.value.replace(/\D/g, ''))} sx={{ width: 130 }} />
             {date('دریافت از', value.from, (from) => onChange({ ...value, from }), false)}
             {date('دریافت تا', value.to, (to) => onChange({ ...value, to }), true)}
         </Stack>

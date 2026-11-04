@@ -24,7 +24,7 @@ import { usePostQuery } from '@hooks/usePostQuery'
 import { useAccessCheck } from '@utility/accessCheck'
 import { useDevice } from '@hooks/useDevice'
 import { sizeConverter } from '@utility/sizeConverter'
-import { convertToShamsi } from '@utility/dateConverter'
+import { convertToShamsi, dateFn } from '@utility/dateConverter'
 import { buildPayload } from '@utility/buildPayload'
 import CircleIcon from '@mui/icons-material/Circle'
 
@@ -100,7 +100,7 @@ function KiosksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
         { field: 'cityName', headerName: 'شهر', width: sizeConverter(110, 'width') },
         { field: 'branchName', headerName: 'شعبه', width: sizeConverter(140, 'width') },
         { field: 'branchCode', headerName: 'کد شعبه', width: sizeConverter(90, 'width') },
-        { field: 'installationDate', headerName: 'تاریخ نصب', width: sizeConverter(100, 'width'), valueGetter: (r) => (r.installationDate ? convertToShamsi(r.installationDate) : '') },
+        { field: 'installationDate', headerName: 'تاریخ نصب', width: sizeConverter(100, 'width'), valueGetter: (r) => (r.installationDate ? convertToShamsi(r.installationDate) : ''),renderCell: (p) => <Typography variant="body2">{p.row.installationDate ? dateFn(p.row.installationDate) : ''}</Typography>},
         { field: 'warrantyEndDate', headerName: 'گارانتی', width: sizeConverter(190, 'width'), renderCell: (p) => <WarrantyChip kiosk={p.row} /> },
         {
             field: 'isActive', headerName: 'وضعیت', width: sizeConverter(80, 'width'), valueGetter: (r) => (r.isActive ? 'فعال' : 'غیرفعال'), renderCell: (param) =>

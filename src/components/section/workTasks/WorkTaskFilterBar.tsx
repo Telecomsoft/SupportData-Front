@@ -4,6 +4,7 @@ import DatePicker, { DateObject } from 'react-multi-date-picker'
 import persian from 'react-date-object/calendars/persian'
 import persian_fa from 'react-date-object/locales/persian_fa'
 import { TASK_STATES, TASK_TYPES } from '@src/data/type/lookups'
+import StyledTextField from '@components/general/input/StyledTextField'
 
 type Opt = { id: number; name: string }
 
@@ -58,7 +59,7 @@ const WorkTaskFilterBar = ({ value, onChange, customers, cities, technicians, is
             getOptionLabel={(o) => o.name}
             isOptionEqualToValue={(a, b) => a.id === b.id}
             onChange={(_, o) => set(o)}
-            renderInput={(p) => <TextField {...p} label={label} />}
+            renderInput={(p) => <StyledTextField{...p} label={label} />}
         />
     )
     const multi = (label: string, options: Opt[], selected: Opt[], set: (o: Opt[]) => void) => (
@@ -72,7 +73,7 @@ const WorkTaskFilterBar = ({ value, onChange, customers, cities, technicians, is
             getOptionLabel={(o) => o.name}
             isOptionEqualToValue={(a, b) => a.id === b.id}
             onChange={(_, o) => set(o)}
-            renderInput={(p) => <TextField {...p} label={label} />}
+            renderInput={(p) => <StyledTextField{...p} label={label} />}
         />
     )
     const date = (label: string, current: string | null, set: (iso: string | null) => void, end: boolean) => (
@@ -86,7 +87,7 @@ const WorkTaskFilterBar = ({ value, onChange, customers, cities, technicians, is
     )
 
     return (
-        <Stack direction="row" gap={1} flexWrap="wrap" alignItems="center" sx={{ mb: 1 }}>
+        <Stack direction="row" gap={1} flexWrap="wrap" alignItems="center" sx={{ mb: 1,p:1, bgcolor: 'background.paper', borderRadius: 2, boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
             {multi('وضعیت', TASK_STATES, value.states, (states) => onChange({ ...value, states }))}
             {multi('نوع', TASK_TYPES, value.types, (types) => onChange({ ...value, types }))}
             {!isCustomer && combo('مشتری', customers, value.customer, (customer) => onChange({ ...value, customer }))}

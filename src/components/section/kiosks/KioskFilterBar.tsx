@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Autocomplete, Stack, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material'
+import StyledTextField from '@components/general/input/StyledTextField';
 
 type Opt = { id: number; name: string }
 
@@ -39,16 +40,16 @@ const KioskFilterBar = ({ value, onChange, customers, cities, models }: Props) =
             getOptionLabel={(o) => o.name}
             isOptionEqualToValue={(a, b) => a.id === b.id}
             onChange={(_, o) => set(o)}
-            renderInput={(p) => <TextField {...p} label={label} />}
+            renderInput={(p) => <StyledTextField {...p} label={label} />}
         />
     )
 
     return (
-        <Stack direction="row" gap={1} flexWrap="wrap" alignItems="center" sx={{ mb: 1 }}>
+        <Stack direction="row" gap={1} flexWrap="wrap" alignItems="center" sx={{ mb: 1, p: 1, bgcolor: 'background.paper', borderRadius: 2, boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
             {combo('مشتری', customers, value.customer, (o) => onChange({ ...value, customer: o }))}
             {combo('شهر', cities, value.city, (o) => onChange({ ...value, city: o }))}
             {combo('مدل', models, value.model, (o) => onChange({ ...value, model: o }))}
-            <TextField size="small" label="کد شعبه" value={branch} onChange={(e) => setBranch(e.target.value)} sx={{ width: 120 }} />
+            <StyledTextField size="small" label="کد شعبه" value={branch} onChange={(e) => setBranch(e.target.value)} sx={{ width: 120 }} />
             <ToggleButtonGroup
                 size="small"
                 exclusive

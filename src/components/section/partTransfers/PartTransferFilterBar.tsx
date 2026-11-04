@@ -3,6 +3,7 @@ import { Autocomplete, Stack, TextField } from '@mui/material'
 import DatePicker, { DateObject } from 'react-multi-date-picker'
 import persian from 'react-date-object/calendars/persian'
 import persian_fa from 'react-date-object/locales/persian_fa'
+import StyledTextField from '@components/general/input/StyledTextField'
 
 type Opt = { id: number; name: string }
 
@@ -55,7 +56,7 @@ const PartTransferFilterBar = ({ value, onChange, kinds, states, deviceModels, t
             getOptionLabel={(o) => o.name}
             isOptionEqualToValue={(a, b) => a.id === b.id}
             onChange={(_, o) => set(o)}
-            renderInput={(p) => <TextField {...p} label={label} />}
+            renderInput={(p) => <StyledTextField {...p} label={label} />}
         />
     )
     const date = (label: string, current: string | null, set: (iso: string | null) => void) => (
@@ -64,17 +65,17 @@ const PartTransferFilterBar = ({ value, onChange, kinds, states, deviceModels, t
             locale={persian_fa}
             value={current ? new Date(current) : ''}
             onChange={(d: DateObject | null) => set(d instanceof DateObject ? toIsoDay(d) : null)}
-            render={<TextField size="small" label={label} sx={{ width: 140 }} InputLabelProps={{ shrink: !!current || undefined }} />}
+            render={<StyledTextField size="small" label={label} sx={{ width: 140 }} InputLabelProps={{ shrink: !!current || undefined }} />}
         />
     )
 
     return (
-        <Stack direction="row" gap={1} flexWrap="wrap" alignItems="center" sx={{ mb: 1 }}>
+        <Stack direction="row" gap={1} flexWrap="wrap" alignItems="center" sx={{ mb: 1, p: 1, bgcolor: 'background.paper', borderRadius: 2, boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
             {combo('نوع انتقال', kinds, value.kind, (kind) => onChange({ ...value, kind }))}
             {combo('وضعیت', states, value.state, (state) => onChange({ ...value, state }))}
             {combo('مدل قطعه', deviceModels, value.deviceModel, (deviceModel) => onChange({ ...value, deviceModel }))}
             {!isFieldTechnician && combo('تکنسین', technicians, value.technician, (technician) => onChange({ ...value, technician }))}
-            <TextField size="small" label="شماره دستورکار" value={taskID} onChange={(e) => setTaskID(e.target.value.replace(/\D/g, ''))} sx={{ width: 130 }} />
+            <StyledTextField size="small" label="شماره دستورکار" value={taskID} onChange={(e) => setTaskID(e.target.value.replace(/\D/g, ''))} sx={{ width: 130 }} />
             {date('ثبت از', value.from, (from) => onChange({ ...value, from }))}
             {date('ثبت تا', value.to, (to) => onChange({ ...value, to }))}
         </Stack>

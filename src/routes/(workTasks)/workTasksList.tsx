@@ -103,11 +103,59 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
         { field: 'kioskSerial', headerName: 'سریال کیوسک', width: sizeConverter(140, 'width') },
         ...(isCustomer ? [] : [{ field: 'customerName', headerName: 'مشتری', width: sizeConverter(140, 'width') }]),
         ...(isCustomer ? [] : [{ field: 'assignedToName', headerName: 'ارجاع‌شده به', width: sizeConverter(130, 'width') }]),
-        { field: 'reportedAt', headerName: 'زمان گزارش', width: sizeConverter(150, 'width'), valueGetter: (r) => (r.reportedAt ? dateFn(r.reportedAt) : '') },
-        { field: 'dueAt', headerName: 'مهلت', width: sizeConverter(150, 'width'), valueGetter: (r) => (r.dueAt ? dateFn(r.dueAt) : '') },
+
+        {
+            field: 'delayDays',
+            headerName: 'روز تاخیر',
+            width: sizeConverter(80, 'width'),
+            renderCell: (p) => (
+                <Grid container alignItems="center" justifyContent="center">
+                    <Typography variant="body2">
+                        {p.row.delayDays ? dateFn(p.row.delayDays) : ''}
+                    </Typography>
+                </Grid>
+            )
+        },
+        {
+            field: 'finishedAt',
+            headerName: 'زمان اتمام',
+            width: sizeConverter(150, 'width'),
+            valueGetter: (r) => (r.finishedAt ? dateFn(r.finishedAt) : ''),
+            renderCell: (p) => (
+                <Grid container alignItems="center" justifyContent="center">
+                    <Typography variant="body2">
+                        {p.row.finishedAt ? dateFn(p.row.finishedAt) : ''}
+                    </Typography>
+                </Grid>
+            )
+        },
+        {
+            field: 'dueAt',
+            headerName: 'مهلت',
+            width: sizeConverter(150, 'width'),
+            valueGetter: (r) => (r.dueAt ? dateFn(r.dueAt) : ''),
+            renderCell: (p) => (
+                <Grid container alignItems="center" justifyContent="center">
+                    <Typography variant="body2">
+                        {p.row.dueAt ? dateFn(p.row.dueAt) : ''}
+                    </Typography>
+                </Grid>
+            )
+        },
+        {
+            field: 'reportedAt',
+            headerName: 'زمان گزارش',
+            width: sizeConverter(150, 'width'),
+            valueGetter: (r) => (r.reportedAt ? dateFn(r.reportedAt) : ''),
+            renderCell: (p) => (
+                <Grid container alignItems="center" justifyContent="center">
+                    <Typography variant="body2">
+                        {p.row.reportedAt ? dateFn(p.row.reportedAt) : ''}
+                    </Typography>
+                </Grid>
+            )
+        },
         { field: 'isOverdue', headerName: 'دیرکرد', width: sizeConverter(80, 'width'), valueGetter: (r) => (r.isOverdue ? 'دیرکرد' : ''), renderCell: (p) => (p.row.isOverdue ? <Chip size="small" color="error" label="دیرکرد" /> : null) },
-        { field: 'finishedAt', headerName: 'زمان اتمام', width: sizeConverter(150, 'width'), valueGetter: (r) => (r.finishedAt ? dateFn(r.finishedAt) : '') },
-        { field: 'delayDays', headerName: 'روز تاخیر', width: sizeConverter(80, 'width') },
         { field: 'serviceFormReceived', headerName: 'فرم سرویس', width: sizeConverter(90, 'width'), valueGetter: (r) => (r.serviceFormReceived ? 'دریافت شده' : 'نشده') },
         { field: 'isPaid', headerName: 'پرداخت', width: sizeConverter(90, 'width'), valueGetter: (r) => (r.isPaid ? 'پرداخت شده' : 'نشده') },
         { field: 'reportedIssue', headerName: 'شرح مشکل', width: sizeConverter(240, 'width') },

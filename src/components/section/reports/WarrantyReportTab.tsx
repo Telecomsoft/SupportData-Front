@@ -7,6 +7,7 @@ import { useReportExport } from '@hooks/useReportExport'
 import { useGetData } from '@hooks/useGetData'
 import { useUserScope } from '@hooks/useUserScope'
 import { num } from '@components/section/statements/statementFormat'
+import StyledTextField from '@components/general/input/StyledTextField'
 
 type Opt = { id: number; name: string }
 
@@ -39,12 +40,12 @@ const WarrantyReportTab = () => {
 
     return (
         <Box>
-            <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap" sx={{ mb: 2 }}>
+            <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap" sx={{ mb: 1, p: 1, bgcolor: 'background.paper', borderRadius: 2, boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
                 {!isCustomer && (
                     <Autocomplete
                         size="small" sx={{ minWidth: 220 }} options={lookups.options.customerID} value={customer}
                         getOptionLabel={(o) => o.name} isOptionEqualToValue={(a, b) => a.id === b.id}
-                        onChange={(_, o) => setCustomer(o)} renderInput={(p) => <TextField {...p} label="مشتری (خالی = همه)" />}
+                        onChange={(_, o) => setCustomer(o)} renderInput={(p) => <StyledTextField {...p} label="مشتری (خالی = همه)" />}
                     />
                 )}
                 <Button variant="outlined" onClick={exportFile} disabled={rows.length === 0} sx={{ borderRadius: 2 }}>خروجی Excel</Button>

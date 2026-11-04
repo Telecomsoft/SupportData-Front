@@ -2,6 +2,7 @@ import { Autocomplete, Stack, TextField, ToggleButton, ToggleButtonGroup } from 
 import DatePicker, { DateObject } from 'react-multi-date-picker'
 import persian from 'react-date-object/calendars/persian'
 import persian_fa from 'react-date-object/locales/persian_fa'
+import StyledTextField from '@components/general/input/StyledTextField'
 
 type Opt = { id: number; name: string }
 
@@ -37,12 +38,12 @@ const StatementFilterBar = ({ value, onChange, states, contractors, isContractor
             locale={persian_fa}
             value={current ? new Date(current) : ''}
             onChange={(d: DateObject | null) => set(d instanceof DateObject ? toIsoDay(d) : null)}
-            render={<TextField size="small" label={label} sx={{ width: 140 }} InputLabelProps={{ shrink: !!current || undefined }} />}
+            render={<StyledTextField size="small" label={label} sx={{ width: 140 }} InputLabelProps={{ shrink: !!current || undefined }} />}
         />
     )
 
     return (
-        <Stack direction="row" gap={1} flexWrap="wrap" alignItems="center" sx={{ mb: 1 }}>
+        <Stack direction="row" gap={1} flexWrap="wrap" alignItems="center" sx={{ mb: 1, p: 1, bgcolor: 'background.paper', borderRadius: 2, boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
             {!isContractor && (
                 <Autocomplete
                     size="small"
@@ -52,7 +53,7 @@ const StatementFilterBar = ({ value, onChange, states, contractors, isContractor
                     getOptionLabel={(o) => o.name}
                     isOptionEqualToValue={(a, b) => a.id === b.id}
                     onChange={(_, contractor) => onChange({ ...value, contractor })}
-                    renderInput={(p) => <TextField {...p} label="پیمانکار" />}
+                    renderInput={(p) => <StyledTextField {...p} label="پیمانکار" />}
                 />
             )}
             <Autocomplete
@@ -65,12 +66,12 @@ const StatementFilterBar = ({ value, onChange, states, contractors, isContractor
                 getOptionLabel={(o) => o.name}
                 isOptionEqualToValue={(a, b) => a.id === b.id}
                 onChange={(_, s) => onChange({ ...value, states: s })}
-                renderInput={(p) => <TextField {...p} label="وضعیت" />}
+                renderInput={(p) => <StyledTextField {...p} label="وضعیت" />}
             />
             {date('بازه از', value.from, (from) => onChange({ ...value, from }))}
             {date('بازه تا', value.to, (to) => onChange({ ...value, to }))}
             {/* settled statements are hidden unless asked (the server's old default); picking states overrides this */}
-            <ToggleButtonGroup size="small" exclusive value={value.includeSettled ? 'all' : 'open'} onChange={(_, v) => v && onChange({ ...value, includeSettled: v === 'all' })}>
+            <ToggleButtonGroup size="small" sx={{ minWidth: 200 }} exclusive value={value.includeSettled ? 'all' : 'open'} onChange={(_, v) => v && onChange({ ...value, includeSettled: v === 'all' })}>
                 <ToggleButton value="open">بدون تسویه‌شده‌ها</ToggleButton>
                 <ToggleButton value="all">همه</ToggleButton>
             </ToggleButtonGroup>

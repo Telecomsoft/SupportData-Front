@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react'
 import { Alert, Autocomplete, Box, Button, Chip, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from '@mui/material'
+import Grid from '@mui/material/Grid2'
 import { useGetData } from '@hooks/useGetData'
 import { usePartTransferLookups } from '@hooks/usePartTransferLookups'
 import CustomCircularProgress from '@components/general/CustomCircularProgress'
+import StyledTextField from '@components/general/input/StyledTextField'
 
 type Opt = { id: number; name: string }
 const WAREHOUSE = 1
@@ -32,20 +34,20 @@ const StockQuestion = () => {
                 <Autocomplete
                     size="small" sx={{ minWidth: 220 }} options={lookups.options.deviceModelID} value={model}
                     getOptionLabel={(o) => o.name} isOptionEqualToValue={(a, b) => a.id === b.id}
-                    onChange={(_, o) => setModel(o)} renderInput={(p) => <TextField {...p} label="مدل قطعه" />}
+                    onChange={(_, o) => setModel(o)} renderInput={(p) => <StyledTextField {...p} label="مدل قطعه" />}
                 />
                 <Autocomplete
                     size="small" sx={{ minWidth: 150 }} disableClearable
                     options={[{ id: WAREHOUSE, name: 'انبار' }, { id: TECHNICIAN, name: 'تکنسین' }]} value={location}
                     getOptionLabel={(o) => o.name} isOptionEqualToValue={(a, b) => a.id === b.id}
                     onChange={(_, o) => { setLocation(o); if (o.id !== TECHNICIAN) setTechnician(null) }}
-                    renderInput={(p) => <TextField {...p} label="کجا" />}
+                    renderInput={(p) => <StyledTextField {...p} label="کجا" />}
                 />
                 {needsTechnician && (
                     <Autocomplete
                         size="small" sx={{ minWidth: 200 }} options={lookups.options.technicianID} value={technician}
                         getOptionLabel={(o) => o.name} isOptionEqualToValue={(a, b) => a.id === b.id}
-                        onChange={(_, o) => setTechnician(o)} renderInput={(p) => <TextField {...p} label="تکنسین" />}
+                        onChange={(_, o) => setTechnician(o)} renderInput={(p) => <StyledTextField {...p} label="تکنسین" />}
                     />
                 )}
                 <Button variant="contained" disabled={!canAsk || stock.isFetching} sx={{ borderRadius: 2, boxShadow: 'none' }}
@@ -57,7 +59,7 @@ const StockQuestion = () => {
                 <Box sx={{ mt: 1.5 }}>
                     {stock.isFetching ? <CustomCircularProgress thickness={2} size={24} />
                         : stock.data?.error === 0 ? <Typography variant="h6">موجودی: {Number(stock.data.value).toLocaleString('fa-IR')}</Typography>
-                        : <Alert severity="error">{stock.data?.errorMessage ?? 'دریافت موجودی انجام نشد'}</Alert>}
+                            : <Alert severity="error">{stock.data?.errorMessage ?? 'دریافت موجودی انجام نشد'}</Alert>}
                 </Box>
             )}
         </Paper>
@@ -78,7 +80,9 @@ const StockReportTab = () => {
         <Box>
             <StockQuestion />
             {report.data?.error !== 0 && report.data?.errorMessage && <Alert severity="error" sx={{ mb: 1 }}>{report.data.errorMessage}</Alert>}
-            <TextField size="small" label="جستجوی مدل قطعه" value={search} onChange={(e) => setSearch(e.target.value)} sx={{ mb: 1, width: 260 }} />
+            <Grid container justifyContent="space-between" alignItems="center" sx={{ mb: 1.5, p: 1, bgcolor: 'background.paper', borderRadius: 2, boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
+                <StyledTextField size="medium" label="جستجوی مدل قطعه" value={search} onChange={(e) => setSearch(e.target.value)} sx={{ mb: 1, width: 260 }} />
+            </Grid>
             <Box sx={{ overflowX: 'auto' }}>
                 <Table size="small">
                     <TableHead>
