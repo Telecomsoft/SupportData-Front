@@ -63,7 +63,7 @@ const StatementPrintDialog = ({ statementID, close }: { statementID: number; clo
                                     <table>
                                         <thead>
                                             <tr>
-                                                <th>ردیف</th><th>دستورکار</th><th>نوع</th><th>کیوسک</th><th>مراجعه</th><th>تاخیر (روز)</th>
+                                                <th>ردیف</th><th>فعالیت</th><th>نوع</th><th>کیوسک</th><th>مراجعه</th><th>تاخیر (روز)</th>
                                                 <th>مبلغ کار</th><th>ایاب و ذهاب</th><th>سایر</th><th>جریمه</th><th>جمع</th>
                                             </tr>
                                         </thead>

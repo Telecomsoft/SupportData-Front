@@ -49,7 +49,7 @@ const RepairInfoTab = ({ repair, onOpenTask, onOpenKiosk }: Props) => {
             {section('منشأ و ارتباط‌ها', (
                 <Grid container spacing={1}>
                     {cell('کیوسک', repair.kioskSerial ? link(repair.kioskSerial, onOpenKiosk, true) : '-')}
-                    {cell('دستورکار', repair.workTaskID ? link(`#${repair.workTaskID}`, onOpenTask) : '-')}
+                    {cell('فعالیت', repair.workTaskID ? link(`#${repair.workTaskID}`, onOpenTask) : '-')}
                     {cell('مشتری', text(repair.customerName))}
                 </Grid>
             ))}

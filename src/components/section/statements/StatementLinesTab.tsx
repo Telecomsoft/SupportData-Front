@@ -15,7 +15,7 @@ const StatementLinesTab = ({ lines, onOpenTask }: Props) => {
     const sum = (key: string) => lines.reduce((a, l) => a + Number(l[key] ?? 0), 0)
 
     if (lines.length === 0) {
-        return <Typography variant="body2" color="text.secondary">هنوز ردیفی نیست. با «محاسبه» دستورکارهای تمام‌شده‌ی پیمانکار در این بازه اضافه می‌شوند.</Typography>
+        return <Typography variant="body2" color="text.secondary">هنوز ردیفی نیست. با «محاسبه» فعالیت های تمام‌شده‌ی پیمانکار در این بازه اضافه می‌شوند.</Typography>
     }
 
     return (
@@ -23,7 +23,7 @@ const StatementLinesTab = ({ lines, onOpenTask }: Props) => {
             <Table size="small">
                 <TableHead>
                     <TableRow>
-                        <TableCell>دستورکار</TableCell><TableCell>نوع</TableCell><TableCell>کیوسک</TableCell><TableCell>مراجعه</TableCell>
+                        <TableCell>فعالیت</TableCell><TableCell>نوع</TableCell><TableCell>کیوسک</TableCell><TableCell>مراجعه</TableCell>
                         <TableCell>روز تاخیر</TableCell><TableCell>فاصله (km)</TableCell><TableCell>مبلغ کار</TableCell>
                         <TableCell>ایاب و ذهاب</TableCell><TableCell>سایر</TableCell><TableCell>جریمه</TableCell><TableCell>جمع ردیف</TableCell>
                     </TableRow>

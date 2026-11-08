@@ -141,7 +141,7 @@ const WorkTaskReportTab = ({ snackbarOpen }: { snackbarOpen: snackbarOpenType })
                     'زمان گزارش': r.reportedAt ? dateFn(r.reportedAt) : '', 'زمان اتمام': r.finishedAt ? dateFn(r.finishedAt) : '',
                     'روز تاخیر': r.delayDays, 'تحت گارانتی': r.underWarranty ? 'بله' : 'خیر', 'مبلغ مشتری': r.customerTotal,
                 })),
-                'گزارش دستورکار', 'work-task-report'
+                'گزارش فعالیت', 'work-task-report'
             )
         } catch (e) {
             snackbarOpen((e as Error).message || 'خروجی گرفته نشد', SNACKBAR_SEVERITIES.ERROR)
@@ -192,7 +192,7 @@ const WorkTaskReportTab = ({ snackbarOpen }: { snackbarOpen: snackbarOpenType })
             {/* ---- the totals ---- */}
             {sum && (
                 <Paper elevation={0} sx={{ p: 2, mb: 2, borderRadius: 3, border: '1px solid', borderColor: 'divider' }}>
-                    <Typography variant="subtitle1" fontWeight={700}>جمع: {num(sum.total)} دستورکار</Typography>
+                    <Typography variant="subtitle1" fontWeight={700}>جمع: {num(sum.total)} فعالیت</Typography>
                     <Stack direction="row" gap={0.5} flexWrap="wrap" sx={{ mt: 1 }}>
                         {Object.entries(sum.byState ?? {}).map(([id, n]) => <Chip key={`s${id}`} size="small" color="primary" variant="outlined" label={`${nameOf(lookups.options.states, Number(id)) || id}: ${num(n as number)}`} />)}
                     </Stack>

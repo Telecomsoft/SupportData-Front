@@ -1,11 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useMemo, useState } from 'react'
-import { Box, Button, Chip, IconButton, Menu, MenuItem, Paper, Stack, Tab, Tabs, Typography } from '@mui/material'
+import { useState } from 'react'
+import { Box, Button, Chip, IconButton, Paper, Stack, Tab, Tabs, Typography } from '@mui/material'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import EditIcon from '@mui/icons-material/Edit'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
-import MoreVertIcon from '@mui/icons-material/MoreVert'
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz'
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn'
+import PaymentsIcon from '@mui/icons-material/Payments'
+import EditCalendarIcon from '@mui/icons-material/EditCalendar'
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong'
 import BusinessIcon from '@mui/icons-material/Business'
 import AtmIcon from '@mui/icons-material/Atm'
 import EngineeringIcon from '@mui/icons-material/Engineering'
@@ -19,10 +23,11 @@ import WorkTaskStateChip from '@components/section/workTasks/WorkTaskStateChip'
 import WorkTaskInfoTab from '@components/section/workTasks/WorkTaskInfoTab'
 import WorkTaskCostsTab from '@components/section/workTasks/WorkTaskCostsTab'
 import WorkTaskLogTab from '@components/section/workTasks/WorkTaskLogTab'
+import WorkTaskDetailsDialog from '@components/section/workTasks/WorkTaskDetailsDialog'
 import {
     buildAssignForm, buildChangeStateForm, buildCorrectDatesForm, buildPaymentForm, buildReplacePartForm, buildWorkTaskEditForm,
 } from '@src/data/dialogArrays/workTaskForm'
-import { isTaskClosed, TASK_TRANSITIONS, TASK_TYPES, WORK_MODES } from '@src/data/type/lookups'
+import { isTaskClosed, TASK_TRANSITIONS, TASK_TYPES } from '@src/data/type/lookups'
 import { useWorkTaskLookups } from '@hooks/useWorkTaskLookups'
 import { useGetData } from '@hooks/useGetData'
 import { usePutData } from '@hooks/usePutData'
@@ -34,20 +39,13 @@ import { buildPayload } from '@utility/buildPayload'
 
 export const Route = createFileRoute('/(workTasks)/workTaskDetail/$workTaskId')({
     component: withSnackbar(WorkTaskDetail),
-    staticData: { breadcrumb: 'مشخصات دستورکار' },
+    staticData: { breadcrumb: 'مشخصات فعالیت' },
 })
 
-type Opt = { id: number; name: string }
 type Dialog =
-    | { kind: 'edit' | 'assign' | 'dates' | 'payment' | 'form' | 'part' }
+    | { kind: 'edit' | 'details' | 'assign' | 'dates' | 'payment' | 'form' | 'part' }
     | { kind: 'state'; transition: (typeof TASK_TRANSITIONS)[number] }
     | null
-
-// the options of a "multiple" combo must contain every id the task already has, or saving would silently drop it
-const withMissing = (options: Opt[], ids: number[] | null | undefined, make: (id: number) => Opt) => {
-    const have = new Set(options.map((o) => o.id))
-    return [...options, ...(ids ?? []).filter((id) => !have.has(id)).map(make)]
-}
 
 function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     const { workTaskId } = Route.useParams()
@@ -61,14 +59,8 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     const taskQuery = useGetData<any>(`api/WorkTask/GetWorkTask/${id}`, 'worktask-detail', { ids: [String(id)] })
     const t = taskQuery.data?.value
 
-    // known errors for the device models inside this kiosk (needs "tasks" read, not "errors" read; staff only)
-    const suggestions = useGetData<any[]>(`api/Error/SuggestForKiosk/${t?.kioskID}`, 'worktask-error-suggestions', {
-        ids: [String(t?.kioskID)], enabled: !!t?.kioskID && !isCustomer,
-    })
-
     const [tab, setTab] = useState<'info' | 'costs' | 'log'>('info')
     const [dialog, setDialog] = useState<Dialog>(null)
-    const [menu, setMenu] = useState<HTMLElement | null>(null)
     const [refreshKey, setRefreshKey] = useState(0)
 
     // "replace part": the part comes from the TECHNICIAN's own stock (the logged-in technician, else the one the task is assigned to)
@@ -79,19 +71,6 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     const confirmForm = usePutData<any, any>(`api/WorkTask/ConfirmServiceForm/${id}`, 'wt-confirm-form')
 
     const editForm = buildWorkTaskEditForm({ isMobile })
-    const errorOptions = useMemo(() => {
-        const all = new Map<number, Opt>()
-        const add = (e: any) => all.set(e.id, { id: e.id, name: `${e.code} - ${e.title}` })
-        ;(suggestions.data?.value ?? []).forEach(add)
-        ;(t?.errors ?? []).forEach(add)                                              // the ones already chosen (with their text)
-        ;(t?.errorIDs ?? []).forEach((eid: number) => { if (!all.has(eid)) all.set(eid, { id: eid, name: `خطا #${eid}` }) })
-        return [...all.values()]
-    }, [suggestions.data, t])
-    const workItemOptions = useMemo(
-        () => withMissing(lookups.options.workItemIDs, t?.workItemIDs, (wid) => ({ id: wid, name: `کار #${wid}` })),
-        [lookups.options.workItemIDs, t]
-    )
-
     const afterAction = () => { taskQuery.refetch(); setRefreshKey((k) => k + 1) }
 
     if (taskQuery.isLoading || lookups.isLoading) {
@@ -104,7 +83,7 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     if (!t) {
         return (
             <Paper sx={{ p: 4, m: 3, textAlign: 'center', borderRadius: 3 }}>
-                <Typography color="text.secondary">{taskQuery.data?.errorMessage ?? 'دستورکار پیدا نشد'}</Typography>
+                <Typography color="text.secondary">{taskQuery.data?.errorMessage ?? 'فعالیت پیدا نشد'}</Typography>
             </Paper>
         )
     }
@@ -123,14 +102,12 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     const canConfirmForm = staff && canPerform(208) && !t.serviceFormReceived
     const canPay = staff && hasWrite && t.state !== 3
     const canReplacePart = staff && hasWrite && !!t.kioskID && (!closed || canPerform(207))
-    const hasMore = canCorrectDates || canConfirmForm || canPay || canReplacePart
 
     const contractorName = lookups.options.contractorID.find((c) => c.id === t.contractorID)?.name
-    const workItemNames = (t.workItemIDs ?? []).map((wid: number) => workItemOptions.find((o) => o.id === wid)?.name).filter(Boolean) as string[]
+    const workItemNames = (t.workItemIDs ?? []).map((wid: number) => lookups.options.workItemIDs.find((o) => o.id === wid)?.name ?? `کار #${wid}`) as string[]
     const close = () => setDialog(null)
     const pick = (k: 'dates' | 'payment' | 'form' | 'part') => {
-        setMenu(null)
-        if (k === 'part' && !partTechID) return snackbarOpen('اول دستورکار را به یک تکنسین ارجاع بده؛ قطعه از موجودی او نصب می‌شود', SNACKBAR_SEVERITIES.ERROR)
+        if (k === 'part' && !partTechID) return snackbarOpen('اول فعالیت را به یک تکنسین ارجاع بده؛ قطعه از موجودی او نصب می‌شود', SNACKBAR_SEVERITIES.ERROR)
         setDialog({ kind: k })
     }
     // the confirm dialog treats any reply as success, but the server refuses with HTTP 200 + error != 0,
@@ -162,7 +139,7 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                         </IconButton>
                         <Box>
                             <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap" mb={0.5}>
-                                <Typography variant="h6" fontWeight="bold" color="text.primary">دستورکار #{t.id}</Typography>
+                                <Typography variant="h6" fontWeight="bold" color="text.primary">فعالیت #{t.id}</Typography>
                                 {t.typeName && <Chip size="small" variant="outlined" label={t.typeName} />}
                                 <WorkTaskStateChip task={t} />
                                 {t.isOverdue && <Chip size="small" color="error" label="دیرکرد" />}
@@ -200,19 +177,23 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                                 {t.assignedToID ? 'ارجاع مجدد' : 'ارجاع'}
                             </Button>
                         )}
+                        {canReplacePart && (
+                            <Button startIcon={<SwapHorizIcon />} variant="outlined" color="warning" onClick={() => pick('part')} sx={{ borderRadius: 2 }}>تعویض قطعه</Button>
+                        )}
+                        {canConfirmForm && (
+                            <Button startIcon={<AssignmentTurnedInIcon />} variant="outlined" color="success" onClick={() => pick('form')} sx={{ borderRadius: 2 }}>تایید دریافت فرم سرویس</Button>
+                        )}
+                        {canPay && (
+                            <Button startIcon={<PaymentsIcon />} variant="outlined" color="info" onClick={() => pick('payment')} sx={{ borderRadius: 2 }}>ثبت پرداخت</Button>
+                        )}
+                        {canCorrectDates && (
+                            <Button startIcon={<EditCalendarIcon />} variant="outlined" color="secondary" onClick={() => pick('dates')} sx={{ borderRadius: 2 }}>تصحیح تاریخ‌ها</Button>
+                        )}
+                        {canEdit && (
+                            <Button startIcon={<ReceiptLongIcon />} variant="outlined" onClick={() => setDialog({ kind: 'details' })} sx={{ borderRadius: 2 }}>تشخیص و هزینه‌ها</Button>
+                        )}
                         {canEdit && (
                             <Button startIcon={<EditIcon />} variant="outlined" onClick={() => setDialog({ kind: 'edit' })} sx={{ borderRadius: 2 }}>ویرایش</Button>
-                        )}
-                        {hasMore && (
-                            <>
-                                <IconButton onClick={(e) => setMenu(e.currentTarget)} sx={{ bgcolor: 'action.hover', borderRadius: 2 }}><MoreVertIcon /></IconButton>
-                                <Menu anchorEl={menu} open={!!menu} onClose={() => setMenu(null)}>
-                                    {canReplacePart && <MenuItem onClick={() => pick('part')}>تعویض قطعه</MenuItem>}
-                                    {canConfirmForm && <MenuItem onClick={() => pick('form')}>تایید دریافت فرم سرویس</MenuItem>}
-                                    {canPay && <MenuItem onClick={() => pick('payment')}>ثبت پرداخت</MenuItem>}
-                                    {canCorrectDates && <MenuItem onClick={() => pick('dates')}>تصحیح تاریخ‌ها</MenuItem>}
-                                </Menu>
-                            </>
                         )}
                     </Stack>
                 </Stack>
@@ -255,24 +236,33 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             {dialog?.kind === 'edit' && (
                 <GeneralDialog
                     open="edit"
-                    title={`ویرایش دستورکار #${t.id}`}
-                    width={sizeConverter(820, 'width')}
+                    title={`ویرایش فعالیت #${t.id}`}
+                    width={sizeConverter(680, 'width')}
                     close={close}
                     array={editForm}
                     editEndpoint="api/WorkTask/UpdateWorkTask"
-                    autoCompleteOption={{ workTaskType: TASK_TYPES, workMode: WORK_MODES, errorIDs: errorOptions, workItemIDs: workItemOptions }}
+                    autoCompleteOption={{
+                        workTaskType: TASK_TYPES,
+                        customerID: lookups.options.customerID,
+                        assignedToID: lookups.options.assignedToID,
+                    }}
                     defaultValue={{ ...t }}
                     sendFinalData
                     apiValueGetter={((data: any) => {
                         // the whole current row is the base, so fields that are not in the dialog keep their value.
                         // `errors` is only for display (the server fills it on GET), never sent back.
+                        // Locked items (kiosk, customer, report time, assignee) are not sent: the server ignores them here.
                         const { errors: _errors, ...base } = t
                         void _errors
-                        return buildPayload(editForm, data, base)
+                        return buildPayload(editForm.filter((i) => !i.editDisabled), data, base)
                     }) as any}
                     wrapperFunc={afterAction}
                     snackbarOpen={snackbarOpen}
                 />
+            )}
+
+            {dialog?.kind === 'details' && (
+                <WorkTaskDetailsDialog taskID={t.id} close={close} onSaved={afterAction} snackbarOpen={snackbarOpen} />
             )}
 
             {dialog?.kind === 'assign' && (() => {
@@ -280,7 +270,7 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 return (
                     <GeneralDialog
                         open="add"
-                        title={`ارجاع دستورکار #${t.id}`}
+                        title={`ارجاع فعالیت #${t.id}`}
                         close={close}
                         array={form}
                         createEndpoint="api/WorkTask/AssignWorkTask"
@@ -303,7 +293,7 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 return (
                     <GeneralDialog
                         open="add"
-                        title={`${tr.label} - دستورکار #${t.id}`}
+                        title={`${tr.label} - فعالیت #${t.id}`}
                         close={close}
                         array={form}
                         createEndpoint="api/WorkTask/ChangeWorkTaskState"
@@ -320,7 +310,7 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 return (
                     <GeneralDialog
                         open="add"
-                        title={`تصحیح تاریخ‌ها - دستورکار #${t.id}`}
+                        title={`تصحیح تاریخ‌ها - فعالیت #${t.id}`}
                         close={close}
                         array={form}
                         createEndpoint="api/WorkTask/CorrectWorkTaskDates"
@@ -338,7 +328,7 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 return (
                     <GeneralDialog
                         open="edit"
-                        title={`ثبت پرداخت - دستورکار #${t.id}`}
+                        title={`ثبت پرداخت - فعالیت #${t.id}`}
                         close={close}
                         array={form}
                         editEndpoint="api/WorkTask/RecordWorkTaskPayment"
@@ -358,7 +348,7 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             {dialog?.kind === 'form' && (
                 <GeneralConfirmDialog
                     isDialogOpen="add"
-                    dialogTitle={`دستورکار #${t.id}`}
+                    dialogTitle={`فعالیت #${t.id}`}
                     confirmMessage="دریافت فرم سرویس امضاشده تایید شود؟"
                     snackBarSuccessMessage="دریافت فرم سرویس ثبت شد"
                     noApiRequest
@@ -373,7 +363,7 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 return (
                     <GeneralDialog
                         open="add"
-                        title={`تعویض قطعه - دستورکار #${t.id}`}
+                        title={`تعویض قطعه - فعالیت #${t.id}`}
                         close={close}
                         array={form}
                         createEndpoint="api/WorkTask/ReplaceKioskPart"

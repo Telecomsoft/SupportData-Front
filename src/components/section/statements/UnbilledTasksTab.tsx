@@ -33,14 +33,14 @@ const UnbilledTasksTab = ({ contractorID, fromDate, toDate, refreshKey, onOpenTa
                 label="فقط بازه‌ی این صورت‌حساب"
             />
             {tasks.isLoading ? <CustomCircularProgress thickness={2} size={40} />
-                : tasks.data?.error !== 0 ? <Alert severity="warning">{tasks.data?.errorMessage ?? 'دریافت دستورکارها انجام نشد'}</Alert>
-                : (tasks.data?.value ?? []).length === 0 ? <Typography variant="body2" color="text.secondary">دستورکار تسویه‌نشده‌ای نیست.</Typography>
+                : tasks.data?.error !== 0 ? <Alert severity="warning">{tasks.data?.errorMessage ?? 'دریافت فعالیت ها انجام نشد'}</Alert>
+                : (tasks.data?.value ?? []).length === 0 ? <Typography variant="body2" color="text.secondary">فعالیت تسویه‌نشده‌ای نیست.</Typography>
                 : (
                     <Box sx={{ overflowX: 'auto' }}>
                         <Table size="small">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell>دستورکار</TableCell><TableCell>نوع</TableCell><TableCell>وضعیت</TableCell><TableCell>کیوسک</TableCell>
+                                    <TableCell>فعالیت</TableCell><TableCell>نوع</TableCell><TableCell>وضعیت</TableCell><TableCell>کیوسک</TableCell>
                                     <TableCell>زمان اتمام</TableCell><TableCell>فرم سرویس</TableCell><TableCell>روز تاخیر</TableCell>
                                 </TableRow>
                             </TableHead>

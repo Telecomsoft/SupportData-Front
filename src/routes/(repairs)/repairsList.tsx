@@ -99,7 +99,7 @@ function RepairsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
         { field: 'stateName', headerName: 'وضعیت', width: sizeConverter(120, 'width'), renderCell: (p) => <RepairStateChip repair={p.row} /> },
         { field: 'customerName', headerName: 'مشتری', width: sizeConverter(140, 'width') },
         { field: 'kioskSerial', headerName: 'کیوسک', width: sizeConverter(130, 'width') },
-        { field: 'workTaskID', headerName: 'دستورکار', width: sizeConverter(90, 'width') },
+        { field: 'workTaskID', headerName: 'فعالیت', width: sizeConverter(90, 'width') },
         { field: 'assignedToName', headerName: 'ارجاع‌شده به', width: sizeConverter(130, 'width') }, {
             field: 'receivedAt',
             headerName: 'زمان دریافت',

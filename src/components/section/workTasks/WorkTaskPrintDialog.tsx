@@ -22,7 +22,7 @@ const WorkTaskPrintDialog = ({ workTaskID, close }: { workTaskID: number; close:
     const t = p?.task
 
     const print = () => {
-        if (sheet.current) openPrintWindow(`دستورکار ${workTaskID}`, sheet.current.innerHTML)
+        if (sheet.current) openPrintWindow(`فعالیت ${workTaskID}`, sheet.current.innerHTML)
     }
 
     const partsTable = (title: string, parts: any[]) =>
@@ -40,7 +40,7 @@ const WorkTaskPrintDialog = ({ workTaskID, close }: { workTaskID: number; close:
 
     return (
         <Dialog open onClose={close} maxWidth="md" fullWidth>
-            <DialogTitle>چاپ دستورکار #{workTaskID}</DialogTitle>
+            <DialogTitle>چاپ فعالیت #{workTaskID}</DialogTitle>
             <DialogContent dividers>
                 {data.isLoading ? <CustomCircularProgress thickness={2} size={40} />
                     : !p ? <Alert severity="error">{data.data?.errorMessage ?? 'دریافت اطلاعات چاپ انجام نشد'}</Alert>
@@ -49,7 +49,7 @@ const WorkTaskPrintDialog = ({ workTaskID, close }: { workTaskID: number; close:
                             <div ref={sheet}>
                                 <style>{PRINT_CSS}</style>
                                 <div className="rp-print">
-                                    <h2>فرم {t.typeName ?? 'دستورکار'} — شماره {t.id}</h2>
+                                    <h2>فرم {t.typeName ?? 'فعالیت'} — شماره {t.id}</h2>
 
                                     <div className="box grid">
                                         <div><b>وضعیت:</b> {t.stateName}</div>

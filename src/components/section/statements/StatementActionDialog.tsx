@@ -56,9 +56,9 @@ const StatementActionDialog = ({ action, statement, close, onDone, snackbarOpen 
         action.kind === 'calculate' ? 'محاسبه‌ی صورت‌حساب' : action.kind === 'delete' ? 'حذف صورت‌حساب' : action.label
     const message =
         action.kind === 'calculate'
-            ? 'ردیف‌های فعلی پاک می‌شوند و دستورکارهای تمام‌شده‌ی پیمانکار در این بازه دوباره جمع می‌شوند. ادامه می‌دهی؟'
+            ? 'ردیف‌های فعلی پاک می‌شوند و فعالیت های تمام‌شده‌ی پیمانکار در این بازه دوباره جمع می‌شوند. ادامه می‌دهی؟'
             : action.kind === 'delete'
-              ? 'صورت‌حساب و همه‌ی ردیف‌های آن حذف می‌شود؛ دستورکارها آزاد می‌شوند. حذف شود؟'
+              ? 'صورت‌حساب و همه‌ی ردیف‌های آن حذف می‌شود؛ فعالیت ها آزاد می‌شوند. حذف شود؟'
               : action.confirm
 
     return (

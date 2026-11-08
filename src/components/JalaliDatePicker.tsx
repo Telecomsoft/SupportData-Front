@@ -1,102 +1,3 @@
-// import React from 'react'
-// import StyledTextField from './general/input/StyledTextField'
-// import DatePicker, { DateObject } from 'react-multi-date-picker'
-// import persian from 'react-date-object/calendars/persian'
-// import persian_fa from 'react-date-object/locales/persian_fa'
-// import Grid from '@mui/material/Grid2'
-// import { TextFieldCompProps } from './general/hookFromInputs/TextFieldComp'
-// import { Controller } from 'react-hook-form'
-// import { sizeConverter } from '@utility/sizeConverter.ts'
-// type JalaliDatePickerProps = {
-//     plugins?: any
-//     format?: any
-// }
-
-// const JalaliDatePicker: React.FC<JalaliDatePickerProps & TextFieldCompProps> = ({
-//     control,
-//     size = 12,
-//     value,
-//     label = 'تاریخ',
-//     validators,
-//     disabled,
-//     plugins,
-//     format,
-//     defaultValue
-// }) => {
-//     const isValueFilled = value && value !== ''
-//     return (
-//         <Grid container size={size} justifyContent={'center'} dir="rtl">
-//             <Controller
-//                 control={control}
-//                 name={value || ''}
-//                 rules={validators}
-//                 defaultValue={defaultValue}
-//                 render={({ field: { onChange, value, ref }, fieldState: { error } }) => (
-//                     <>
-//                         <DatePicker
-//                             position="bottom"
-//                             {...(!!format && { format: format })}
-//                             style={{
-//                                 width: sizeConverter(150, 'width'),
-//                                 height: sizeConverter(30, 'height'),
-//                                 fontSize: sizeConverter(12),
-//                                 padding: sizeConverter(8, 'space')
-//                             }}
-//                             value={value || ''}
-//                             // style={{
-//                             //     width: '100%',
-//                             // }}
-//                             // onChange={(date) => {
-//                             //     const formattedDate = date instanceof DateObject ? date.format() : date
-//                             //     onChange(formattedDate)
-//                             // }}
-//                             onChange={(date: DateObject | DateObject[] | null) => {
-//                                 if (date instanceof DateObject) {
-//                                     const isoString = date.toDate().toISOString();
-//                                     onChange(isoString);
-//                                 } else {
-//                                     onChange('');
-//                                 }
-//                             }}
-
-//                             calendar={persian}
-//                             containerStyle={{
-//                                 width: '100%',
-//                             }}
-//                             {...(!!plugins && { plugins: plugins })}
-//                             locale={persian_fa}
-//                             calendarPosition="top-left"
-//                             render={
-//                                 <StyledTextField
-//                                     disabled={disabled}
-//                                     label={
-//                                         validators?.required ? (
-//                                             <span>
-//                                                 {label} <span style={{ color: 'red', marginLeft: sizeConverter(20, 'spaceX') }}>*</span>
-//                                             </span>
-//                                         ) : (
-//                                             label
-//                                         )
-//                                     }
-//                                     inputRef={ref}
-//                                     error={!!error}
-//                                     helperText={error?.message}
-//                                     InputLabelProps={{
-//                                         shrink: isValueFilled || undefined,
-//                                     }}
-//                                     sx={{ width: '100%' }}
-//                                 />
-//                             }
-//                         />
-//                     </>
-//                 )}
-//             />
-//         </Grid>
-//     )
-// }
-
-// export default JalaliDatePicker
-
 import React from 'react'
 import StyledTextField from './general/input/StyledTextField'
 import DatePicker, { DateObject } from 'react-multi-date-picker'
@@ -152,7 +53,7 @@ const JalaliDatePicker: React.FC<JalaliDatePickerProps> = ({
             control={control}
             name={value}
             rules={validators}
-            defaultValue={normalizeToISO(defaultValue)}
+            defaultValue={normalizeToISO(defaultValue) || new Date().toISOString()}
             render={({ field: { onChange, value, ref } }) => (
                <DatePicker
                   calendar={persian}

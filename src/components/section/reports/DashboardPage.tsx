@@ -77,8 +77,8 @@ const DashboardPage = () => {
             <Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>داشبورد</Typography>
 
             <Grid container spacing={2} sx={{ mb: 2 }}>
-                <Grid size={{ xs: 6, md: 3 }}><StatCard label="دستورکارهای باز" value={num(openTotal)} to={link(111, '/workTasksList')} /></Grid>
-                <Grid size={{ xs: 6, md: 3 }}><StatCard label="دستورکارهای دیرکرد" value={num(d.overdueTasks)} color={d.overdueTasks > 0 ? '#d32f2f' : undefined} to={link(111, '/workTasksList')} /></Grid>
+                <Grid size={{ xs: 6, md: 3 }}><StatCard label="فعالیت های باز" value={num(openTotal)} to={link(111, '/workTasksList')} /></Grid>
+                <Grid size={{ xs: 6, md: 3 }}><StatCard label="فعالیت های دیرکرد" value={num(d.overdueTasks)} color={d.overdueTasks > 0 ? '#d32f2f' : undefined} to={link(111, '/workTasksList')} /></Grid>
                 <Grid size={{ xs: 6, md: 3 }}><StatCard label="میانگین زمان تا اتمام (۳۰ روز اخیر)" value={`${num(d.avgHoursToFinishLast30Days)} ساعت`} /></Grid>
                 <Grid size={{ xs: 6, md: 3 }}><StatCard label="کیوسک‌های تحت گارانتی" value={num(d.kiosksUnderWarranty)} to={link(110, '/kiosksList')} /></Grid>
                 <Grid size={{ xs: 6, md: 3 }}><StatCard label="گارانتی در حال اتمام (۳۰ روز آینده)" value={num(d.kiosksWarrantyEndingIn30Days)} color={d.kiosksWarrantyEndingIn30Days > 0 ? '#ed6c02' : undefined} /></Grid>
@@ -87,8 +87,8 @@ const DashboardPage = () => {
             </Grid>
 
             <Grid container spacing={2}>
-                <Grid size={{ xs: 12, md: 6 }}><BarCard title="دستورکارهای باز بر اساس وضعیت" data={byState} /></Grid>
-                <Grid size={{ xs: 12, md: 6 }}><BarCard title="دستورکارهای باز بر اساس تکنسین" data={(d.openTasksByTechnician ?? []).map((t: any) => ({ name: t.name, count: t.count }))} /></Grid>
+                <Grid size={{ xs: 12, md: 6 }}><BarCard title="فعالیت های باز بر اساس وضعیت" data={byState} /></Grid>
+                <Grid size={{ xs: 12, md: 6 }}><BarCard title="فعالیت های باز بر اساس تکنسین" data={(d.openTasksByTechnician ?? []).map((t: any) => ({ name: t.name, count: t.count }))} /></Grid>
                 {!isCustomer && (
                     <Grid size={{ xs: 12 }}><BarCard title="پرتکرارترین خطاها (۳۰ روز اخیر)" data={(d.topErrorsLast30Days ?? []).map((t: any) => ({ name: t.name, count: t.count }))} /></Grid>
                 )}

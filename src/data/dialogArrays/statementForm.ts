@@ -26,7 +26,7 @@ export const buildStatementCreateForm = ({ isMobile }: Opts): DialogArrayType[] 
         { label: 'عنوان', value: 'caption', kind: 'textField', size: half, component: TextFieldComp },
         { label: 'از تاریخ', value: 'fromDate', type: 'date', kind: 'textField', size: half, component: JalaliDatePicker, validators: { ...REQUIRED_VALIDATOR } },
         { label: 'تا تاریخ', value: 'toDate', type: 'date', kind: 'textField', size: half, component: JalaliDatePicker, validators: { ...REQUIRED_VALIDATOR } },
-        { title: 'فقط دستورکارهایی که فرم سرویس‌شان دریافت شده', value: 'onlyFormReceived', kind: 'checkbox', size: 12, component: CheckboxComponent },
+        { title: 'فقط فعالیت هایی که فرم سرویس‌شان دریافت شده', value: 'onlyFormReceived', kind: 'checkbox', size: 12, component: CheckboxComponent },
         ...extras(half),
     ]
 }
@@ -47,7 +47,7 @@ export const buildStatementEditForm = ({ isMobile, locked }: Opts & { locked: bo
         ...(locked ? [] : [
             { label: 'از تاریخ', value: 'fromDate', type: 'date', kind: 'textField', size: half, component: JalaliDatePicker, validators: { ...REQUIRED_VALIDATOR } } as DialogArrayType,
             { label: 'تا تاریخ', value: 'toDate', type: 'date', kind: 'textField', size: half, component: JalaliDatePicker, validators: { ...REQUIRED_VALIDATOR } } as DialogArrayType,
-            { title: 'فقط دستورکارهایی که فرم سرویس‌شان دریافت شده', value: 'onlyFormReceived', kind: 'checkbox', size: 12, component: CheckboxComponent } as DialogArrayType,
+            { title: 'فقط فعالیت هایی که فرم سرویس‌شان دریافت شده', value: 'onlyFormReceived', kind: 'checkbox', size: 12, component: CheckboxComponent } as DialogArrayType,
         ]),
         ...extras(half),
     ]

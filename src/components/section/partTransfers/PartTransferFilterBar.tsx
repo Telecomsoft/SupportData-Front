@@ -75,7 +75,7 @@ const PartTransferFilterBar = ({ value, onChange, kinds, states, deviceModels, t
             {combo('وضعیت', states, value.state, (state) => onChange({ ...value, state }))}
             {combo('مدل قطعه', deviceModels, value.deviceModel, (deviceModel) => onChange({ ...value, deviceModel }))}
             {!isFieldTechnician && combo('تکنسین', technicians, value.technician, (technician) => onChange({ ...value, technician }))}
-            <StyledTextField size="small" label="شماره دستورکار" value={taskID} onChange={(e) => setTaskID(e.target.value.replace(/\D/g, ''))} sx={{ width: 130 }} />
+            <StyledTextField size="small" label="شماره فعالیت" value={taskID} onChange={(e) => setTaskID(e.target.value.replace(/\D/g, ''))} sx={{ width: 130 }} />
             {date('ثبت از', value.from, (from) => onChange({ ...value, from }))}
             {date('ثبت تا', value.to, (to) => onChange({ ...value, to }))}
         </Stack>

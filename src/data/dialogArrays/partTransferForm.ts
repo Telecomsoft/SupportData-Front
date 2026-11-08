@@ -18,7 +18,7 @@ export const buildPartTransferCreateForm = ({ isMobile, isFieldTechnician }: { i
         ...(isFieldTechnician ? [] : [
             { label: 'تکنسین (برای تحویل، بازگشت و ارسال به تعمیرگاه)', value: 'technicianID', kind: 'combo', type: 'choice', size: half, component: AutoCompleteComp } as DialogArrayType,
         ]),
-        { label: 'شماره دستورکار', value: 'workTaskID', type: 'natural', kind: 'textField', size: half, component: TextFieldComp, helperText: 'اختیاری؛ کیوسک و مشتری از روی آن پر می‌شود' },
+        { label: 'شماره فعالیت', value: 'workTaskID', type: 'natural', kind: 'textField', size: half, component: TextFieldComp, helperText: 'اختیاری؛ کیوسک و مشتری از روی آن پر می‌شود' },
         { label: 'سریال‌ها (هر سریال در یک خط)', value: 'serials', kind: 'textField', multiline: true, maxRows: 5, size: 12, component: TextFieldComp, ltr: true, helperText: 'فقط برای مدل‌های سریال‌دار؛ تعداد سریال‌ها باید با تعداد برابر باشد' },
         { label: 'توضیحات', value: 'description', kind: 'textField', multiline: true, maxRows: 3, size: 12, component: TextFieldComp },
     ]

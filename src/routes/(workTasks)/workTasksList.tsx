@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import Grid from '@mui/material/Grid2'
-import { Box, Button, Chip, Fab, TextField, Typography } from '@mui/material'
+import { Box, Button, Chip, Fab, IconButton, TextField, Tooltip, Typography } from '@mui/material'
 import { useEffect, useMemo, useState } from 'react'
 import AddIcon from '@mui/icons-material/Add'
+import EditIcon from '@mui/icons-material/Edit'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong'
 import { withSnackbar } from '@components/hoc/withSnackbar'
 import { snackbarOpenType } from '@type/snackbarOpen'
 import { TelecomColumnsType, ServerCtrDataType } from '@components/general/telecomDataGrid/staticData/TelecomDataGridType'
@@ -15,8 +17,9 @@ import CustomCircularProgress from '@components/general/CustomCircularProgress'
 import WorkTaskFilterBar, { EMPTY_WORKTASK_FILTER, WorkTaskFilterState } from '@components/section/workTasks/WorkTaskFilterBar'
 import WorkTaskMobileCard from '@components/section/workTasks/WorkTaskMobileCard'
 import WorkTaskStateChip from '@components/section/workTasks/WorkTaskStateChip'
+import WorkTaskDetailsDialog from '@components/section/workTasks/WorkTaskDetailsDialog'
 import { buildWorkTaskCreateForm } from '@src/data/dialogArrays/workTaskForm'
-import { CUSTOMER_TASK_TYPES, TASK_TYPES } from '@src/data/type/lookups'
+import { CUSTOMER_TASK_TYPES, isTaskClosed, TASK_TYPES } from '@src/data/type/lookups'
 import { useWorkTaskLookups } from '@hooks/useWorkTaskLookups'
 import { usePostQuery } from '@hooks/usePostQuery'
 import { useUserScope } from '@hooks/useUserScope'
@@ -28,23 +31,25 @@ import { buildPayload } from '@utility/buildPayload'
 
 export const Route = createFileRoute('/(workTasks)/workTasksList')({
     component: withSnackbar(WorkTasksList),
-    staticData: { breadcrumb: 'دستورکارها' },
+    staticData: { breadcrumb: 'فعالیت ها' },
 })
 
 const PAGE_SIZE = 50
 
 function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
-    const navigate = useNavigate()
     const { isMobile } = useDevice()
     const { canPerform } = useAccessCheck()
     const { isCustomer } = useUserScope()
     const lookups = useWorkTaskLookups()
     const canCreate = canPerform(201)                 // "Task - Create"; the server also checks the customer rules
+    const canEditTask = canPerform(202)               // "Task - Edit"
+    const canEditClosed = canPerform(207)             // editing a finished / cancelled / approved task
 
     const [filter, setFilter] = useState<WorkTaskFilterState>(EMPTY_WORKTASK_FILTER)
     const [serverCtrl, setServerCtrl] = useState<ServerCtrDataType | null>(null)   // the grid's search text and page
     const [selectedID, setSelectedID] = useState<number | undefined>(undefined)
     const [adding, setAdding] = useState(false)
+    const [costsTaskID, setCostsTaskID] = useState<number | null>(null)   // the task whose diagnosis / costs dialog is open
     const [mobileItems, setMobileItems] = useState<any[]>([])
     const [mobileSearch, setMobileSearch] = useState('')
 
@@ -57,6 +62,8 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
         cityID: filter.city?.id ?? null,
         assignedToID: filter.assignedTo?.id ?? null,
         kioskSerial: filter.kioskSerial.trim() || null,
+        branchCode: filter.branchCode.trim() || null,
+        branchName: filter.branchName.trim() || null,
         reportedFrom: filter.from,
         reportedTo: filter.to,
         overdueOnly: filter.overdueOnly ? true : null,
@@ -92,15 +99,36 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [list.data, isMobile])
 
-    const open = (id: number) => navigate({ to: `/workTaskDetail/${id}` })
+    const open = (id: number) => window.open(`/workTaskDetail/${id}`, '_blank');
 
     const taskTypeOptions = isCustomer ? CUSTOMER_TASK_TYPES : TASK_TYPES
     const createForm = buildWorkTaskCreateForm({ isMobile, isCustomer, canAssign: canPerform(203) })
     const columns: TelecomColumnsType[] = [
         { field: 'id', headerName: 'شماره', width: sizeConverter(70, 'width') },
+        // same rule as the edit button on the task page (the server checks again)
+        ...(isCustomer ? [] : [{
+            field: 'actions',
+            headerName: 'هزینه‌ها',
+            width: sizeConverter(80, 'width'),
+            sortLock: true,
+            renderCell: (p: { row: Record<string, any> }) => {
+                const allowed = canEditTask && !p.row.isLocked && (!isTaskClosed(p.row.state) || canEditClosed)
+                return allowed ? (
+                    <Grid container alignItems="center" justifyContent="center">
+                        <Tooltip title="تشخیص و هزینه‌ها">
+                            <IconButton size="small" color="primary" onClick={(e) => { e.stopPropagation(); setCostsTaskID(p.row.id) }}>
+                                <ReceiptLongIcon fontSize="small" />
+                            </IconButton>
+                        </Tooltip>
+                    </Grid>
+                ) : null
+            },
+        } as TelecomColumnsType]),
         { field: 'typeName', headerName: 'نوع', width: sizeConverter(100, 'width') },
         { field: 'stateName', headerName: 'وضعیت', width: sizeConverter(110, 'width'), renderCell: (p) => <WorkTaskStateChip task={p.row} /> },
         { field: 'kioskSerial', headerName: 'سریال کیوسک', width: sizeConverter(140, 'width') },
+        { field: 'BranchCode', headerName: 'کد شعبه', width: sizeConverter(140, 'width') },
+        { field: 'BranchName', headerName: 'نام شعبه', width: sizeConverter(140, 'width') },
         ...(isCustomer ? [] : [{ field: 'customerName', headerName: 'مشتری', width: sizeConverter(140, 'width') }]),
         ...(isCustomer ? [] : [{ field: 'assignedToName', headerName: 'ارجاع‌شده به', width: sizeConverter(130, 'width') }]),
 
@@ -195,7 +223,8 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                         CustomToolBar={() => (
                             <Grid container size={'auto'} spacing={sizeConverter(4, 'spaceX')}>
                                 <DataGridIconProvider toolTipText={'مشاهده'} Icon={OpenInNewIcon} disable={!selectedID} clickFunc={() => selectedID && open(selectedID)} />
-                                {canCreate && <DataGridIconProvider toolTipText={'ثبت دستورکار'} Icon={AddIcon} disable={false} clickFunc={() => setAdding(true)} />}
+                                {canCreate && <DataGridIconProvider toolTipText={'ثبت فعالیت'} Icon={AddIcon} disable={false} clickFunc={() => setAdding(true)} />}
+                                {canCreate && <DataGridIconProvider toolTipText={'ویرایش فعالیت'} disable={!selectedID} Icon={EditIcon} clickFunc={() => setAdding(true)} />}
                             </Grid>
                         )}
                         setRows={(data: any) => data && setSelectedID(data?.[0])}
@@ -206,10 +235,14 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 </Box>
             )}
 
+            {costsTaskID !== null && (
+                <WorkTaskDetailsDialog taskID={costsTaskID} close={() => setCostsTaskID(null)} onSaved={() => list.refetch()} snackbarOpen={snackbarOpen} />
+            )}
+
             {adding && (
                 <GeneralDialog
                     open="add"
-                    title="ثبت دستورکار"
+                    title="ثبت فعالیت"
                     width={sizeConverter(680, 'width')}
                     close={() => setAdding(false)}
                     array={createForm}

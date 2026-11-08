@@ -75,17 +75,17 @@ export const TASK_STATE_COLOR: Record<number, ChipColor> = { 1: 'info', 2: 'prim
  * it needs a technician, so it goes through the "assign" dialog.
  */
 export const TASK_TRANSITIONS: { from: number; to: number; permission: number; label: string; confirm: string }[] = [
-    { from: 1, to: 3, permission: 204, label: 'انصراف', confirm: 'دستورکار لغو شود؟' },
-    { from: 1, to: 7, permission: 205, label: 'اتمام (حل تلفنی)', confirm: 'دستورکار تمام شود؟' },
-    { from: 2, to: 4, permission: 0, label: 'شروع کار', confirm: 'کار روی دستورکار شروع شود؟' },
-    { from: 2, to: 3, permission: 204, label: 'انصراف', confirm: 'دستورکار لغو شود؟' },
-    { from: 2, to: 7, permission: 205, label: 'اتمام', confirm: 'دستورکار تمام شود؟' },
-    { from: 4, to: 5, permission: 0, label: 'در انتظار قطعه', confirm: 'دستورکار در انتظار قطعه قرار گیرد؟' },
+    { from: 1, to: 3, permission: 204, label: 'انصراف', confirm: 'فعالیت لغو شود؟' },
+    { from: 1, to: 7, permission: 205, label: 'اتمام (حل تلفنی)', confirm: 'فعالیت تمام شود؟' },
+    { from: 2, to: 4, permission: 0, label: 'شروع کار', confirm: 'کار روی فعالیت شروع شود؟' },
+    { from: 2, to: 3, permission: 204, label: 'انصراف', confirm: 'فعالیت لغو شود؟' },
+    { from: 2, to: 7, permission: 205, label: 'اتمام', confirm: 'فعالیت تمام شود؟' },
+    { from: 4, to: 5, permission: 0, label: 'در انتظار قطعه', confirm: 'فعالیت در انتظار قطعه قرار گیرد؟' },
     { from: 5, to: 4, permission: 0, label: 'ادامه کار', confirm: 'کار دوباره ادامه پیدا کند؟' },
-    { from: 4, to: 3, permission: 204, label: 'انصراف', confirm: 'دستورکار لغو شود؟' },
-    { from: 4, to: 7, permission: 205, label: 'اتمام', confirm: 'دستورکار تمام شود؟' },
-    { from: 7, to: 8, permission: 206, label: 'تایید نهایی', confirm: 'دستورکار تایید نهایی شود؟' },
-    { from: 7, to: 4, permission: 206, label: 'بازگشت برای اصلاح', confirm: 'دستورکار برای اصلاح به «در حال انجام» برگردد؟' },
+    { from: 4, to: 3, permission: 204, label: 'انصراف', confirm: 'فعالیت لغو شود؟' },
+    { from: 4, to: 7, permission: 205, label: 'اتمام', confirm: 'فعالیت تمام شود؟' },
+    { from: 7, to: 8, permission: 206, label: 'تایید نهایی', confirm: 'فعالیت تایید نهایی شود؟' },
+    { from: 7, to: 4, permission: 206, label: 'بازگشت برای اصلاح', confirm: 'فعالیت برای اصلاح به «در حال انجام» برگردد؟' },
     { from: 8, to: 7, permission: 206, label: 'لغو تایید نهایی', confirm: 'تایید نهایی برداشته شود؟' },
 ]
 
@@ -180,8 +180,8 @@ export const STATEMENT_STATE_COLOR: Record<number, ChipColor> = { 1: 'info', 2: 
  */
 export const STATEMENT_TRANSITIONS: { from: number; to: number; permission: number; label: string; confirm: string }[] = [
     { from: 2, to: 3, permission: 0, label: 'ارسال', confirm: 'صورت‌حساب برای پیمانکار ارسال شود؟' },
-    { from: 2, to: 4, permission: 250, label: 'تایید', confirm: 'صورت‌حساب تایید شود؟ با تایید، همه‌ی دستورکارهای آن قفل می‌شوند و راه برگشتی نیست.' },
+    { from: 2, to: 4, permission: 250, label: 'تایید', confirm: 'صورت‌حساب تایید شود؟ با تایید، همه‌ی فعالیت های آن قفل می‌شوند و راه برگشتی نیست.' },
     { from: 3, to: 2, permission: 0, label: 'بازگشت به محاسبه‌شده', confirm: 'صورت‌حساب به «محاسبه شده» برگردد؟' },
-    { from: 3, to: 4, permission: 250, label: 'تایید', confirm: 'صورت‌حساب تایید شود؟ با تایید، همه‌ی دستورکارهای آن قفل می‌شوند و راه برگشتی نیست.' },
+    { from: 3, to: 4, permission: 250, label: 'تایید', confirm: 'صورت‌حساب تایید شود؟ با تایید، همه‌ی فعالیت های آن قفل می‌شوند و راه برگشتی نیست.' },
     { from: 4, to: 5, permission: 251, label: 'تسویه', confirm: 'صورت‌حساب تسویه شود؟ بعد از تسویه هیچ تغییری ممکن نیست.' },
 ]

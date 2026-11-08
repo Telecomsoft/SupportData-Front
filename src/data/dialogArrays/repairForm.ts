@@ -14,8 +14,8 @@ export const buildRepairCreateForm = (isMobile: boolean): DialogArrayType[] => {
     return [
         { label: 'مدل قطعه', value: 'deviceModelID', kind: 'combo', type: 'choice', size: half, component: AutoCompleteComp, validators: { ...REQUIRED_VALIDATOR } },
         { label: 'سریال قطعه', value: 'serial', kind: 'textField', size: half, component: TextFieldComp, ltr: true, helperText: 'برای مدل‌های سریال‌دار الزامی است' },
-        { label: 'شماره دستورکار', value: 'workTaskID', type: 'natural', kind: 'textField', size: half, component: TextFieldComp, helperText: 'کیوسک و مشتری از روی آن پر می‌شود' },
-        { label: 'مشتری (اگر دستورکار ندارد)', value: 'customerID', kind: 'combo', type: 'choice', size: half, component: AutoCompleteComp },
+        { label: 'شماره فعالیت', value: 'workTaskID', type: 'natural', kind: 'textField', size: half, component: TextFieldComp, helperText: 'کیوسک و مشتری از روی آن پر می‌شود' },
+        { label: 'مشتری (اگر فعالیت ندارد)', value: 'customerID', kind: 'combo', type: 'choice', size: half, component: AutoCompleteComp },
         { label: 'زمان دریافت (خالی = همین حالا)', value: 'receivedAt', type: 'date', kind: 'textField', size: 12, component: JalaliDatePicker },
         { label: 'توضیحات', value: 'description', kind: 'textField', multiline: true, maxRows: 3, size: 12, component: TextFieldComp },
     ]

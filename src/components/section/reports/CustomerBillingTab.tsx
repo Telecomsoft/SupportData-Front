@@ -55,7 +55,7 @@ const CustomerBillingTab = ({ snackbarOpen }: { snackbarOpen: snackbarOpenType }
     const exportFile = () =>
         exporter.exportXlsx(
             rows.map((r) => ({
-                'دستورکار': r.workTaskID, 'نوع': r.typeName, 'سریال کیوسک': r.kioskSerial, 'شعبه': r.branchName, 'شهر': r.cityName,
+                'فعالیت': r.workTaskID, 'نوع': r.typeName, 'سریال کیوسک': r.kioskSerial, 'شعبه': r.branchName, 'شهر': r.cityName,
                 'زمان اتمام': r.finishedAt ? day(r.finishedAt) : '', 'کارشناسی': r.inspectionCost, 'ایاب و ذهاب': r.transportationCost,
                 'قطعه': r.partCost, 'سایر': r.otherCost, 'جمع': r.total, 'دریافتی': r.receivedAmount, 'شماره فاکتور': r.invoiceNo ?? '',
                 'پرداخت': r.isPaid ? 'پرداخت شده' : 'نشده', 'مبلغ پرداخت‌شده': r.paidAmount,
@@ -92,7 +92,7 @@ const CustomerBillingTab = ({ snackbarOpen }: { snackbarOpen: snackbarOpenType }
                 <Button variant="outlined" onClick={printIt} disabled={rows.length === 0} sx={{ borderRadius: 2 }}>چاپ</Button>
             </Stack>
 
-            {!asked ? <Typography variant="body2" color="text.secondary">{isCustomer ? 'بازه‌ی تاریخ اتمام را انتخاب کن.' : 'مشتری و بازه‌ی تاریخ اتمام را انتخاب کن.'} دستورکارهای «اتمام» و «تایید نهایی» همین بازه نمایش داده می‌شوند.</Typography>
+            {!asked ? <Typography variant="body2" color="text.secondary">{isCustomer ? 'بازه‌ی تاریخ اتمام را انتخاب کن.' : 'مشتری و بازه‌ی تاریخ اتمام را انتخاب کن.'} فعالیت های «اتمام» و «تایید نهایی» همین بازه نمایش داده می‌شوند.</Typography>
                 : result.isFetching && !result.data ? <CustomCircularProgress thickness={2} size={40} />
                 : result.data?.error !== 0 ? <Alert severity="error">{result.data?.errorMessage ?? 'دریافت گزارش انجام نشد'}</Alert>
                 : (
@@ -101,11 +101,11 @@ const CustomerBillingTab = ({ snackbarOpen }: { snackbarOpen: snackbarOpenType }
                             <style>{PRINT_CSS}</style>
                             <div className="rp-print">
                                 <h2>صورت‌حساب مشتری — {data?.customerName ?? ''}</h2>
-                                <div className="box">بازه‌ی اتمام: {day(asked.from)} تا {day(asked.to)} — تعداد دستورکار: {num(totals?.count)}</div>
+                                <div className="box">بازه‌ی اتمام: {day(asked.from)} تا {day(asked.to)} — تعداد فعالیت: {num(totals?.count)}</div>
                                 <table>
                                     <thead>
                                         <tr>
-                                            <th>دستورکار</th><th>نوع</th><th>کیوسک</th><th>شعبه</th><th>شهر</th><th>اتمام</th><th>کارشناسی</th><th>ایاب و ذهاب</th>
+                                            <th>فعالیت</th><th>نوع</th><th>کیوسک</th><th>شعبه</th><th>شهر</th><th>اتمام</th><th>کارشناسی</th><th>ایاب و ذهاب</th>
                                             <th>قطعه</th><th>سایر</th><th>جمع</th><th>دریافتی</th><th>فاکتور</th><th>پرداخت</th>
                                         </tr>
                                     </thead>
@@ -119,10 +119,10 @@ const CustomerBillingTab = ({ snackbarOpen }: { snackbarOpen: snackbarOpenType }
                                                 <td>{r.isPaid ? `پرداخت شده (${num(r.paidAmount)})` : 'نشده'}</td>
                                             </tr>
                                         ))}
-                                        {rows.length === 0 && <tr><td colSpan={14}>دستورکاری در این بازه نیست</td></tr>}
+                                        {rows.length === 0 && <tr><td colSpan={14}>فعالیتی در این بازه نیست</td></tr>}
                                         {totals && rows.length > 0 && (
                                             <tr className="sum">
-                                                <td colSpan={6}>جمع ({num(totals.count)} دستورکار)</td><td>{num(totals.inspection)}</td><td>{num(totals.transportation)}</td>
+                                                <td colSpan={6}>جمع ({num(totals.count)} فعالیت)</td><td>{num(totals.inspection)}</td><td>{num(totals.transportation)}</td>
                                                 <td>{num(totals.part)}</td><td>{num(totals.other)}</td><td>{num(totals.total)}</td><td>{num(totals.received)}</td>
                                                 <td></td><td>{num(totals.paid)}</td>
                                             </tr>

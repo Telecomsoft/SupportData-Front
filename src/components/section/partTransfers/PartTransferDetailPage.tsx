@@ -143,7 +143,7 @@ const PartTransferDetailPage = ({ id, snackbarOpen }: { id: number; snackbarOpen
                         <Divider sx={{ mb: 1 }} />
                         <Grid container spacing={1} sx={{ mb: 2 }}>
                             {cell('کیوسک', t.kioskID ? link(`کیوسک #${t.kioskID}`, rules.canOpenKiosk ? () => navigate({ to: `/kioskDetail/${t.kioskID}` }) : undefined) : '-')}
-                            {cell('دستورکار', t.workTaskID ? link(`#${t.workTaskID}`, rules.canOpenWorkTask ? () => navigate({ to: `/workTaskDetail/${t.workTaskID}` }) : undefined) : '-')}
+                            {cell('فعالیت', t.workTaskID ? link(`#${t.workTaskID}`, rules.canOpenWorkTask ? () => navigate({ to: `/workTaskDetail/${t.workTaskID}` }) : undefined) : '-')}
                             {cell('تعمیر', t.repairID ? link(`#${t.repairID}`, rules.canOpenRepair ? () => navigate({ to: `/repairDetail/${t.repairID}` }) : undefined) : '-')}
                         </Grid>
 

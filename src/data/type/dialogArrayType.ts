@@ -19,4 +19,6 @@ export type DialogArrayType = {
     validators?: RegisterOptions
     component?: ComponentType<any>
     [key: string]: unknown
+    BranchCode?: string
+    BranchName?: string
 }

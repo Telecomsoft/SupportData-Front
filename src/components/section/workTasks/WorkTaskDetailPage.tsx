@@ -100,7 +100,7 @@ const WorkTaskDetailPage = ({ id, snackbarOpen }: { id: number; snackbarOpen: sn
     if (!t) {
         return (
             <Paper sx={{ p: 4, m: 3, textAlign: 'center', borderRadius: 3 }}>
-                <Typography color="text.secondary">{taskQuery.data?.errorMessage ?? 'دستورکار پیدا نشد'}</Typography>
+                <Typography color="text.secondary">{taskQuery.data?.errorMessage ?? 'فعالیت پیدا نشد'}</Typography>
             </Paper>
         )
     }
@@ -128,7 +128,7 @@ const WorkTaskDetailPage = ({ id, snackbarOpen }: { id: number; snackbarOpen: sn
     const close = () => setDialog(null)
     const pick = (k: 'dates' | 'payment' | 'form' | 'part') => {
         setMenu(null)
-        if (k === 'part' && !partTechID) return snackbarOpen('اول دستورکار را به یک تکنسین ارجاع بده؛ قطعه از موجودی او نصب می‌شود', SNACKBAR_SEVERITIES.ERROR)
+        if (k === 'part' && !partTechID) return snackbarOpen('اول فعالیت را به یک تکنسین ارجاع بده؛ قطعه از موجودی او نصب می‌شود', SNACKBAR_SEVERITIES.ERROR)
         setDialog({ kind: k })
     }
     // the confirm dialog treats any reply as success, but the server refuses with HTTP 200 + error != 0,
@@ -160,7 +160,7 @@ const WorkTaskDetailPage = ({ id, snackbarOpen }: { id: number; snackbarOpen: sn
                         </IconButton>
                         <Box>
                             <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap" mb={0.5}>
-                                <Typography variant="h6" fontWeight="bold" color="text.primary">دستورکار #{t.id}</Typography>
+                                <Typography variant="h6" fontWeight="bold" color="text.primary">فعالیت #{t.id}</Typography>
                                 {t.typeName && <Chip size="small" variant="outlined" label={t.typeName} />}
                                 <WorkTaskStateChip task={t} />
                                 {t.isOverdue && <Chip size="small" color="error" label="دیرکرد" />}
@@ -256,7 +256,7 @@ const WorkTaskDetailPage = ({ id, snackbarOpen }: { id: number; snackbarOpen: sn
             {dialog?.kind === 'edit' && (
                 <GeneralDialog
                     open="edit"
-                    title={`ویرایش دستورکار #${t.id}`}
+                    title={`ویرایش فعالیت #${t.id}`}
                     width={sizeConverter(820, 'width')}
                     close={close}
                     array={editForm}
@@ -283,7 +283,7 @@ const WorkTaskDetailPage = ({ id, snackbarOpen }: { id: number; snackbarOpen: sn
                 return (
                     <GeneralDialog
                         open="add"
-                        title={`ارجاع دستورکار #${t.id}`}
+                        title={`ارجاع فعالیت #${t.id}`}
                         close={close}
                         array={form}
                         createEndpoint="api/WorkTask/AssignWorkTask"
@@ -306,7 +306,7 @@ const WorkTaskDetailPage = ({ id, snackbarOpen }: { id: number; snackbarOpen: sn
                 return (
                     <GeneralDialog
                         open="add"
-                        title={`${tr.label} - دستورکار #${t.id}`}
+                        title={`${tr.label} - فعالیت #${t.id}`}
                         close={close}
                         array={form}
                         createEndpoint="api/WorkTask/ChangeWorkTaskState"
@@ -323,7 +323,7 @@ const WorkTaskDetailPage = ({ id, snackbarOpen }: { id: number; snackbarOpen: sn
                 return (
                     <GeneralDialog
                         open="add"
-                        title={`تصحیح تاریخ‌ها - دستورکار #${t.id}`}
+                        title={`تصحیح تاریخ‌ها - فعالیت #${t.id}`}
                         close={close}
                         array={form}
                         createEndpoint="api/WorkTask/CorrectWorkTaskDates"
@@ -341,7 +341,7 @@ const WorkTaskDetailPage = ({ id, snackbarOpen }: { id: number; snackbarOpen: sn
                 return (
                     <GeneralDialog
                         open="edit"
-                        title={`ثبت پرداخت - دستورکار #${t.id}`}
+                        title={`ثبت پرداخت - فعالیت #${t.id}`}
                         close={close}
                         array={form}
                         editEndpoint="api/WorkTask/RecordWorkTaskPayment"
@@ -361,7 +361,7 @@ const WorkTaskDetailPage = ({ id, snackbarOpen }: { id: number; snackbarOpen: sn
             {dialog?.kind === 'form' && (
                 <GeneralConfirmDialog
                     isDialogOpen="add"
-                    dialogTitle={`دستورکار #${t.id}`}
+                    dialogTitle={`فعالیت #${t.id}`}
                     confirmMessage="دریافت فرم سرویس امضاشده تایید شود؟"
                     snackBarSuccessMessage="دریافت فرم سرویس ثبت شد"
                     noApiRequest
@@ -376,7 +376,7 @@ const WorkTaskDetailPage = ({ id, snackbarOpen }: { id: number; snackbarOpen: sn
                 return (
                     <GeneralDialog
                         open="add"
-                        title={`تعویض قطعه - دستورکار #${t.id}`}
+                        title={`تعویض قطعه - فعالیت #${t.id}`}
                         close={close}
                         array={form}
                         createEndpoint="api/WorkTask/ReplaceKioskPart"

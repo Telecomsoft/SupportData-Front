@@ -25,7 +25,7 @@ const ReportsPage = ({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) => {
                         '& .MuiTab-root': { textTransform: 'none', fontWeight: 600, fontSize: '0.95rem', minHeight: 46, color: 'text.secondary', '&.Mui-selected': { color: 'primary.main' } },
                     }}
                 >
-                    <Tab value="tasks" label="گزارش دستورکار" />
+                    <Tab value="tasks" label="گزارش فعالیت" />
                     <Tab value="warranty" label="گزارش گارانتی" />
                     <Tab value="billing" label="صورت‌حساب مشتری" />
                 </Tabs>

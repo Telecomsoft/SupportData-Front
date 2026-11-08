@@ -126,7 +126,7 @@ export const LAYOUT_SIDEBAR_DATA: (DataType & { children?: DataType[] })[] = [
       ],
    },
    { name: 'کیوسک‌ها', value: 'kiosksList', link: '/kiosksList', icon: AtmIcon, accessID: 110 },
-   { name: 'دستورکارها', value: 'workTasksList', link: '/workTasksList', icon: AssignmentIcon, accessID: 111 },
+   { name: 'فعالیت ها', value: 'workTasksList', link: '/workTasksList', icon: AssignmentIcon, accessID: 111 },
    { name: 'تعمیرات', value: 'repairsList', link: '/repairsList', icon: HandymanIcon, accessID: 113 },
    { name: 'انبار قطعات', value: 'partTransfersList', link: '/partTransfersList', icon: Inventory2Icon, accessID: 112 },
    { name: 'صورت‌حساب‌ها', value: 'statementsList', link: '/statementsList', icon: ReceiptLongIcon, accessID: 114 },

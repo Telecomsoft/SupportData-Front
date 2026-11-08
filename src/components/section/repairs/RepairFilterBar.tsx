@@ -91,7 +91,7 @@ const RepairFilterBar = ({ value, onChange, states, deviceModels, customers, tec
             {combo('مشتری', customers, value.customer, (customer) => onChange({ ...value, customer }))}
             {combo('ارجاع‌شده به', technicians, value.assignedTo, (assignedTo) => onChange({ ...value, assignedTo }))}
             <StyledTextField size="small" label="سریال قطعه" value={serial} onChange={(e) => setSerial(e.target.value)} sx={{ width: 150 }} />
-            <StyledTextField size="small" label="شماره دستورکار" value={taskID} onChange={(e) => setTaskID(e.target.value.replace(/\D/g, ''))} sx={{ width: 130 }} />
+            <StyledTextField size="small" label="شماره فعالیت" value={taskID} onChange={(e) => setTaskID(e.target.value.replace(/\D/g, ''))} sx={{ width: 130 }} />
             {date('دریافت از', value.from, (from) => onChange({ ...value, from }), false)}
             {date('دریافت تا', value.to, (to) => onChange({ ...value, to }), true)}
         </Stack>
