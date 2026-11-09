@@ -3,6 +3,7 @@ import TextFieldComp from '@components/general/hookFromInputs/TextFieldComp'
 import AutoCompleteComp from '@components/general/hookFromInputs/AutoComplete'
 import SectionTitle from '@components/general/hookFromInputs/SectionTitle'
 import JalaliDatePicker from '@components/JalaliDatePicker'
+import KioskSearchField from '@components/section/workTasks/KioskSearchField'
 import { REQUIRED_VALIDATOR } from '@src/data/validators/validators'
 
 type Opts = { isMobile: boolean; isCustomer?: boolean; canAssign?: boolean }
@@ -15,13 +16,14 @@ export const buildWorkTaskCreateForm = ({ isMobile, isCustomer, canAssign }: Opt
     const half = isMobile ? 12 : 5.9
 
     return [
-        { label: 'نوع فعالیت', value: 'workTaskType', kind: 'combo', type: 'choice', size: half, component: AutoCompleteComp, validators: { ...REQUIRED_VALIDATOR } },
-        { label: 'سریال کیوسک', value: 'kioskSerial', kind: 'textField', size: half, component: TextFieldComp, ltr: true, validators: { ...REQUIRED_VALIDATOR } },
+        // the form value `kiosk` is the chosen kiosk object; the page sends its id (see the add dialog's apiValueGetter)
+        { label: 'کیوسک (سریال، کد/نام شعبه، شهر، مشتری ...)', value: 'kiosk', kind: 'custom', size: 12, component: KioskSearchField, helperText: 'برای خرابی و بازدید الزامی است' },
+        { label: 'نوع دستورکار', value: 'workTaskType', kind: 'combo', type: 'choice', size: half, component: AutoCompleteComp, validators: { ...REQUIRED_VALIDATOR } },
         ...(isCustomer ? [] : [
             { label: 'مشتری (فقط وقتی کیوسک ندارد)', value: 'customerID', kind: 'combo', type: 'choice', size: half, component: AutoCompleteComp } as DialogArrayType,
-            { label: 'زمان گزارش', value: 'reportedAt', type: 'date', kind: 'textField', size: half, component: JalaliDatePicker } as DialogArrayType,
+            { label: 'زمان گزارش (خالی = همین حالا)', value: 'reportedAt', type: 'date', kind: 'textField', size: half, component: JalaliDatePicker } as DialogArrayType,
         ]),
-        { label: 'شرح مشکل', value: 'reportedIssue', kind: 'textField', multiline: true, maxRows: 4, size: 12, component: TextFieldComp, validators: { ...REQUIRED_VALIDATOR }, rows: 3 },
+        { label: 'شرح مشکل', value: 'reportedIssue', kind: 'textField', multiline: true, maxRows: 4, size: 12, component: TextFieldComp, validators: { ...REQUIRED_VALIDATOR } },
         ...(canAssign && !isCustomer
             ? [{ label: 'ارجاع به (خالی = تکنسین پیش‌فرض کیوسک)', value: 'assignedToID', kind: 'combo', type: 'choice', size: 12, component: AutoCompleteComp } as DialogArrayType]
             : []),
@@ -31,7 +33,7 @@ export const buildWorkTaskCreateForm = ({ isMobile, isCustomer, canAssign }: Opt
 
 // In the edit dialog these are shown (same items as the add dialog) but locked: the server never changes them through
 // UpdateWorkTask (kiosk: R11, customer: comes from the kiosk, report time: CorrectWorkTaskDates, assignee: AssignWorkTask).
-const EDIT_LOCKED = ['kioskSerial', 'customerID', 'reportedAt', 'assignedToID']
+const EDIT_LOCKED = ['customerID', 'reportedAt', 'assignedToID']
 const EDIT_LABELS: Record<string, string> = { customerID: 'مشتری', reportedAt: 'زمان گزارش', assignedToID: 'ارجاع به' }
 
 /**
@@ -39,11 +41,15 @@ const EDIT_LABELS: Record<string, string> = { customerID: 'مشتری', reported
  * The ones the server can't change here are locked; the diagnosis, work done and costs are in buildWorkTaskDetailsForm.
  */
 export const buildWorkTaskEditForm = ({ isMobile }: Opts): DialogArrayType[] =>
-    buildWorkTaskCreateForm({ isMobile, isCustomer: false, canAssign: true }).map((item) =>
-        EDIT_LOCKED.includes(item.value)
+    buildWorkTaskCreateForm({ isMobile, isCustomer: false, canAssign: true }).map((item): DialogArrayType => {
+        // the kiosk of a task can't change (R11): the edit dialog shows its serial, locked, instead of the search
+        if (item.value === 'kiosk') {
+            return { label: 'سریال کیوسک', value: 'kioskSerial', kind: 'textField', size: 12, component: TextFieldComp, ltr: true, editDisabled: true }
+        }
+        return EDIT_LOCKED.includes(item.value)
             ? { ...item, label: EDIT_LABELS[item.value] ?? item.label, helperText: undefined, editDisabled: true }
             : item
-    )
+    })
 
 /** Diagnosis, work done and costs of a task (PUT api/WorkTask/UpdateWorkTask too). Staff only. */
 export const buildWorkTaskDetailsForm = ({ isMobile }: Opts): DialogArrayType[] => {

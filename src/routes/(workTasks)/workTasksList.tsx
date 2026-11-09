@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import Grid from '@mui/material/Grid2'
 import { Box, Button, Chip, Fab, IconButton, TextField, Tooltip, Typography } from '@mui/material'
 import { useEffect, useMemo, useState } from 'react'
 import AddIcon from '@mui/icons-material/Add'
-import EditIcon from '@mui/icons-material/Edit'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong'
 import { withSnackbar } from '@components/hoc/withSnackbar'
@@ -18,7 +17,6 @@ import WorkTaskFilterBar, { EMPTY_WORKTASK_FILTER, WorkTaskFilterState } from '@
 import WorkTaskMobileCard from '@components/section/workTasks/WorkTaskMobileCard'
 import WorkTaskStateChip from '@components/section/workTasks/WorkTaskStateChip'
 import WorkTaskDetailsDialog from '@components/section/workTasks/WorkTaskDetailsDialog'
-import { buildWorkTaskCreateForm } from '@src/data/dialogArrays/workTaskForm'
 import { CUSTOMER_TASK_TYPES, isTaskClosed, TASK_TYPES } from '@src/data/type/lookups'
 import { useWorkTaskLookups } from '@hooks/useWorkTaskLookups'
 import { usePostQuery } from '@hooks/usePostQuery'
@@ -28,15 +26,17 @@ import { useDevice } from '@hooks/useDevice'
 import { sizeConverter } from '@utility/sizeConverter'
 import { dateFn } from '@utility/dateConverter'
 import { buildPayload } from '@utility/buildPayload'
+import { buildWorkTaskCreateForm } from '@src/data/dialogArrays/workTaskForm'
 
 export const Route = createFileRoute('/(workTasks)/workTasksList')({
     component: withSnackbar(WorkTasksList),
-    staticData: { breadcrumb: 'فعالیت ها' },
+    staticData: { breadcrumb: 'دستورکارها' },
 })
 
 const PAGE_SIZE = 50
 
 function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
+    const navigate = useNavigate()
     const { isMobile } = useDevice()
     const { canPerform } = useAccessCheck()
     const { isCustomer } = useUserScope()
@@ -99,7 +99,7 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [list.data, isMobile])
 
-    const open = (id: number) => window.open(`/workTaskDetail/${id}`, '_blank');
+    const open = (id: number) => navigate({ to: `/workTaskDetail/${id}` })
 
     const taskTypeOptions = isCustomer ? CUSTOMER_TASK_TYPES : TASK_TYPES
     const createForm = buildWorkTaskCreateForm({ isMobile, isCustomer, canAssign: canPerform(203) })
@@ -127,8 +127,8 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
         { field: 'typeName', headerName: 'نوع', width: sizeConverter(100, 'width') },
         { field: 'stateName', headerName: 'وضعیت', width: sizeConverter(110, 'width'), renderCell: (p) => <WorkTaskStateChip task={p.row} /> },
         { field: 'kioskSerial', headerName: 'سریال کیوسک', width: sizeConverter(140, 'width') },
-        { field: 'BranchCode', headerName: 'کد شعبه', width: sizeConverter(140, 'width') },
-        { field: 'BranchName', headerName: 'نام شعبه', width: sizeConverter(140, 'width') },
+        { field: 'branchName', headerName: 'شعبه', width: sizeConverter(140, 'width') },
+        { field: 'branchCode', headerName: 'کد شعبه', width: sizeConverter(140, 'width') },
         ...(isCustomer ? [] : [{ field: 'customerName', headerName: 'مشتری', width: sizeConverter(140, 'width') }]),
         ...(isCustomer ? [] : [{ field: 'assignedToName', headerName: 'ارجاع‌شده به', width: sizeConverter(130, 'width') }]),
 
@@ -214,6 +214,7 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 <Box sx={{ width: '100%' }}>
                     <WorkTaskFilterBar value={filter} onChange={changeFilter} customers={lookups.options.customerID} cities={lookups.options.cityID} technicians={lookups.options.assignedToID} isCustomer={isCustomer} />
                     <TelecomDataGrid
+                        height={sizeConverter(500, 'height')}
                         data={items}
                         loading={list.isFetching}
                         serverData={{ totalDataCount: total, maxRowInPage: PAGE_SIZE, currentPage: page }}
@@ -223,8 +224,7 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                         CustomToolBar={() => (
                             <Grid container size={'auto'} spacing={sizeConverter(4, 'spaceX')}>
                                 <DataGridIconProvider toolTipText={'مشاهده'} Icon={OpenInNewIcon} disable={!selectedID} clickFunc={() => selectedID && open(selectedID)} />
-                                {canCreate && <DataGridIconProvider toolTipText={'ثبت فعالیت'} Icon={AddIcon} disable={false} clickFunc={() => setAdding(true)} />}
-                                {canCreate && <DataGridIconProvider toolTipText={'ویرایش فعالیت'} disable={!selectedID} Icon={EditIcon} clickFunc={() => setAdding(true)} />}
+                                {canCreate && <DataGridIconProvider toolTipText={'ثبت دستورکار'} Icon={AddIcon} disable={false} clickFunc={() => setAdding(true)} />}
                             </Grid>
                         )}
                         setRows={(data: any) => data && setSelectedID(data?.[0])}
@@ -242,7 +242,7 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             {adding && (
                 <GeneralDialog
                     open="add"
-                    title="ثبت فعالیت"
+                    title="ثبت دستورکار"
                     width={sizeConverter(680, 'width')}
                     close={() => setAdding(false)}
                     array={createForm}
@@ -256,6 +256,9 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                     sendFinalData
                     apiValueGetter={((data: any) => {
                         const payload: Record<string, unknown> = buildPayload(createForm, data, {})
+                        // the form holds the whole chosen kiosk; the server only needs its id
+                        delete payload.kiosk
+                        if (data?.kiosk?.id) payload.kioskID = data.kiosk.id
                         // the server's ReportedAt is not nullable: leave it out to mean "now"
                         if (!payload.reportedAt) delete payload.reportedAt
                         return payload

@@ -39,7 +39,7 @@ import { buildPayload } from '@utility/buildPayload'
 
 export const Route = createFileRoute('/(workTasks)/workTaskDetail/$workTaskId')({
     component: withSnackbar(WorkTaskDetail),
-    staticData: { breadcrumb: 'مشخصات فعالیت' },
+    staticData: { breadcrumb: 'مشخصات دستورکار' },
 })
 
 type Dialog =
@@ -83,7 +83,7 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     if (!t) {
         return (
             <Paper sx={{ p: 4, m: 3, textAlign: 'center', borderRadius: 3 }}>
-                <Typography color="text.secondary">{taskQuery.data?.errorMessage ?? 'فعالیت پیدا نشد'}</Typography>
+                <Typography color="text.secondary">{taskQuery.data?.errorMessage ?? 'دستورکار پیدا نشد'}</Typography>
             </Paper>
         )
     }
@@ -107,7 +107,7 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     const workItemNames = (t.workItemIDs ?? []).map((wid: number) => lookups.options.workItemIDs.find((o) => o.id === wid)?.name ?? `کار #${wid}`) as string[]
     const close = () => setDialog(null)
     const pick = (k: 'dates' | 'payment' | 'form' | 'part') => {
-        if (k === 'part' && !partTechID) return snackbarOpen('اول فعالیت را به یک تکنسین ارجاع بده؛ قطعه از موجودی او نصب می‌شود', SNACKBAR_SEVERITIES.ERROR)
+        if (k === 'part' && !partTechID) return snackbarOpen('اول دستورکار را به یک تکنسین ارجاع بده؛ قطعه از موجودی او نصب می‌شود', SNACKBAR_SEVERITIES.ERROR)
         setDialog({ kind: k })
     }
     // the confirm dialog treats any reply as success, but the server refuses with HTTP 200 + error != 0,
@@ -139,7 +139,7 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                         </IconButton>
                         <Box>
                             <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap" mb={0.5}>
-                                <Typography variant="h6" fontWeight="bold" color="text.primary">فعالیت #{t.id}</Typography>
+                                <Typography variant="h6" fontWeight="bold" color="text.primary">دستورکار #{t.id}</Typography>
                                 {t.typeName && <Chip size="small" variant="outlined" label={t.typeName} />}
                                 <WorkTaskStateChip task={t} />
                                 {t.isOverdue && <Chip size="small" color="error" label="دیرکرد" />}
@@ -236,7 +236,7 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             {dialog?.kind === 'edit' && (
                 <GeneralDialog
                     open="edit"
-                    title={`ویرایش فعالیت #${t.id}`}
+                    title={`ویرایش دستورکار #${t.id}`}
                     width={sizeConverter(680, 'width')}
                     close={close}
                     array={editForm}
@@ -270,7 +270,7 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 return (
                     <GeneralDialog
                         open="add"
-                        title={`ارجاع فعالیت #${t.id}`}
+                        title={`ارجاع دستورکار #${t.id}`}
                         close={close}
                         array={form}
                         createEndpoint="api/WorkTask/AssignWorkTask"
@@ -293,7 +293,7 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 return (
                     <GeneralDialog
                         open="add"
-                        title={`${tr.label} - فعالیت #${t.id}`}
+                        title={`${tr.label} - دستورکار #${t.id}`}
                         close={close}
                         array={form}
                         createEndpoint="api/WorkTask/ChangeWorkTaskState"
@@ -310,7 +310,7 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 return (
                     <GeneralDialog
                         open="add"
-                        title={`تصحیح تاریخ‌ها - فعالیت #${t.id}`}
+                        title={`تصحیح تاریخ‌ها - دستورکار #${t.id}`}
                         close={close}
                         array={form}
                         createEndpoint="api/WorkTask/CorrectWorkTaskDates"
@@ -328,7 +328,7 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 return (
                     <GeneralDialog
                         open="edit"
-                        title={`ثبت پرداخت - فعالیت #${t.id}`}
+                        title={`ثبت پرداخت - دستورکار #${t.id}`}
                         close={close}
                         array={form}
                         editEndpoint="api/WorkTask/RecordWorkTaskPayment"
@@ -348,7 +348,7 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             {dialog?.kind === 'form' && (
                 <GeneralConfirmDialog
                     isDialogOpen="add"
-                    dialogTitle={`فعالیت #${t.id}`}
+                    dialogTitle={`دستورکار #${t.id}`}
                     confirmMessage="دریافت فرم سرویس امضاشده تایید شود؟"
                     snackBarSuccessMessage="دریافت فرم سرویس ثبت شد"
                     noApiRequest
@@ -363,7 +363,7 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 return (
                     <GeneralDialog
                         open="add"
-                        title={`تعویض قطعه - فعالیت #${t.id}`}
+                        title={`تعویض قطعه - دستورکار #${t.id}`}
                         close={close}
                         array={form}
                         createEndpoint="api/WorkTask/ReplaceKioskPart"

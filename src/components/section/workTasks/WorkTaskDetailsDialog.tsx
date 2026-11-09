@@ -71,7 +71,7 @@ const WorkTaskDetailsDialog = ({ taskID, close, onSaved, snackbarOpen }: Props) 
     return (
         <GeneralDialog
             open="edit"
-            title={`تشخیص، کار انجام‌شده و هزینه‌ها - فعالیت #${t.id}`}
+            title={`تشخیص، کار انجام‌شده و هزینه‌ها - دستورکار #${t.id}`}
             width={sizeConverter(820, 'width')}
             close={close}
             array={form}

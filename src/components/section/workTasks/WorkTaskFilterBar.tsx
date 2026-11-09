@@ -85,25 +85,25 @@ const WorkTaskFilterBar = ({ value, onChange, customers, cities, technicians, is
             locale={persian_fa}
             value={current ? new Date(current) : ''}
             onChange={(d: DateObject | null) => set(d instanceof DateObject ? toIsoDay(d, end) : null)}
-            render={<StyledTextField size="small" label={label} sx={{ width: 140 }} InputLabelProps={{ shrink: !!current || undefined }} />}
+            render={<TextField size="small" label={label} sx={{ width: 140 }} InputLabelProps={{ shrink: !!current || undefined }} />}
         />
     )
 
     return (
-        <Stack direction="row" gap={1} flexWrap="wrap" alignItems="center" sx={{ mb: 1, p: 1, bgcolor: 'background.paper', borderRadius: 2, boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
+        <Stack direction="row" gap={1} flexWrap="wrap" alignItems="center" sx={{ mb: 1,p:1, bgcolor: 'background.paper', borderRadius: 2, boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
             {multi('وضعیت', TASK_STATES, value.states, (states) => onChange({ ...value, states }))}
             {multi('نوع', TASK_TYPES, value.types, (types) => onChange({ ...value, types }))}
             {!isCustomer && combo('مشتری', customers, value.customer, (customer) => onChange({ ...value, customer }))}
             {combo('شهر', cities, value.city, (city) => onChange({ ...value, city }))}
             {!isCustomer && combo('ارجاع‌شده به', technicians, value.assignedTo, (assignedTo) => onChange({ ...value, assignedTo }))}
-            <StyledTextField size="small" label="سریال کیوسک" value={typed.kioskSerial} onChange={(e) => setTyped((p) => ({ ...p, kioskSerial: e.target.value }))} sx={{ width: 150 }} />
-            <StyledTextField size="small" label="کد شعبه" value={typed.branchCode} onChange={(e) => setTyped((p) => ({ ...p, branchCode: e.target.value }))} sx={{ width: 130 }} />
-            <StyledTextField size="small" label="نام شعبه" value={typed.branchName} onChange={(e) => setTyped((p) => ({ ...p, branchName: e.target.value }))} sx={{ width: 160 }} />
+            <TextField size="small" label="سریال کیوسک" value={typed.kioskSerial} onChange={(e) => setTyped((p) => ({ ...p, kioskSerial: e.target.value }))} sx={{ width: 150 }} />
+            <TextField size="small" label="کد شعبه" value={typed.branchCode} onChange={(e) => setTyped((p) => ({ ...p, branchCode: e.target.value }))} sx={{ width: 130 }} />
+            <TextField size="small" label="نام شعبه" value={typed.branchName} onChange={(e) => setTyped((p) => ({ ...p, branchName: e.target.value }))} sx={{ width: 160 }} />
             {date('گزارش از', value.from, (from) => onChange({ ...value, from }), false)}
             {date('گزارش تا', value.to, (to) => onChange({ ...value, to }), true)}
-            <ToggleButtonGroup size="small"  exclusive value={value.overdueOnly ? 'overdue' : 'all'} onChange={(_, v) => v && onChange({ ...value, overdueOnly: v === 'overdue' })}>
-                <ToggleButton color="primary" value="all">همه</ToggleButton>
-                <ToggleButton color="primary" value="overdue">فقط دیرکردها</ToggleButton>
+            <ToggleButtonGroup size="small" exclusive value={value.overdueOnly ? 'overdue' : 'all'} onChange={(_, v) => v && onChange({ ...value, overdueOnly: v === 'overdue' })}>
+                <ToggleButton value="all">همه</ToggleButton>
+                <ToggleButton value="overdue">فقط دیرکردها</ToggleButton>
             </ToggleButtonGroup>
         </Stack>
     )
