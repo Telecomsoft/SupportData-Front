@@ -67,25 +67,27 @@ const Field = ({ label, value, term, ltr, wide }: { label: string; value?: strin
 /** The whole kiosk in one card; the searched text is highlighted wherever it appears. Empty fields take no space. */
 export const KioskCard = ({ kiosk, term = '' }: { kiosk: KioskSearchItem; term?: string }) => (
     <Box sx={{ width: '100%', py: 0.5, textAlign: 'start' }} dir="rtl">
-        <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap" sx={{ mb: 1 }}>
-            <Typography variant="subtitle1" fontWeight={700} component="div"><bdi dir="ltr"><Highlight text={kiosk.serial} term={term} /></bdi></Typography>
+        {/* <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap" sx={{ mb: 1 }}>
+            <Typography variant="subtitle1" fontWeight={200} component="div"><bdi dir="ltr"><Highlight text={kiosk.serial} term={term} /></bdi></Typography>
             {kiosk.kioskModelName && <Chip size="small" variant="outlined" label={<Highlight text={kiosk.kioskModelName} term={term} />} />}
             {kiosk.isActive === false && <Chip size="small" color="warning" label="غیرفعال" />}
-        </Stack>
-        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', columnGap: 2, rowGap: 1.25 }}>
+        </Stack> */}
+        <Grid container justifyContent={'space-between'} spacing={1} sx={{ mb: 0.5 }}>
             <Field label="مشتری" value={kiosk.customerName} term={term} />
-            <Field label="سازمان" value={kiosk.customerOrganizationName} term={term} />
+            {/* <Field label="سازمان" value={kiosk.customerOrganizationName} term={term} /> */}
+            <Field label="سریال" value={kiosk.serial} term={term} />
+            <Field label="مدل" value={kiosk.kioskModelName} term={term} />
             <Field label="نام مرتبط" value={kiosk.customerContactName} term={term} />
             <Field label="کد شعبه" value={kiosk.branchCode} term={term} ltr />
             <Field label="نام شعبه" value={kiosk.branchName} term={term} />
             <Field label="شهر محل نصب" value={kiosk.cityName} term={term} />
-            <Field label="استان" value={kiosk.provinceName} term={term} />
+            {/* <Field label="استان" value={kiosk.provinceName} term={term} />
             <Field label="ذی‌نفع" value={kiosk.beneficiaryName} term={term} />
             <Field label="شماره ترمینال" value={kiosk.terminalID} term={term} ltr />
             <Field label="پذیرنده" value={kiosk.merchant} term={term} ltr />
             <Field label="شماره پرونده" value={kiosk.fileNo} term={term} ltr />
-            <Field label="آدرس" value={kiosk.address} term={term} wide />
-        </Box>
+            <Field label="آدرس" value={kiosk.address} term={term} wide /> */}
+        </Grid>
     </Box>
 )
 

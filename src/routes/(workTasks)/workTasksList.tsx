@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import Grid from '@mui/material/Grid2'
-import { Box, Button, Chip, Fab, IconButton, TextField, Tooltip, Typography } from '@mui/material'
+import { Box, Button, Chip, Dialog, DialogContent, Fab, IconButton, TextField, Tooltip, Typography } from '@mui/material'
 import { useEffect, useMemo, useState } from 'react'
 import AddIcon from '@mui/icons-material/Add'
+import EditIcon from '@mui/icons-material/Edit'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong'
 import { withSnackbar } from '@components/hoc/withSnackbar'
@@ -17,16 +18,17 @@ import WorkTaskFilterBar, { EMPTY_WORKTASK_FILTER, WorkTaskFilterState } from '@
 import WorkTaskMobileCard from '@components/section/workTasks/WorkTaskMobileCard'
 import WorkTaskStateChip from '@components/section/workTasks/WorkTaskStateChip'
 import WorkTaskDetailsDialog from '@components/section/workTasks/WorkTaskDetailsDialog'
+import { buildWorkTaskCreateForm, buildWorkTaskEditForm } from '@src/data/dialogArrays/workTaskForm'
 import { CUSTOMER_TASK_TYPES, isTaskClosed, TASK_TYPES } from '@src/data/type/lookups'
 import { useWorkTaskLookups } from '@hooks/useWorkTaskLookups'
 import { usePostQuery } from '@hooks/usePostQuery'
+import { useGetData } from '@hooks/useGetData'
 import { useUserScope } from '@hooks/useUserScope'
 import { useAccessCheck } from '@utility/accessCheck'
 import { useDevice } from '@hooks/useDevice'
 import { sizeConverter } from '@utility/sizeConverter'
 import { dateFn } from '@utility/dateConverter'
 import { buildPayload } from '@utility/buildPayload'
-import { buildWorkTaskCreateForm } from '@src/data/dialogArrays/workTaskForm'
 
 export const Route = createFileRoute('/(workTasks)/workTasksList')({
     component: withSnackbar(WorkTasksList),
@@ -34,6 +36,42 @@ export const Route = createFileRoute('/(workTasks)/workTasksList')({
 })
 
 const PAGE_SIZE = 50
+
+/** The edit dialog of one task (the same items as the add dialog). It loads the task itself, so nothing the list row lacks is lost on save. */
+const EditTaskDialog = ({ taskID, close, onSaved, snackbarOpen, lookups, isMobile }: {
+    taskID: number; close: () => void; onSaved: () => void; snackbarOpen: snackbarOpenType; lookups: ReturnType<typeof useWorkTaskLookups>; isMobile: boolean
+}) => {
+    const taskQuery = useGetData<any>(`api/WorkTask/GetWorkTask/${taskID}`, 'worktask-detail', { ids: [String(taskID)] })
+    const t = taskQuery.data?.value
+    const form = useMemo(() => buildWorkTaskEditForm({ isMobile }), [isMobile])
+
+    // always edit the freshest copy: wait for the (re)fetch before the form opens
+    if (!t || taskQuery.isFetching) {
+        return <Dialog open onClose={close}><DialogContent sx={{ p: 4 }}><CustomCircularProgress thickness={2} size={50} /></DialogContent></Dialog>
+    }
+    return (
+        <GeneralDialog
+            open="edit"
+            title={`ویرایش دستورکار #${t.id}`}
+            width={sizeConverter(680, 'width')}
+            close={close}
+            array={form}
+            editEndpoint="api/WorkTask/UpdateWorkTask"
+            autoCompleteOption={{ workTaskType: TASK_TYPES, customerID: lookups.options.customerID, assignedToID: lookups.options.assignedToID }}
+            defaultValue={{ ...t }}
+            sendFinalData
+            apiValueGetter={((data: any) => {
+                // the whole current row is the base, so fields that are not in the dialog keep their value.
+                // `errors` is only for display (the server fills it on GET); locked items are not sent (the server ignores them here)
+                const { errors: _errors, ...base } = t
+                void _errors
+                return buildPayload(form.filter((i) => !i.editDisabled), data, base)
+            }) as any}
+            wrapperFunc={onSaved}
+            snackbarOpen={snackbarOpen}
+        />
+    )
+}
 
 function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     const navigate = useNavigate()
@@ -49,6 +87,7 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     const [serverCtrl, setServerCtrl] = useState<ServerCtrDataType | null>(null)   // the grid's search text and page
     const [selectedID, setSelectedID] = useState<number | undefined>(undefined)
     const [adding, setAdding] = useState(false)
+    const [editingID, setEditingID] = useState<number | null>(null)   // the task whose edit dialog is open
     const [costsTaskID, setCostsTaskID] = useState<number | null>(null)   // the task whose diagnosis / costs dialog is open
     const [mobileItems, setMobileItems] = useState<any[]>([])
     const [mobileSearch, setMobileSearch] = useState('')
@@ -101,6 +140,10 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
 
     const open = (id: number) => navigate({ to: `/workTaskDetail/${id}` })
 
+    // same rule as the edit button on the task page (the server checks again)
+    const selectedRow = items.find((i) => i.id === selectedID)
+    const canEditSelected = !isCustomer && canEditTask && !!selectedRow && !selectedRow.isLocked && (!isTaskClosed(selectedRow.state) || canEditClosed)
+
     const taskTypeOptions = isCustomer ? CUSTOMER_TASK_TYPES : TASK_TYPES
     const createForm = buildWorkTaskCreateForm({ isMobile, isCustomer, canAssign: canPerform(203) })
     const columns: TelecomColumnsType[] = [
@@ -127,8 +170,6 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
         { field: 'typeName', headerName: 'نوع', width: sizeConverter(100, 'width') },
         { field: 'stateName', headerName: 'وضعیت', width: sizeConverter(110, 'width'), renderCell: (p) => <WorkTaskStateChip task={p.row} /> },
         { field: 'kioskSerial', headerName: 'سریال کیوسک', width: sizeConverter(140, 'width') },
-        { field: 'branchName', headerName: 'شعبه', width: sizeConverter(140, 'width') },
-        { field: 'branchCode', headerName: 'کد شعبه', width: sizeConverter(140, 'width') },
         ...(isCustomer ? [] : [{ field: 'customerName', headerName: 'مشتری', width: sizeConverter(140, 'width') }]),
         ...(isCustomer ? [] : [{ field: 'assignedToName', headerName: 'ارجاع‌شده به', width: sizeConverter(130, 'width') }]),
 
@@ -214,8 +255,8 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 <Box sx={{ width: '100%' }}>
                     <WorkTaskFilterBar value={filter} onChange={changeFilter} customers={lookups.options.customerID} cities={lookups.options.cityID} technicians={lookups.options.assignedToID} isCustomer={isCustomer} />
                     <TelecomDataGrid
-                        height={sizeConverter(500, 'height')}
                         data={items}
+                        height={sizeConverter(500, 'height')}
                         loading={list.isFetching}
                         serverData={{ totalDataCount: total, maxRowInPage: PAGE_SIZE, currentPage: page }}
                         setServerCtrData={setServerCtrl}
@@ -224,6 +265,7 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                         CustomToolBar={() => (
                             <Grid container size={'auto'} spacing={sizeConverter(4, 'spaceX')}>
                                 <DataGridIconProvider toolTipText={'مشاهده'} Icon={OpenInNewIcon} disable={!selectedID} clickFunc={() => selectedID && open(selectedID)} />
+                                {!isCustomer && canEditTask && <DataGridIconProvider toolTipText={'ویرایش'} Icon={EditIcon} disable={!canEditSelected} clickFunc={() => selectedID && setEditingID(selectedID)} />}
                                 {canCreate && <DataGridIconProvider toolTipText={'ثبت دستورکار'} Icon={AddIcon} disable={false} clickFunc={() => setAdding(true)} />}
                             </Grid>
                         )}
@@ -233,6 +275,10 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                         columns={columns}
                     />
                 </Box>
+            )}
+
+            {editingID !== null && (
+                <EditTaskDialog taskID={editingID} close={() => setEditingID(null)} onSaved={() => list.refetch()} snackbarOpen={snackbarOpen} lookups={lookups} isMobile={isMobile} />
             )}
 
             {costsTaskID !== null && (
