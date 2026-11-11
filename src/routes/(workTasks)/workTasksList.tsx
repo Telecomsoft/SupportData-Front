@@ -7,7 +7,9 @@ import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong'
-import { withSnackbar } from '@components/hoc/withSnackbar'
+import PrintIcon from '@mui/icons-material/Print'
+import axios from 'axios'
+import { SNACKBAR_SEVERITIES, withSnackbar } from '@components/hoc/withSnackbar'
 import { snackbarOpenType } from '@type/snackbarOpen'
 import { TelecomColumnsType, ServerCtrDataType } from '@components/general/telecomDataGrid/staticData/TelecomDataGridType'
 import TelecomDataGrid from '@components/general/telecomDataGrid'
@@ -24,6 +26,8 @@ import { useWorkTaskLookups } from '@hooks/useWorkTaskLookups'
 import { usePostQuery } from '@hooks/usePostQuery'
 import { useGetData } from '@hooks/useGetData'
 import { useUserScope } from '@hooks/useUserScope'
+import { useGetAuthorizationConfig } from '@hooks/useGetAuthorizationConfig'
+import getEndPoint from '@utility/getEndPoint'
 import { useAccessCheck } from '@utility/accessCheck'
 import { useDevice } from '@hooks/useDevice'
 import { sizeConverter } from '@utility/sizeConverter'
@@ -82,12 +86,15 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     const canCreate = canPerform(201)                 // "Task - Create"; the server also checks the customer rules
     const canEditTask = canPerform(202)               // "Task - Edit"
     const canEditClosed = canPerform(207)             // editing a finished / cancelled / approved task
+    const canPrint = canPerform(115)                  // "Reports": the printed form (GET api/Report/WorkTaskPdf) needs it
+    const authConfig = useGetAuthorizationConfig()
 
     const [filter, setFilter] = useState<WorkTaskFilterState>(EMPTY_WORKTASK_FILTER)
     const [serverCtrl, setServerCtrl] = useState<ServerCtrDataType | null>(null)   // the grid's search text and page
     const [selectedID, setSelectedID] = useState<number | undefined>(undefined)
     const [adding, setAdding] = useState(false)
     const [editingID, setEditingID] = useState<number | null>(null)   // the task whose edit dialog is open
+    const [printingID, setPrintingID] = useState<number | null>(null)   // the task whose PDF is being made
     const [costsTaskID, setCostsTaskID] = useState<number | null>(null)   // the task whose diagnosis / costs dialog is open
     const [mobileItems, setMobileItems] = useState<any[]>([])
     const [mobileSearch, setMobileSearch] = useState('')
@@ -140,6 +147,36 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
 
     const open = (id: number) => navigate({ to: `/workTaskDetail/${id}` })
 
+    // GET api/Report/WorkTaskPdf/{id}: a PDF file, or (on failure) the usual AppResult JSON, so the content type decides.
+    // The tab is opened first, inside the click, so the browser doesn't block it; the PDF is put into it when it arrives.
+    const printTask = async (id: number) => {
+        if (printingID !== null) return
+        setPrintingID(id)
+        const tab = window.open('', '_blank')
+        try {
+            const res = await axios.get(getEndPoint() + `api/Report/WorkTaskPdf/${id}`, { ...authConfig, responseType: 'blob' })
+            const blob: Blob = res.data
+            if (!blob.type.includes('application/pdf')) {
+                const result = JSON.parse(await blob.text())
+                throw new Error(`${result?.error ?? ''} ${result?.errorMessage ?? ''}`.trim())
+            }
+            const url = URL.createObjectURL(blob)
+            if (tab) tab.location.href = url
+            else {                                  // the browser blocked the new tab: download the file instead
+                const a = document.createElement('a')
+                a.href = url
+                a.download = `WorkTask-${id}.pdf`
+                a.click()
+            }
+            setTimeout(() => URL.revokeObjectURL(url), 60_000)
+        } catch (e) {
+            tab?.close()
+            snackbarOpen(`چاپ دستورکار #${id} انجام نشد. ${e instanceof Error ? e.message : ''}`.trim(), SNACKBAR_SEVERITIES.ERROR)
+        } finally {
+            setPrintingID(null)
+        }
+    }
+
     // same rule as the edit button on the task page (the server checks again)
     const selectedRow = items.find((i) => i.id === selectedID)
     const canEditSelected = !isCustomer && canEditTask && !!selectedRow && !selectedRow.isLocked && (!isTaskClosed(selectedRow.state) || canEditClosed)
@@ -167,6 +204,24 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 ) : null
             },
         } as TelecomColumnsType]),
+        // the printed form (PDF) of the task; the server picks the form by task type
+        ...(canPrint ? [{
+            field: 'print',
+            headerName: 'چاپ',
+            width: sizeConverter(70, 'width'),
+            sortLock: true,
+            renderCell: (p: { row: Record<string, any> }) => (
+                <Grid container alignItems="center" justifyContent="center">
+                    <Tooltip title="چاپ فرم">
+                        <span>
+                            <IconButton size="small" color="primary" disabled={printingID !== null} onClick={(e) => { e.stopPropagation(); printTask(p.row.id) }}>
+                                {printingID === p.row.id ? <CustomCircularProgress thickness={3} size={18} /> : <PrintIcon fontSize="small" />}
+                            </IconButton>
+                        </span>
+                    </Tooltip>
+                </Grid>
+            ),
+        } as TelecomColumnsType] : []),
         { field: 'typeName', headerName: 'نوع', width: sizeConverter(100, 'width') },
         { field: 'stateName', headerName: 'وضعیت', width: sizeConverter(110, 'width'), renderCell: (p) => <WorkTaskStateChip task={p.row} /> },
         { field: 'kioskSerial', headerName: 'سریال کیوسک', width: sizeConverter(140, 'width') },
