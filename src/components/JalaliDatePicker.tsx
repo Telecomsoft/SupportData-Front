@@ -58,7 +58,11 @@ const JalaliDatePicker: React.FC<JalaliDatePickerProps> = ({
                <DatePicker
                   calendar={persian}
                   locale={persian_fa}
-                  position="bottom"
+                  // The calendar is drawn in document.body, not inside the dialog: a dialog clips (overflow) and scrolls what is inside it,
+                  // so an inline calendar was cut off at the dialog's edge. In the body it can flip above the field when there is no room below.
+                  portal
+                  zIndex={1500}
+                  calendarPosition="bottom-center"
                   value={value ? new Date(value) : ''}
                   onChange={(date: DateObject | null) => {
                      if (date instanceof DateObject) {
