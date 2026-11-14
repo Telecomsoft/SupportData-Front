@@ -8,8 +8,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong'
 import PrintIcon from '@mui/icons-material/Print'
-import axios from 'axios'
-import { SNACKBAR_SEVERITIES, withSnackbar } from '@components/hoc/withSnackbar'
+import { withSnackbar } from '@components/hoc/withSnackbar'
 import { snackbarOpenType } from '@type/snackbarOpen'
 import { TelecomColumnsType, ServerCtrDataType } from '@components/general/telecomDataGrid/staticData/TelecomDataGridType'
 import TelecomDataGrid from '@components/general/telecomDataGrid'
@@ -26,14 +25,13 @@ import { useWorkTaskLookups } from '@hooks/useWorkTaskLookups'
 import { usePostQuery } from '@hooks/usePostQuery'
 import { useGetData } from '@hooks/useGetData'
 import { useUserScope } from '@hooks/useUserScope'
-import { useGetAuthorizationConfig } from '@hooks/useGetAuthorizationConfig'
-import getEndPoint from '@utility/getEndPoint'
 import { useAccessCheck } from '@utility/accessCheck'
 import { useDevice } from '@hooks/useDevice'
 import { sizeConverter } from '@utility/sizeConverter'
 import { dateFn } from '@utility/dateConverter'
 import { num } from '@components/section/statements/statementFormat'
 import { buildPayload } from '@utility/buildPayload'
+import { useWorkTaskPdf } from '@hooks/useWorkTaskPdf'
 
 export const Route = createFileRoute('/(workTasks)/workTasksList')({
     component: withSnackbar(WorkTasksList),
@@ -88,14 +86,12 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     const canEditTask = canPerform(202)               // "Task - Edit"
     const canEditClosed = canPerform(207)             // editing a finished / cancelled / approved task
     const canPrint = canPerform(115)                  // "Reports": the printed form (GET api/Report/WorkTaskPdf) needs it
-    const authConfig = useGetAuthorizationConfig()
 
     const [filter, setFilter] = useState<WorkTaskFilterState>(EMPTY_WORKTASK_FILTER)
     const [serverCtrl, setServerCtrl] = useState<ServerCtrDataType | null>(null)   // the grid's search text and page
     const [selectedID, setSelectedID] = useState<number | undefined>(undefined)
     const [adding, setAdding] = useState(false)
     const [editingID, setEditingID] = useState<number | null>(null)   // the task whose edit dialog is open
-    const [printingID, setPrintingID] = useState<number | null>(null)   // the task whose PDF is being made
     const [costsTaskID, setCostsTaskID] = useState<number | null>(null)   // the task whose diagnosis / costs dialog is open
     const [mobileItems, setMobileItems] = useState<any[]>([])
     const [mobileSearch, setMobileSearch] = useState('')
@@ -148,35 +144,7 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
 
     const open = (id: number) => navigate({ to: `/workTaskDetail/${id}` })
 
-    // GET api/Report/WorkTaskPdf/{id}: a PDF file, or (on failure) the usual AppResult JSON, so the content type decides.
-    // The tab is opened first, inside the click, so the browser doesn't block it; the PDF is put into it when it arrives.
-    const printTask = async (id: number) => {
-        if (printingID !== null) return
-        setPrintingID(id)
-        const tab = window.open('', '_blank')
-        try {
-            const res = await axios.get(getEndPoint() + `api/Report/WorkTaskPdf/${id}`, { ...authConfig, responseType: 'blob' })
-            const blob: Blob = res.data
-            if (!blob.type.includes('application/pdf')) {
-                const result = JSON.parse(await blob.text())
-                throw new Error(`${result?.error ?? ''} ${result?.errorMessage ?? ''}`.trim())
-            }
-            const url = URL.createObjectURL(blob)
-            if (tab) tab.location.href = url
-            else {                                  // the browser blocked the new tab: download the file instead
-                const a = document.createElement('a')
-                a.href = url
-                a.download = `WorkTask-${id}.pdf`
-                a.click()
-            }
-            setTimeout(() => URL.revokeObjectURL(url), 60_000)
-        } catch (e) {
-            tab?.close()
-            snackbarOpen(`چاپ دستورکار #${id} انجام نشد. ${e instanceof Error ? e.message : ''}`.trim(), SNACKBAR_SEVERITIES.ERROR)
-        } finally {
-            setPrintingID(null)
-        }
-    }
+    const { print: printTask, printingID } = useWorkTaskPdf(snackbarOpen)
 
     // same rule as the edit button on the task page (the server checks again)
     const selectedRow = items.find((i) => i.id === selectedID)

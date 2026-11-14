@@ -23,6 +23,8 @@ import WorkTaskStateChip from '@components/section/workTasks/WorkTaskStateChip'
 import WorkTaskInfoTab from '@components/section/workTasks/WorkTaskInfoTab'
 import WorkTaskCostsTab from '@components/section/workTasks/WorkTaskCostsTab'
 import WorkTaskLogTab from '@components/section/workTasks/WorkTaskLogTab'
+import WorkTaskAttachmentsTab from '@components/section/workTasks/WorkTaskAttachmentsTab'
+import { num } from '@components/section/statements/statementFormat'
 import WorkTaskDetailsDialog from '@components/section/workTasks/WorkTaskDetailsDialog'
 import {
     buildAssignForm, buildChangeStateForm, buildCorrectDatesForm, buildPaymentForm, buildReplacePartForm, buildWorkTaskEditForm,
@@ -59,7 +61,7 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     const taskQuery = useGetData<any>(`api/WorkTask/GetWorkTask/${id}`, 'worktask-detail', { ids: [String(id)] })
     const t = taskQuery.data?.value
 
-    const [tab, setTab] = useState<'info' | 'costs' | 'log'>('info')
+    const [tab, setTab] = useState<'info' | 'costs' | 'files' | 'log'>('info')
     const [dialog, setDialog] = useState<Dialog>(null)
     const [refreshKey, setRefreshKey] = useState(0)
 
@@ -214,6 +216,7 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 >
                     <Tab value="info" label="مشخصات کلی" />
                     {!isCustomer && <Tab value="costs" label="هزینه‌ها و پرداخت" />}
+                    <Tab value="files" label={`پیوست‌ها${(t.attachments ?? []).length > 0 ? ` (${num((t.attachments ?? []).length)})` : ''}`} />
                     <Tab value="log" label="تاریخچه" />
                 </Tabs>
             </Paper>
@@ -229,6 +232,17 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             >
                 {tab === 'info' && <WorkTaskInfoTab task={t} contractorName={contractorName} workItemNames={workItemNames} isCustomer={isCustomer} />}
                 {tab === 'costs' && !isCustomer && <WorkTaskCostsTab task={t} />}
+                {tab === 'files' && (
+                    <WorkTaskAttachmentsTab
+                        task={t}
+                        canAttach={!locked && canPerform(211)}
+                        canConfirmForm={canConfirmForm}
+                        canPrint={accessCheck({ accessInfoId: 115, KindAccessInfo: 'readAccess' })}
+                        refreshKey={refreshKey}
+                        onChanged={afterAction}
+                        snackbarOpen={snackbarOpen}
+                    />
+                )}
                 {tab === 'log' && <WorkTaskLogTab taskID={id} refreshKey={refreshKey} />}
             </Paper>
 

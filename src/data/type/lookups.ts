@@ -62,6 +62,7 @@ export const TASK_LOG_KINDS: Option[] = [
     { id: 2, name: 'ارجاع' },
     { id: 3, name: 'تصحیح تاریخ' },
     { id: 4, name: 'ویرایش' },
+    { id: 5, name: 'پیوست' },
 ]
 
 export const isTaskClosed = (state?: number | null) => state === 3 || state === 7 || state === 8

@@ -17,6 +17,8 @@ const WorkTaskLogTab = ({ taskID, refreshKey }: { taskID: number; refreshKey: nu
 
     const change = (l: any) => {
         if (l.kind === 1) return `${nameOf(TASK_STATES, l.oldState) || '-'}  ←  ${nameOf(TASK_STATES, l.newState)}`
+        // an attachment: the stored path is long and meaningless, show added / removed and the file's short name
+        if (l.kind === 5) return `${l.newValue ? 'افزوده شد' : 'حذف شد'}: ${String(l.newValue ?? l.oldValue ?? '').split('/').pop()}`
         return `${l.oldValue ?? '-'}  ←  ${l.newValue ?? '-'}`
     }
 
