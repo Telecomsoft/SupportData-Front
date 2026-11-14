@@ -1,8 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Fragment, useEffect, useRef, useState } from 'react'
+import { createContext, Fragment, HTMLAttributes, ReactNode, useContext, useEffect, useRef, useState } from 'react'
 import { Controller } from 'react-hook-form'
 import Grid from '@mui/material/Grid2'
-import { Box, Typography, useTheme } from '@mui/material'
+import { alpha, Box, Chip, CircularProgress, InputAdornment, Paper, Stack, Typography, useTheme } from '@mui/material'
+import SearchIcon from '@mui/icons-material/Search'
+import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined'
+import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined'
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
+import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import StyledTextField from '@components/general/input/StyledTextField'
 import { StyledAutoComplete } from '@components/general/input/StyledAutoComplete'
 import { usePostData } from '@hooks/usePostData'
@@ -42,59 +48,108 @@ const Highlight = ({ text, term }: { text?: string | null; term: string }) => {
     if (!text) return null
     if (!term) return <>{text}</>
     const parts = text.split(new RegExp(`(${escapeRegExp(term)})`, 'gi'))
-    const bg = (theme.palette as any).yellow?.[1] ?? '#ffe08a'
     return (
         <>
             {parts.map((part, i) =>
                 part.toLowerCase() === term.toLowerCase()
-                    ? <mark key={i} style={{ backgroundColor: bg, color: 'inherit', borderRadius: 2, padding: '0 1px' }}>{part}</mark>
+                    ? <mark key={i} style={{ backgroundColor: alpha(theme.palette.secondary.main, 0.4), color: 'inherit', borderRadius: 3, padding: '0 1px' }}>{part}</mark>
                     : <Fragment key={i}>{part}</Fragment>
             )}
         </>
     )
 }
 
-const Field = ({ label, value, term, ltr, wide }: { label: string; value?: string | null; term: string; ltr?: boolean; wide?: boolean }) =>
-    value ? (
-        <Box sx={{ minWidth: 0, ...(wide && { gridColumn: '1 / -1' }) }}>
-            <Typography variant="caption" color="text.secondary" component="div" sx={{ lineHeight: 1.3, textAlign: 'start' }}>{label}</Typography>
-            <Typography variant="body2" component="div" sx={{ textAlign: 'start', wordBreak: 'break-word' }}>
-                {ltr ? <bdi dir="ltr"><Highlight text={value} term={term} /></bdi> : <Highlight text={value} term={term} />}
-            </Typography>
-        </Box>
+/** One icon + text fact of the second line; nothing when there's no text. */
+const Meta = ({ icon, children, show = true }: { icon: ReactNode; children: ReactNode; show?: boolean }) =>
+    show ? (
+        <Stack direction="row" alignItems="center" gap={0.5} sx={{ minWidth: 0, color: 'text.secondary', '& svg': { fontSize: 16, flexShrink: 0, opacity: 0.8 } }}>
+            {icon}
+            <Typography variant="body2" component="span" noWrap sx={{ color: 'text.secondary' }}>{children}</Typography>
+        </Stack>
     ) : null
 
-/** The whole kiosk in one card; the searched text is highlighted wherever it appears. Empty fields take no space. */
+/** "شعبه 2 · کد 291" (either half may be missing). */
+const BranchText = ({ kiosk, term }: { kiosk: KioskSearchItem; term: string }) => (
+    <>
+        {kiosk.branchName && <Highlight text={kiosk.branchName} term={term} />}
+        {kiosk.branchName && kiosk.branchCode && <Box component="span" sx={{ mx: 0.5, opacity: 0.5 }}>·</Box>}
+        {kiosk.branchCode && <>کد <bdi dir="ltr"><Highlight text={kiosk.branchCode} term={term} /></bdi></>}
+    </>
+)
+
+/**
+ * A kiosk in two lines: serial (the thing being picked) with its model and customer, then branch, city and contact.
+ * No per-field labels: the icons say what each fact is, so the list scans quickly. The searched text is highlighted.
+ */
 export const KioskCard = ({ kiosk, term = '' }: { kiosk: KioskSearchItem; term?: string }) => (
-    <Box sx={{ width: '100%', py: 0.5, textAlign: 'start' }} dir="rtl">
-        {/* <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap" sx={{ mb: 1 }}>
-            <Typography variant="subtitle1" fontWeight={200} component="div"><bdi dir="ltr"><Highlight text={kiosk.serial} term={term} /></bdi></Typography>
-            {kiosk.kioskModelName && <Chip size="small" variant="outlined" label={<Highlight text={kiosk.kioskModelName} term={term} />} />}
-            {kiosk.isActive === false && <Chip size="small" color="warning" label="غیرفعال" />}
-        </Stack> */}
-        <Grid container justifyContent={'space-between'} spacing={1} sx={{ mb: 0.5 }}>
-            <Field label="مشتری" value={kiosk.customerName} term={term} />
-            {/* <Field label="سازمان" value={kiosk.customerOrganizationName} term={term} /> */}
-            <Field label="سریال" value={kiosk.serial} term={term} />
-            <Field label="مدل" value={kiosk.kioskModelName} term={term} />
-            <Field label="نام مرتبط" value={kiosk.customerContactName} term={term} />
-            <Field label="کد شعبه" value={kiosk.branchCode} term={term} ltr />
-            <Field label="نام شعبه" value={kiosk.branchName} term={term} />
-            <Field label="شهر محل نصب" value={kiosk.cityName} term={term} />
-            {/* <Field label="استان" value={kiosk.provinceName} term={term} />
-            <Field label="ذی‌نفع" value={kiosk.beneficiaryName} term={term} />
-            <Field label="شماره ترمینال" value={kiosk.terminalID} term={term} ltr />
-            <Field label="پذیرنده" value={kiosk.merchant} term={term} ltr />
-            <Field label="شماره پرونده" value={kiosk.fileNo} term={term} ltr />
-            <Field label="آدرس" value={kiosk.address} term={term} wide /> */}
-        </Grid>
+    <Box sx={{ width: '100%', minWidth: 0, textAlign: 'start' }}>
+        <Stack direction="row" alignItems="center" gap={1} sx={{ minWidth: 0 }}>
+            <Typography component="bdi" dir="ltr" sx={{ fontFamily: 'yekanBold', fontSize: '0.95rem', letterSpacing: 0.3, whiteSpace: 'nowrap' }}>
+                <Highlight text={kiosk.serial} term={term} />
+            </Typography>
+            {kiosk.kioskModelName && (
+                <Chip size="small" variant="outlined" label={<Highlight text={kiosk.kioskModelName} term={term} />}
+                    sx={{ height: 20, fontSize: '0.7rem', borderRadius: 1, '& .MuiChip-label': { px: 0.75 } }} />
+            )}
+            {kiosk.isActive === false && <Chip size="small" color="warning" label="غیرفعال" sx={{ height: 20, fontSize: '0.7rem' }} />}
+            {kiosk.customerName && (
+                <Typography variant="body2" noWrap sx={{ marginInlineStart: 'auto', minWidth: 0, color: 'primary.main', fontFamily: 'yekanMedium' }}>
+                    <Highlight text={kiosk.customerName} term={term} />
+                </Typography>
+            )}
+        </Stack>
+        <Stack direction="row" alignItems="center" columnGap={2} rowGap={0.25} flexWrap="wrap" sx={{ mt: 0.5, minWidth: 0 }}>
+            <Meta icon={<StorefrontOutlinedIcon />} show={!!(kiosk.branchName || kiosk.branchCode)}><BranchText kiosk={kiosk} term={term} /></Meta>
+            <Meta icon={<PlaceOutlinedIcon />} show={!!kiosk.cityName}><Highlight text={kiosk.cityName} term={term} /></Meta>
+            <Meta icon={<PersonOutlineIcon />} show={!!kiosk.customerContactName}><Highlight text={kiosk.customerContactName} term={term} /></Meta>
+        </Stack>
     </Box>
 )
+
+/** Shown under the field once a kiosk is picked, so the person can confirm it's the right one before saving. */
+const SelectedKiosk = ({ kiosk }: { kiosk: KioskSearchItem }) => (
+    <Stack direction="row" alignItems="flex-start" gap={1}
+        sx={(t) => ({ mt: 1, px: 1.5, py: 1, borderRadius: 2, border: '1px solid', borderColor: alpha(t.palette.primary.main, 0.25), bgcolor: alpha(t.palette.primary.main, 0.04) })}>
+        <CheckCircleIcon sx={{ color: 'primary.main', fontSize: 20, mt: 0.25 }} />
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+            <KioskCard kiosk={kiosk} />
+            {(kiosk.customerOrganizationName || kiosk.address) && (
+                <Stack direction="row" columnGap={2} flexWrap="wrap" sx={{ mt: 0.25 }}>
+                    <Meta icon={<BusinessOutlinedIcon />} show={!!kiosk.customerOrganizationName}>{kiosk.customerOrganizationName}</Meta>
+                    {kiosk.address && <Typography variant="caption" color="text.secondary" sx={{ wordBreak: 'break-word' }}>{kiosk.address}</Typography>}
+                </Stack>
+            )}
+        </Box>
+    </Stack>
+)
+
+// what the results header of the popup says; a context so the Paper component can stay a stable module-level component
+type ResultsInfo = { shown: number; total: number; visible: boolean }
+const ResultsInfoContext = createContext<ResultsInfo>({ shown: 0, total: 0, visible: false })
+
+const ResultsPaper = ({ children, ...props }: HTMLAttributes<HTMLElement>) => {
+    const { shown, total, visible } = useContext(ResultsInfoContext)
+    const more = total > shown
+    return (
+        <Paper {...props} elevation={8} sx={{ borderRadius: 2, mt: 0.5, overflow: 'hidden', minWidth: { sm: 560 } }}>
+            {visible && (
+                <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}
+                    sx={(t) => ({ px: 2, py: 0.75, bgcolor: t.palette.bgColor?.[1] ?? 'grey.50', borderBottom: '1px solid', borderColor: 'divider' })}>
+                    <Typography variant="caption" color="text.secondary">
+                        {more ? `${shown} مورد از ${total} مورد` : `${shown} مورد`}
+                    </Typography>
+                    {more && <Typography variant="caption" sx={{ color: 'warning.dark' }}>برای نتیجه‌ی دقیق‌تر، عبارت بیشتری بنویسید</Typography>}
+                </Stack>
+            )}
+            {children}
+        </Paper>
+    )
+}
 
 /**
  * The kiosk picker of the "new task" dialog (a GeneralDialog item: kind 'custom').
  * The person types anything (serial, branch code or name, city, customer...); the text goes to the server, which
- * returns at most 50 kiosks that contain it anywhere. Every result is a card, with the typed text highlighted.
+ * returns at most 50 kiosks that contain it anywhere. Every result is a two-line row, with the typed text highlighted.
  * The form value is the chosen kiosk object (or null).
  */
 const KioskSearchField = ({ value, label, control, size = 12, helperText, validators, disabled, placeholder }: any) => {
@@ -102,18 +157,19 @@ const KioskSearchField = ({ value, label, control, size = 12, helperText, valida
     const [inputValue, setInputValue] = useState('')
     const [options, setOptions] = useState<KioskSearchItem[]>([])
     const [total, setTotal] = useState(0)
-    const [loading, setLoading] = useState(false)
+    const [searchedTerm, setSearchedTerm] = useState('')   // the term the current options are for
     const [failed, setFailed] = useState(false)
     const reqId = useRef(0)
     const term = toLatinDigits(inputValue.trim())
+    // derived, so there's no frame between typing and the effect where the list says "not found"
+    const loading = !!term && term !== searchedTerm
 
     // the search runs once the typing stops; only the newest request may fill the list
     const searchRef = useRef(search)
     searchRef.current = search
     useEffect(() => {
-        if (!term) { reqId.current++; setOptions([]); setTotal(0); setLoading(false); setFailed(false); return }
+        if (!term) { reqId.current++; setOptions([]); setTotal(0); setSearchedTerm(''); setFailed(false); return }
         const id = ++reqId.current
-        setLoading(true)
         const timer = setTimeout(() => {
             searchRef.current.mutateAsync({ text: term, number: MAX_RESULTS })
                 .then((res: any) => {
@@ -122,7 +178,7 @@ const KioskSearchField = ({ value, label, control, size = 12, helperText, valida
                     else { setOptions([]); setTotal(0); setFailed(true) }
                 })
                 .catch(() => { if (id === reqId.current) { setOptions([]); setTotal(0); setFailed(true) } })
-                .finally(() => { if (id === reqId.current) setLoading(false) })
+                .finally(() => { if (id === reqId.current) setSearchedTerm(term) })
         }, DEBOUNCE_MS)
         return () => clearTimeout(timer)
     }, [term])
@@ -137,54 +193,74 @@ const KioskSearchField = ({ value, label, control, size = 12, helperText, valida
                 rules={validators}
                 render={({ field: { onChange, value: selected }, fieldState: { error } }) => (
                     <Box sx={{ width: '100%' }}>
-                        <Auto
-                            disabled={disabled}
-                            options={options}
-                            value={selected ?? null}
-                            inputValue={inputValue}
-                            loading={loading}
-                            loadingText="در حال جستجو..."
-                            noOptionsText={term ? (failed ? 'خطا در جستجو' : 'موردی پیدا نشد') : 'سریال، کد یا نام شعبه، شهر، مشتری و ... را بنویسید'}
-                            filterOptions={(x: KioskSearchItem[]) => x}                      // the server already filtered
-                            getOptionLabel={(o: KioskSearchItem) => o?.serial ?? ''}
-                            isOptionEqualToValue={(a: KioskSearchItem, b: KioskSearchItem) => a.id === b.id}
-                            onInputChange={(_: unknown, text: string, reason: string) => {
-                                // 'reset' = the text of a picked option, not a new search
-                                if (reason === 'reset') return
-                                setInputValue(text)
-                            }}
-                            onChange={(_: unknown, newValue: KioskSearchItem | null) => {
-                                onChange(newValue)
-                                setInputValue(newValue?.serial ?? '')
-                            }}
-                            slotProps={{
-                                paper: { sx: { minWidth: { sm: 560 } } },
-                                listbox: { sx: { maxHeight: 420 } },
-                            }}
-                            renderOption={(props: any, option: KioskSearchItem) => {
-                                const { key, ...rest } = props
-                                return (
-                                    <Box component="li" key={key} {...rest} sx={{ borderBottom: '1px solid', borderColor: 'divider', alignItems: 'stretch !important' }}>
-                                        <KioskCard kiosk={option} term={term} />
-                                    </Box>
-                                )
-                            }}
-                            renderInput={(params: any) => (
-                                <StyledTextField
-                                    {...params}
-                                    label={label}
-                                    placeholder={placeholder ?? 'سریال، شعبه، شهر، مشتری...'}
-                                    error={!!error}
-                                    helperText={
-                                        error ? error.message
-                                            : total > options.length ? `${options.length} مورد از ${total} مورد نمایش داده شده؛ عبارت جستجو را دقیق‌تر کنید`
-                                                : helperText
-                                    }
-                                    InputLabelProps={{ shrink: !!selected || !!inputValue || undefined }}
-                                />
-                            )}
-                        />
-
+                        <ResultsInfoContext.Provider value={{ shown: options.length, total, visible: !!term && !loading && options.length > 0 }}>
+                            <Auto
+                                disabled={disabled}
+                                options={options}
+                                value={selected ?? null}
+                                inputValue={inputValue}
+                                loading={loading}
+                                autoHighlight                                                    // Enter picks the first result
+                                forcePopupIcon={false}                                           // a search, not a dropdown to browse
+                                loadingText={
+                                    <Stack direction="row" alignItems="center" gap={1}>
+                                        <CircularProgress size={14} thickness={5} /> در حال جستجو...
+                                    </Stack>
+                                }
+                                noOptionsText={term ? (failed ? 'خطا در جستجو؛ دوباره تلاش کنید' : `کیوسکی با «${term}» پیدا نشد`) : 'سریال، کد یا نام شعبه، شهر، مشتری و ... را بنویسید'}
+                                filterOptions={(x: KioskSearchItem[]) => x}                      // the server already filtered
+                                getOptionLabel={(o: KioskSearchItem) => o?.serial ?? ''}
+                                isOptionEqualToValue={(a: KioskSearchItem, b: KioskSearchItem) => a.id === b.id}
+                                onInputChange={(_: unknown, text: string, reason: string) => {
+                                    // 'reset' = the text of a picked option, not a new search
+                                    if (reason === 'reset') return
+                                    setInputValue(text)
+                                }}
+                                onChange={(_: unknown, newValue: KioskSearchItem | null) => {
+                                    onChange(newValue)
+                                    setInputValue(newValue?.serial ?? '')
+                                }}
+                                PaperComponent={ResultsPaper}
+                                slotProps={{
+                                    listbox: { sx: { maxHeight: 400, py: 0 } },
+                                }}
+                                renderOption={(props: any, option: KioskSearchItem) => {
+                                    const { key, ...rest } = props
+                                    return (
+                                        <Box component="li" key={key} {...rest}
+                                            sx={(t) => ({
+                                                px: '16px !important', py: '10px !important',
+                                                borderBottom: '1px solid', borderColor: 'divider',
+                                                '&:last-of-type': { borderBottom: 0 },
+                                                // the keyboard / hover row: a primary bar on the start edge
+                                                '&.Mui-focused': { bgcolor: `${alpha(t.palette.primary.main, 0.05)} !important`, boxShadow: `inset -3px 0 0 ${t.palette.primary.main}` },
+                                                '&[aria-selected="true"]': { bgcolor: `${alpha(t.palette.primary.main, 0.09)} !important` },
+                                            })}>
+                                            <KioskCard kiosk={option} term={term} />
+                                        </Box>
+                                    )
+                                }}
+                                renderInput={(params: any) => (
+                                    <StyledTextField
+                                        {...params}
+                                        label={label}
+                                        placeholder={placeholder ?? 'سریال، شعبه، شهر، مشتری...'}
+                                        error={!!error}
+                                        helperText={error ? error.message : helperText}
+                                        InputLabelProps={{ ...params.InputLabelProps, shrink: !!selected || !!inputValue || undefined }}
+                                        InputProps={{
+                                            ...params.InputProps,
+                                            startAdornment: (
+                                                <InputAdornment position="start" sx={{ color: 'text.secondary', marginInlineStart: '4px' }}>
+                                                    {loading ? <CircularProgress size={18} thickness={5} color="inherit" /> : <SearchIcon fontSize="small" />}
+                                                </InputAdornment>
+                                            ),
+                                        }}
+                                    />
+                                )}
+                            />
+                        </ResultsInfoContext.Provider>
+                        {selected && <SelectedKiosk kiosk={selected} />}
                     </Box>
                 )}
             />
