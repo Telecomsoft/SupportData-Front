@@ -32,6 +32,7 @@ import { useAccessCheck } from '@utility/accessCheck'
 import { useDevice } from '@hooks/useDevice'
 import { sizeConverter } from '@utility/sizeConverter'
 import { dateFn } from '@utility/dateConverter'
+import { num } from '@components/section/statements/statementFormat'
 import { buildPayload } from '@utility/buildPayload'
 
 export const Route = createFileRoute('/(workTasks)/workTasksList')({
@@ -235,7 +236,7 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             renderCell: (p) => (
                 <Grid container alignItems="center" justifyContent="center">
                     <Typography variant="body2">
-                        {p.row.delayDays ? dateFn(p.row.delayDays) : ''}
+                        {p.row.delayDays ? num(p.row.delayDays) : ''}
                     </Typography>
                 </Grid>
             )
