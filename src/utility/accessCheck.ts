@@ -86,6 +86,7 @@ export const PERMISSION_LABELS: Record<number, string> = {
    241: 'تعمیرات - بستن تعمیر',
    250: 'صورتحساب - تایید',
    251: 'صورتحساب - ثبت پرداخت',
+   260: 'بله - ارسال پیام به کاربران',
 }
 
 /** The Persian name of a permission; a permission added to the backend and not listed above shows its English name. */

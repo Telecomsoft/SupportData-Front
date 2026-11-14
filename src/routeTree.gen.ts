@@ -16,6 +16,7 @@ import { Route as workTasksWorkTasksListImport } from './routes/(workTasks)/work
 import { Route as systemManagementUsersImport } from './routes/(systemManagement)/users'
 import { Route as systemManagementPermissionsImport } from './routes/(systemManagement)/permissions'
 import { Route as systemManagementMobileListSystemManagementImport } from './routes/(systemManagement)/mobileListSystemManagement'
+import { Route as systemManagementBaleImport } from './routes/(systemManagement)/bale'
 import { Route as statementsStatementsListImport } from './routes/(statements)/statementsList'
 import { Route as settingsMobileListSettingsImport } from './routes/(settings)/mobileListSettings'
 import { Route as settingsDevicesListImport } from './routes/(settings)/devicesList'
@@ -76,6 +77,12 @@ const systemManagementMobileListSystemManagementRoute =
     path: '/mobileListSystemManagement',
     getParentRoute: () => rootRoute,
   } as any)
+
+const systemManagementBaleRoute = systemManagementBaleImport.update({
+  id: '/(systemManagement)/bale',
+  path: '/bale',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const statementsStatementsListRoute = statementsStatementsListImport.update({
   id: '/(statements)/statementsList',
@@ -401,6 +408,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof statementsStatementsListImport
       parentRoute: typeof rootRoute
     }
+    '/(systemManagement)/bale': {
+      id: '/(systemManagement)/bale'
+      path: '/bale'
+      fullPath: '/bale'
+      preLoaderRoute: typeof systemManagementBaleImport
+      parentRoute: typeof rootRoute
+    }
     '/(systemManagement)/mobileListSystemManagement': {
       id: '/(systemManagement)/mobileListSystemManagement'
       path: '/mobileListSystemManagement'
@@ -492,6 +506,7 @@ export interface FileRoutesByFullPath {
   '/devicesList': typeof settingsDevicesListRoute
   '/mobileListSettings': typeof settingsMobileListSettingsRoute
   '/statementsList': typeof statementsStatementsListRoute
+  '/bale': typeof systemManagementBaleRoute
   '/mobileListSystemManagement': typeof systemManagementMobileListSystemManagementRoute
   '/permissions': typeof systemManagementPermissionsRoute
   '/users': typeof systemManagementUsersRoute
@@ -526,6 +541,7 @@ export interface FileRoutesByTo {
   '/devicesList': typeof settingsDevicesListRoute
   '/mobileListSettings': typeof settingsMobileListSettingsRoute
   '/statementsList': typeof statementsStatementsListRoute
+  '/bale': typeof systemManagementBaleRoute
   '/mobileListSystemManagement': typeof systemManagementMobileListSystemManagementRoute
   '/permissions': typeof systemManagementPermissionsRoute
   '/users': typeof systemManagementUsersRoute
@@ -561,6 +577,7 @@ export interface FileRoutesById {
   '/(settings)/devicesList': typeof settingsDevicesListRoute
   '/(settings)/mobileListSettings': typeof settingsMobileListSettingsRoute
   '/(statements)/statementsList': typeof statementsStatementsListRoute
+  '/(systemManagement)/bale': typeof systemManagementBaleRoute
   '/(systemManagement)/mobileListSystemManagement': typeof systemManagementMobileListSystemManagementRoute
   '/(systemManagement)/permissions': typeof systemManagementPermissionsRoute
   '/(systemManagement)/users': typeof systemManagementUsersRoute
@@ -597,6 +614,7 @@ export interface FileRouteTypes {
     | '/devicesList'
     | '/mobileListSettings'
     | '/statementsList'
+    | '/bale'
     | '/mobileListSystemManagement'
     | '/permissions'
     | '/users'
@@ -630,6 +648,7 @@ export interface FileRouteTypes {
     | '/devicesList'
     | '/mobileListSettings'
     | '/statementsList'
+    | '/bale'
     | '/mobileListSystemManagement'
     | '/permissions'
     | '/users'
@@ -663,6 +682,7 @@ export interface FileRouteTypes {
     | '/(settings)/devicesList'
     | '/(settings)/mobileListSettings'
     | '/(statements)/statementsList'
+    | '/(systemManagement)/bale'
     | '/(systemManagement)/mobileListSystemManagement'
     | '/(systemManagement)/permissions'
     | '/(systemManagement)/users'
@@ -698,6 +718,7 @@ export interface RootRouteChildren {
   settingsDevicesListRoute: typeof settingsDevicesListRoute
   settingsMobileListSettingsRoute: typeof settingsMobileListSettingsRoute
   statementsStatementsListRoute: typeof statementsStatementsListRoute
+  systemManagementBaleRoute: typeof systemManagementBaleRoute
   systemManagementMobileListSystemManagementRoute: typeof systemManagementMobileListSystemManagementRoute
   systemManagementPermissionsRoute: typeof systemManagementPermissionsRoute
   systemManagementUsersRoute: typeof systemManagementUsersRoute
@@ -732,6 +753,7 @@ const rootRouteChildren: RootRouteChildren = {
   settingsDevicesListRoute: settingsDevicesListRoute,
   settingsMobileListSettingsRoute: settingsMobileListSettingsRoute,
   statementsStatementsListRoute: statementsStatementsListRoute,
+  systemManagementBaleRoute: systemManagementBaleRoute,
   systemManagementMobileListSystemManagementRoute:
     systemManagementMobileListSystemManagementRoute,
   systemManagementPermissionsRoute: systemManagementPermissionsRoute,
@@ -781,6 +803,7 @@ export const routeTree = rootRoute
         "/(settings)/devicesList",
         "/(settings)/mobileListSettings",
         "/(statements)/statementsList",
+        "/(systemManagement)/bale",
         "/(systemManagement)/mobileListSystemManagement",
         "/(systemManagement)/permissions",
         "/(systemManagement)/users",
@@ -857,6 +880,9 @@ export const routeTree = rootRoute
     },
     "/(statements)/statementsList": {
       "filePath": "(statements)/statementsList.tsx"
+    },
+    "/(systemManagement)/bale": {
+      "filePath": "(systemManagement)/bale.tsx"
     },
     "/(systemManagement)/mobileListSystemManagement": {
       "filePath": "(systemManagement)/mobileListSystemManagement.tsx"

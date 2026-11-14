@@ -7,6 +7,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications'
 import SupervisedUserCircleRoundedIcon from '@mui/icons-material/SupervisedUserCircleRounded'
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt'
+import SmartToyIcon from '@mui/icons-material/SmartToyOutlined'
 import MemoryIcon from '@mui/icons-material/Memory';
 import ComputerIcon from '@mui/icons-material/Computer';
 import StorageIcon from '@mui/icons-material/Storage'
@@ -96,6 +97,13 @@ export const LAYOUT_SIDEBAR_DATA: (DataType & { children?: DataType[] })[] = [
             link: '/permissions',
             icon: SupervisedUserCircleRoundedIcon,
             accessID: 102,
+         },
+         {
+            name: 'ربات بله',
+            value: 'bale',
+            link: '/bale',
+            icon: SmartToyIcon,
+            accessID: 101,
          },
       ],
    },
