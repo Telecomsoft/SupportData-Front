@@ -46,10 +46,17 @@ const StatementActionDialog = ({ action, statement, close, onDone, snackbarOpen 
         onError: (err: Error) => snackbarOpen(err.message, SNACKBAR_SEVERITIES.ERROR),
     }
 
+    // GeneralConfirmDialog closes itself the moment this runs, which unmounts this component. TanStack Query does not
+    // call the callbacks given to mutate() after an unmount, so the reply would be lost (no message, no refresh).
+    // A promise keeps running: its .then() still shows the message and refreshes the page.
     const run = () => {
-        if (action.kind === 'delete') del.mutate(undefined, handle)
-        else if (action.kind === 'calculate') post.mutate(undefined, handle)
-        else post.mutate({ statementID: statement.id, newState: action.to }, handle)
+        const request =
+            action.kind === 'delete'
+                ? del.mutateAsync(undefined)
+                : action.kind === 'calculate'
+                  ? post.mutateAsync(undefined)
+                  : post.mutateAsync({ statementID: statement.id, newState: action.to })
+        request.then(handle.onSuccess, handle.onError)
     }
 
     const title =

@@ -25,9 +25,12 @@ const PartTransferActionDialog = ({ action, transfer, close, onDone, snackbarOpe
         'pt-action'
     )
 
+    // GeneralConfirmDialog closes itself the moment this runs, which unmounts this component. TanStack Query does not
+    // call the callbacks given to mutate() after an unmount, so the reply (success, or "not enough stock") would be lost.
+    // A promise keeps running: its .then() still shows the message and refreshes the list.
     const run = () =>
-        request.mutate(undefined, {
-            onSuccess: (res: any) => {
+        request.mutateAsync(undefined).then(
+            (res: any) => {
                 if (res?.error === 0) {
                     snackbarOpen(complete ? 'انتقال تکمیل شد' : 'انتقال لغو شد', SNACKBAR_SEVERITIES.SUCCESS)
                     onDone()
@@ -35,8 +38,8 @@ const PartTransferActionDialog = ({ action, transfer, close, onDone, snackbarOpe
                     snackbarOpen(`${res?.error ?? ''} ${res?.errorMessage ?? ''}`.trim(), SNACKBAR_SEVERITIES.ERROR)
                 }
             },
-            onError: (err: Error) => snackbarOpen(err.message, SNACKBAR_SEVERITIES.ERROR),
-        })
+            (err: Error) => snackbarOpen(err.message, SNACKBAR_SEVERITIES.ERROR)
+        )
 
     // what completing really does, so nobody is surprised
     const effects: string[] = []
