@@ -39,14 +39,17 @@ export const formatDateString = (date: string): string => {
    return englishDate?.replace(/\//g, '-')
 }
 
-export const dateFn = (value?: string | null) => {
-   const shamsi = new Date(value as string).toLocaleDateString('fa-IR', {
+export const dateFn = (value?: string | null, withTime: boolean = true) => {
+   if (!value) return '-'
+console.log('withTime',withTime)
+   return new Date(value).toLocaleDateString('fa-IR', {
       year: 'numeric',
       month: 'short',
       day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
+      ...(withTime && {
+         hour: '2-digit',
+         minute: '2-digit',
+      }),
       formatMatcher: 'best fit',
    })
-   return !value || undefined ? '-' : shamsi
 }

@@ -15,7 +15,6 @@ import TelecomDataGrid from '@components/general/telecomDataGrid'
 import DataGridIconProvider from '@components/general/telecomDataGrid/components/DataGridIconProvider'
 import GeneralDialog from '@components/general/GeneralDialog'
 import CustomCircularProgress from '@components/general/CustomCircularProgress'
-import WorkTaskFilterBar, { EMPTY_WORKTASK_FILTER, WorkTaskFilterState } from '@components/section/workTasks/WorkTaskFilterBar'
 import WorkTaskMobileCard from '@components/section/workTasks/WorkTaskMobileCard'
 import WorkTaskStateChip from '@components/section/workTasks/WorkTaskStateChip'
 import WorkTaskDetailsDialog from '@components/section/workTasks/WorkTaskDetailsDialog'
@@ -34,6 +33,7 @@ import { buildPayload } from '@utility/buildPayload'
 import { useWorkTaskPdf } from '@hooks/useWorkTaskPdf'
 import WorkTaskBulkBar from '@components/section/workTasks/WorkTaskBulkBar'
 import StyledTextField from '@components/general/input/StyledTextField'
+import WorkTaskFilterBar, { EMPTY_WORKTASK_FILTER, WorkTaskFilterState } from '@components/section/workTasks/WorkTaskFilterBar'
 
 export const Route = createFileRoute('/(workTasks)/workTasksList')({
     component: withSnackbar(WorkTasksList),
@@ -277,7 +277,7 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                     )}
                     <TelecomDataGrid
                         data={items}
-                        height={sizeConverter(500, 'height')}
+                        height={sizeConverter(450, 'height')}
                         rowHeight={sizeConverter(46, 'height')}
                         loading={list.isFetching}
                         serverData={{ totalDataCount: total, maxRowInPage: PAGE_SIZE, currentPage: page }}
@@ -297,7 +297,7 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                         pinnedColumnsProps={{ right: ['actions'] }}
                         columns={columns}
                     />
-                </Box>
+                </Box>  
             )}
 
             {editingID !== null && (

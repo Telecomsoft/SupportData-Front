@@ -15,7 +15,7 @@ import CustomCircularProgress from '@components/general/CustomCircularProgress'
 import StatementFilterBar, { EMPTY_STATEMENT_FILTER, StatementFilterState } from '@components/section/statements/StatementFilterBar'
 import StatementMobileCard from '@components/section/statements/StatementMobileCard'
 import StatementStateChip from '@components/section/statements/StatementStateChip'
-import {  num } from '@components/section/statements/statementFormat'
+import { num } from '@components/section/statements/statementFormat'
 import { buildStatementCreateForm } from '@src/data/dialogArrays/statementForm'
 import { useStatementLookups } from '@hooks/useStatementLookups'
 import { useStatementRules } from '@hooks/useStatementRules'
@@ -85,8 +85,8 @@ function StatementsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
         { field: 'id', headerName: 'شماره', width: sizeConverter(70, 'width') },
         { field: 'caption', headerName: 'عنوان', width: sizeConverter(180, 'width') },
         { field: 'contractorName', headerName: 'پیمانکار', width: sizeConverter(170, 'width') },
-        { field: 'fromDate', headerName: 'از تاریخ', width: sizeConverter(110, 'width'), valueGetter: (r) => dateFn(r.fromDate), renderCell: (p) =><Grid container justifyContent="center"><Typography variant="body2">{p.row.fromDate ? dateFn(p.row.fromDate) : ''}</Typography></Grid> },
-        { field: 'toDate', headerName: 'تا تاریخ', width: sizeConverter(110, 'width'), valueGetter: (r) => dateFn(r.toDate), renderCell: (p) => <Grid container justifyContent="center"><Typography variant="body2">{p.row.toDate ? dateFn(p.row.toDate) : ''}</Typography></Grid> },
+        { field: 'fromDate', headerName: 'از تاریخ', width: sizeConverter(110, 'width'), valueGetter: (r) => dateFn(r.fromDate,false), renderCell: (p) => <Grid container justifyContent="center"><Typography variant="body2">{p.row.fromDate ? dateFn(p.row.fromDate,false) : ''}</Typography></Grid> },
+        { field: 'toDate', headerName: 'تا تاریخ', width: sizeConverter(110, 'width'), valueGetter: (r) => dateFn(r.toDate, false), renderCell: (p) => <Grid container justifyContent="center"><Typography variant="body2">{p.row.toDate ? dateFn(p.row.toDate,false) : ''}</Typography></Grid> },
         { field: 'stateName', headerName: 'وضعیت', width: sizeConverter(120, 'width'), renderCell: (p) => <StatementStateChip statement={p.row} /> },
         { field: 'lineCount', headerName: 'ردیف', width: sizeConverter(70, 'width') },
         { field: 'total', headerName: 'جمع کل (ریال)', width: sizeConverter(140, 'width'), valueGetter: (r) => num(r.total) },

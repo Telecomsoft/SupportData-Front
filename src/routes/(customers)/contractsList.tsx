@@ -13,13 +13,14 @@ import { sizeConverter } from '@utility/sizeConverter'
 import { useDevice } from '@hooks/useDevice'
 import { useGetData } from '@hooks/useGetData'
 import JalaliDatePicker from '@components/JalaliDatePicker'
-import { convertToShamsi, dateFn } from '@utility/dateConverter'
+import { dateFn } from '@utility/dateConverter'
 import { VISIT_START_MODES, WARRANTY_START_MODES } from '@src/data/type/lookups'
 import Grid from '@mui/material/Grid2'
 import CircleIcon from '@mui/icons-material/Circle'
 import { useState } from 'react'
 import { Autocomplete, Box, Button, Typography } from '@mui/material'
 import StyledTextField from '@components/general/input/StyledTextField'
+import { BoolIcon } from '@src/utility/BoolIcon'
 
 export const Route = createFileRoute('/(customers)/contractsList')({
   component: withSnackbar(ContractsList),
@@ -75,28 +76,28 @@ function ContractsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     { label: 'گارانتی', value: '_warranty', kind: 'custom', noValue: true, component: SectionTitle },
     { label: 'مدت گارانتی (ماه)', value: 'warrantyMonths', type: 'natural', kind: 'textField', size: half, component: TextFieldComp },
     { label: 'شروع گارانتی از', value: 'warrantyStartMode', kind: 'combo', type: 'choice', emptyValue: 1, size: half, component: AutoCompleteComp },
-    { title: 'گارانتی تماس تلفنی', value: 'warrantyByCall', kind: 'checkbox', size: 4, component: CheckboxComponent },
-    { title: 'گارانتی بازدید', value: 'warrantyByVisit', kind: 'checkbox', size: 4, component: CheckboxComponent },
-    { title: 'گارانتی قطعه', value: 'warrantyByPart', kind: 'checkbox', size: 4, component: CheckboxComponent },
+    { title: 'گارانتی تماس تلفنی', value: 'warrantyByCall', kind: 'checkbox', size: 3.9, component: CheckboxComponent },
+    { title: 'گارانتی بازدید', value: 'warrantyByVisit', kind: 'checkbox', size: 3.9, component: CheckboxComponent },
+    { title: 'گارانتی قطعه', value: 'warrantyByPart', kind: 'checkbox', size: 3.9, component: CheckboxComponent },
 
     { label: 'بازدید دوره‌ای', value: '_visits', kind: 'custom', noValue: true, component: SectionTitle },
     { title: 'بازدید دوره‌ای فعال است', value: 'periodicVisitActive', kind: 'checkbox', size: 12, component: CheckboxComponent },
-    { label: 'فاصله‌ی بازدیدها (روز)', value: 'periodicVisitDays', type: 'natural', kind: 'textField', size: half, component: TextFieldComp, showWhen: visitOn },
-    { label: 'شروع بازدیدها', value: 'periodicVisitStartMode', kind: 'combo', type: 'choice', emptyValue: 1, size: half, component: AutoCompleteComp, showWhen: visitOn },
-    { label: 'تاریخ شروع', value: 'periodicVisitStartDate', type: 'date', kind: 'textField', size: half, component: JalaliDatePicker, showWhen: (v: any) => visitOn(v) && v.periodicVisitStartMode?.id === 2 },
+    { label: 'فاصله‌ی بازدیدها (روز)', value: 'periodicVisitDays', type: 'natural', kind: 'textField', size: 3.9, component: TextFieldComp, showWhen: visitOn },
+    { label: 'شروع بازدیدها', value: 'periodicVisitStartMode', kind: 'combo', type: 'choice', emptyValue: 1, size: 3.9, component: AutoCompleteComp, showWhen: visitOn },
+    { label: 'تاریخ شروع', value: 'periodicVisitStartDate', type: 'date', kind: 'textField', size: 3.9, component: JalaliDatePicker, showWhen: (v: any) => visitOn(v) && v.periodicVisitStartMode?.id === 2 },
     { label: 'توضیحات بازدید', value: 'periodicVisitDescription', kind: 'textField', size: 12, component: TextFieldComp, showWhen: visitOn },
 
     { label: 'زمان پاسخگویی (محاسبه‌ی مهلت تسک)', value: '_sla', kind: 'custom', noValue: true, component: SectionTitle },
-    { label: 'ساعت پاسخگویی - مرکز استان', value: 'responseHoursProvinceCenter', type: 'natural', kind: 'textField', size: half, component: TextFieldComp },
-    { label: 'ساعت پاسخگویی - سایر شهرها', value: 'responseHoursOtherCities', type: 'natural', kind: 'textField', size: half, component: TextFieldComp },
-    { label: 'شروع ساعت کاری', value: 'workDayStart', type: 'time', kind: 'textField', size: half, component: TextFieldComp },
-    { label: 'پایان ساعت کاری', value: 'workDayEnd', type: 'time', kind: 'textField', size: half, component: TextFieldComp },
+    { label: 'ساعت پاسخگویی - مرکز استان', value: 'responseHoursProvinceCenter', type: 'natural', kind: 'textField', size: 2.9, component: TextFieldComp },
+    { label: 'ساعت پاسخگویی - سایر شهرها', value: 'responseHoursOtherCities', type: 'natural', kind: 'textField', size: 2.9, component: TextFieldComp },
+    { label: 'شروع ساعت کاری', value: 'workDayStart', type: 'time', kind: 'textField', size: 2.9, component: TextFieldComp },
+    { label: 'پایان ساعت کاری', value: 'workDayEnd', type: 'time', kind: 'textField', size: 2.9, component: TextFieldComp },
     { title: 'پشتیبانی در جمعه و تعطیلات', value: 'supportOnHolidays', kind: 'checkbox', size: 12, component: CheckboxComponent },
 
     { label: 'هزینه‌ها', value: '_costs', kind: 'custom', noValue: true, component: SectionTitle },
-    { label: 'هزینه‌ی کارشناسی (ریال)', value: 'inspectionCost', type: 'natural', kind: 'textField', size: 4, component: TextFieldComp },
-    { label: 'کیلومتر رایگان', value: 'freeKilometers', type: 'natural', kind: 'textField', size: 4, component: TextFieldComp },
-    { label: 'هزینه‌ی هر کیلومتر (ریال)', value: 'costPerKilometer', type: 'natural', kind: 'textField', size: 4, component: TextFieldComp },
+    { label: 'هزینه‌ی کارشناسی (ریال)', value: 'inspectionCost', type: 'natural', kind: 'textField', size: 3.9, component: TextFieldComp },
+    { label: 'کیلومتر رایگان', value: 'freeKilometers', type: 'natural', kind: 'textField', size: 3.9, component: TextFieldComp },
+    { label: 'هزینه‌ی هر کیلومتر (ریال)', value: 'costPerKilometer', type: 'natural', kind: 'textField', size: 3.9, component: TextFieldComp },
 
     { label: 'توضیحات', value: 'description', kind: 'textField', multiline: true, maxRows: 2, size: 12, component: TextFieldComp },
     { title: 'فعال', value: 'isActive', kind: 'checkbox', size: 12, component: CheckboxComponent },
@@ -106,7 +107,7 @@ function ContractsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     { field: 'contractNo', headerName: 'شماره', width: sizeConverter(110, 'width') },
     { field: 'name', headerName: 'عنوان', width: sizeConverter(180, 'width') },
     { field: 'customerName', headerName: 'مشتری', width: sizeConverter(150, 'width') },
-    { field: 'contractDate', headerName: 'تاریخ قرارداد', width: sizeConverter(110, 'width'), valueGetter: (r) => (r.contractDate ? dateFn(r.contractDate) : ''), renderCell: (p) => <Grid container justifyContent="center"><Typography variant="body2">{p.row.contractDate ? dateFn(p.row.contractDate) : ''}</Typography></Grid> },
+    { field: 'contractDate', headerName: 'تاریخ قرارداد', width: sizeConverter(110, 'width'), valueGetter: (r) => (r.contractDate ? dateFn(r.contractDate, false) : ''), renderCell: (p) => <Grid container justifyContent="center"><Typography variant="body2">{p.row.contractDate ? dateFn(p.row.contractDate, false) : ''}</Typography></Grid> },
     { field: 'warrantyMonths', headerName: 'گارانتی (ماه)', width: sizeConverter(100, 'width') },
     { field: 'responseHoursProvinceCenter', headerName: 'پاسخ مرکز (ساعت)', width: sizeConverter(120, 'width') },
     { field: 'responseHoursOtherCities', headerName: 'پاسخ شهرها (ساعت)', width: sizeConverter(120, 'width') },
@@ -126,22 +127,50 @@ function ContractsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     // Warranty
     { field: 'customerID', headerName: 'شناسه مشتری', width: sizeConverter(110, 'width') },
     { field: 'warrantyStartMode', headerName: 'شروع گارانتی از', width: sizeConverter(130, 'width') },
-    { field: 'warrantyByCall', headerName: 'گارانتی تماس تلفنی', width: sizeConverter(130, 'width'), valueGetter: (r) => r.warrantyByCall ? 'بله' : 'خیر' },
-    { field: 'warrantyByVisit', headerName: 'گارانتی بازدید', width: sizeConverter(120, 'width'), valueGetter: (r) => r.warrantyByVisit ? 'بله' : 'خیر' },
-    { field: 'warrantyByPart', headerName: 'گارانتی قطعه', width: sizeConverter(120, 'width'), valueGetter: (r) => r.warrantyByPart ? 'بله' : 'خیر' },
-
+    {
+      field: 'warrantyByCall',
+      headerName: 'گارانتی تماس تلفنی',
+      width: sizeConverter(130, 'width'),
+      valueGetter: (r) => (r.warrantyByCall ? 'بله' : 'خیر'),
+      renderCell: (p) => <BoolIcon value={!!p.row.warrantyByCall} />,
+    },
+    {
+      field: 'warrantyByVisit',
+      headerName: 'گارانتی بازدید',
+      width: sizeConverter(120, 'width'),
+      valueGetter: (r) => (r.warrantyByVisit ? 'بله' : 'خیر'),
+      renderCell: (p) => <BoolIcon value={!!p.row.warrantyByVisit} />,
+    },
+    {
+      field: 'warrantyByPart',
+      headerName: 'گارانتی قطعه',
+      width: sizeConverter(120, 'width'),
+      valueGetter: (r) => (r.warrantyByPart ? 'بله' : 'خیر'),
+      renderCell: (p) => <BoolIcon value={!!p.row.warrantyByPart} />,
+    },
     // Periodic Visits
-    { field: 'periodicVisitActive', headerName: 'بازدید دوره‌ای فعال', width: sizeConverter(140, 'width'), valueGetter: (r) => r.periodicVisitActive ? 'بله' : 'خیر' },
+    {
+      field: 'periodicVisitActive',
+      headerName: 'بازدید دوره‌ای فعال',
+      width: sizeConverter(140, 'width'),
+      valueGetter: (r) => (r.periodicVisitActive ? 'بله' : 'خیر'),
+      renderCell: (p) => <BoolIcon value={!!p.row.periodicVisitActive} />,
+    },
     { field: 'periodicVisitDays', headerName: 'فاصله بازدیدها (روز)', width: sizeConverter(140, 'width') },
     { field: 'periodicVisitStartMode', headerName: 'شروع بازدیدها', width: sizeConverter(130, 'width') },
-    { field: 'periodicVisitStartDate', headerName: 'تاریخ شروع بازدید', width: sizeConverter(130, 'width'), valueGetter: (r) => (r.periodicVisitStartDate ? convertToShamsi(r.periodicVisitStartDate) : '') },
+    { field: 'periodicVisitStartDate', headerName: 'تاریخ شروع بازدید', width: sizeConverter(130, 'width'), valueGetter: (r) => (r.periodicVisitStartDate ? dateFn(r.periodicVisitStartDate, false) : ''), renderCell: (p) => <Grid container justifyContent="center"><Typography variant="body2">{p.row.periodicVisitStartDate ? dateFn(p.row.periodicVisitStartDate, false) : ''}</Typography></Grid> },
     { field: 'periodicVisitDescription', headerName: 'توضیحات بازدید', width: sizeConverter(150, 'width') },
 
     // SLA
     { field: 'workDayStart', headerName: 'شروع ساعت کاری', width: sizeConverter(120, 'width'), },
     { field: 'workDayEnd', headerName: 'پایان ساعت کاری', width: sizeConverter(120, 'width') },
-    { field: 'supportOnHolidays', headerName: 'پشتیبانی در تعطیلات', width: sizeConverter(140, 'width'), valueGetter: (r) => r.supportOnHolidays ? 'بله' : 'خیر' },
-
+    {
+      field: 'supportOnHolidays',
+      headerName: 'پشتیبانی در تعطیلات',
+      width: sizeConverter(140, 'width'),
+      valueGetter: (r) => (r.supportOnHolidays ? 'بله' : 'خیر'),
+      renderCell: (p) => <BoolIcon value={!!p.row.supportOnHolidays} />,
+    },
     // Costs
     { field: 'inspectionCost', headerName: 'هزینه کارشناسی (ریال)', width: sizeConverter(150, 'width') },
     { field: 'freeKilometers', headerName: 'کیلومتر رایگان', width: sizeConverter(120, 'width') },
