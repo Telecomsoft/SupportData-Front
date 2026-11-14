@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import Grid from '@mui/material/Grid2'
-import { Box, Button, Chip, Dialog, DialogContent, Fab, IconButton, TextField, Tooltip, Typography } from '@mui/material'
-import { useEffect, useMemo, useState } from 'react'
+import { Box, Button, Dialog, DialogContent, Fab, IconButton, TextField, Tooltip, Typography } from '@mui/material'
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
@@ -32,6 +32,7 @@ import { dateFn } from '@utility/dateConverter'
 import { num } from '@components/section/statements/statementFormat'
 import { buildPayload } from '@utility/buildPayload'
 import { useWorkTaskPdf } from '@hooks/useWorkTaskPdf'
+import WorkTaskBulkBar from '@components/section/workTasks/WorkTaskBulkBar'
 
 export const Route = createFileRoute('/(workTasks)/workTasksList')({
     component: withSnackbar(WorkTasksList),
@@ -89,7 +90,10 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
 
     const [filter, setFilter] = useState<WorkTaskFilterState>(EMPTY_WORKTASK_FILTER)
     const [serverCtrl, setServerCtrl] = useState<ServerCtrDataType | null>(null)   // the grid's search text and page
-    const [selectedID, setSelectedID] = useState<number | undefined>(undefined)
+    const [selectedIDs, setSelectedIDs] = useState<number[]>([])         // the ticked rows (they survive a page change)
+    const [clearSelectionKey, setClearSelectionKey] = useState<null | undefined>(undefined)
+    const selectedID = selectedIDs.length === 1 ? selectedIDs[0] : undefined   // view / edit work on exactly one row
+    const rowCache = useRef(new Map<number, any>())                            // every row seen, so a selected row from another page is still known
     const [adding, setAdding] = useState(false)
     const [editingID, setEditingID] = useState<number | null>(null)   // the task whose edit dialog is open
     const [costsTaskID, setCostsTaskID] = useState<number | null>(null)   // the task whose diagnosis / costs dialog is open
@@ -117,6 +121,7 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
 
     const list = usePostQuery<{ items: any[]; total: number }>('api/WorkTask/ListWorkTasks', 'list-worktasks', body)
     const items = list.data?.value?.items ?? []
+    items.forEach((i) => rowCache.current.set(i.id, i))
     const total = list.data?.value?.total ?? 0
 
     // a new filter or search always starts from page 1
@@ -147,111 +152,92 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     const { print: printTask, printingID } = useWorkTaskPdf(snackbarOpen)
 
     // same rule as the edit button on the task page (the server checks again)
-    const selectedRow = items.find((i) => i.id === selectedID)
+    const selectedRow = selectedID !== undefined ? rowCache.current.get(selectedID) : undefined
+    const selectedTasks = selectedIDs.map((id) => rowCache.current.get(id)).filter(Boolean)
+    const clearSelection = () => { setSelectedIDs([]); setClearSelectionKey(null); setTimeout(() => setClearSelectionKey(undefined), 0) }
     const canEditSelected = !isCustomer && canEditTask && !!selectedRow && !selectedRow.isLocked && (!isTaskClosed(selectedRow.state) || canEditClosed)
 
     const taskTypeOptions = isCustomer ? CUSTOMER_TASK_TYPES : TASK_TYPES
     const createForm = buildWorkTaskCreateForm({ isMobile, isCustomer, canAssign: canPerform(203) })
-    const columns: TelecomColumnsType[] = [
-        { field: 'id', headerName: 'شماره', width: sizeConverter(70, 'width') },
-        // same rule as the edit button on the task page (the server checks again)
-        ...(isCustomer ? [] : [{
-            field: 'actions',
-            headerName: 'هزینه‌ها',
-            width: sizeConverter(80, 'width'),
-            sortLock: true,
-            renderCell: (p: { row: Record<string, any> }) => {
-                const allowed = canEditTask && !p.row.isLocked && (!isTaskClosed(p.row.state) || canEditClosed)
-                return allowed ? (
-                    <Grid container alignItems="center" justifyContent="center">
-                        <Tooltip title="تشخیص و هزینه‌ها">
-                            <IconButton size="small" color="primary" onClick={(e) => { e.stopPropagation(); setCostsTaskID(p.row.id) }}>
-                                <ReceiptLongIcon fontSize="small" />
-                            </IconButton>
-                        </Tooltip>
-                    </Grid>
-                ) : null
-            },
-        } as TelecomColumnsType]),
-        // the printed form (PDF) of the task; the server picks the form by task type
-        ...(canPrint ? [{
-            field: 'print',
-            headerName: 'چاپ',
-            width: sizeConverter(70, 'width'),
-            sortLock: true,
-            renderCell: (p: { row: Record<string, any> }) => (
-                <Grid container alignItems="center" justifyContent="center">
-                    <Tooltip title="چاپ فرم">
-                        <span>
-                            <IconButton size="small" color="primary" disabled={printingID !== null} onClick={(e) => { e.stopPropagation(); printTask(p.row.id) }}>
-                                {printingID === p.row.id ? <CustomCircularProgress thickness={3} size={18} /> : <PrintIcon fontSize="small" />}
-                            </IconButton>
-                        </span>
-                    </Tooltip>
-                </Grid>
-            ),
-        } as TelecomColumnsType] : []),
-        { field: 'typeName', headerName: 'نوع', width: sizeConverter(100, 'width') },
-        { field: 'stateName', headerName: 'وضعیت', width: sizeConverter(110, 'width'), renderCell: (p) => <WorkTaskStateChip task={p.row} /> },
-        { field: 'kioskSerial', headerName: 'سریال کیوسک', width: sizeConverter(140, 'width') },
-        ...(isCustomer ? [] : [{ field: 'customerName', headerName: 'مشتری', width: sizeConverter(140, 'width') }]),
-        ...(isCustomer ? [] : [{ field: 'assignedToName', headerName: 'ارجاع‌شده به', width: sizeConverter(130, 'width') }]),
+    // two lines in one cell: the main value and a small second one
+    const two = (top: ReactNode, bottom?: ReactNode, ltr = false) => (
+        <Box sx={{ lineHeight: 1.25, py: 0.25, minWidth: 0 }}>
+            <Typography variant="body2" noWrap dir={ltr ? 'ltr' : undefined} sx={{ textAlign: 'start' }}>{top}</Typography>
+            {bottom ? <Typography variant="caption" color="text.secondary" noWrap display="block">{bottom}</Typography> : null}
+        </Box>
+    )
+    const yes = (ok: boolean, label: string) => <Typography variant="caption" display="block" noWrap color={ok ? 'success.main' : 'text.secondary'}>{label}: {ok ? 'بله' : 'خیر'}</Typography>
 
+    // the columns that used to be 14 are 8: related values share a cell (they are still searched and sorted as one text)
+    const columns: TelecomColumnsType[] = [
         {
-            field: 'delayDays',
-            headerName: 'روز تاخیر',
-            width: sizeConverter(80, 'width'),
-            renderCell: (p) => (
-                <Grid container alignItems="center" justifyContent="center">
-                    <Typography variant="body2">
-                        {p.row.delayDays ? num(p.row.delayDays) : ''}
-                    </Typography>
-                </Grid>
-            )
+            field: 'id', headerName: 'دستورکار', width: sizeConverter(110, 'width'),
+            valueGetter: (r) => `${r.id} ${r.typeName ?? ''}`,
+            renderCell: (p) => two(`#${p.row.id}`, p.row.typeName),
         },
         {
-            field: 'finishedAt',
-            headerName: 'زمان اتمام',
-            width: sizeConverter(150, 'width'),
+            field: 'stateName', headerName: 'وضعیت', width: sizeConverter(150, 'width'),
+            renderCell: (p) => (
+                <Box sx={{ lineHeight: 1.25 }}>
+                    <WorkTaskStateChip task={p.row} />
+                    {p.row.isOverdue || p.row.delayDays ? (
+                        <Typography variant="caption" color="error" display="block" noWrap>
+                            {p.row.isOverdue ? 'دیرکرد' : ''}{p.row.delayDays ? ` ${num(p.row.delayDays)} روز تاخیر` : ''}
+                        </Typography>
+                    ) : null}
+                </Box>
+            ),
+        },
+        {
+            field: 'kioskSerial', headerName: isCustomer ? 'کیوسک' : 'کیوسک / مشتری', width: sizeConverter(190, 'width'),
+            valueGetter: (r) => `${r.kioskSerial ?? ''} ${r.customerName ?? ''} ${r.branchName ?? ''}`,
+            renderCell: (p) => two(p.row.kioskSerial ?? '-', isCustomer ? p.row.branchName : p.row.customerName, true),
+        },
+        ...(isCustomer ? [] : [{ field: 'assignedToName', headerName: 'ارجاع‌شده به', width: sizeConverter(130, 'width') } as TelecomColumnsType]),
+        {
+            field: 'reportedAt', headerName: 'گزارش / مهلت', width: sizeConverter(160, 'width'),
+            valueGetter: (r) => `${r.reportedAt ? dateFn(r.reportedAt) : ''} ${r.dueAt ? dateFn(r.dueAt) : ''}`,
+            renderCell: (p) => two(p.row.reportedAt ? dateFn(p.row.reportedAt) : '', p.row.dueAt ? `مهلت: ${dateFn(p.row.dueAt)}` : ''),
+        },
+        {
+            field: 'finishedAt', headerName: 'زمان اتمام', width: sizeConverter(150, 'width'),
             valueGetter: (r) => (r.finishedAt ? dateFn(r.finishedAt) : ''),
-            renderCell: (p) => (
-                <Grid container alignItems="center" justifyContent="center">
-                    <Typography variant="body2">
-                        {p.row.finishedAt ? dateFn(p.row.finishedAt) : ''}
-                    </Typography>
-                </Grid>
-            )
+            renderCell: (p) => two(p.row.finishedAt ? dateFn(p.row.finishedAt) : ''),
         },
         {
-            field: 'dueAt',
-            headerName: 'مهلت',
-            width: sizeConverter(150, 'width'),
-            valueGetter: (r) => (r.dueAt ? dateFn(r.dueAt) : ''),
-            renderCell: (p) => (
-                <Grid container alignItems="center" justifyContent="center">
-                    <Typography variant="body2">
-                        {p.row.dueAt ? dateFn(p.row.dueAt) : ''}
-                    </Typography>
-                </Grid>
-            )
+            field: 'serviceFormReceived', headerName: 'فرم / پرداخت', width: sizeConverter(120, 'width'),
+            valueGetter: (r) => `${r.serviceFormReceived ? 'فرم دریافت شده' : 'فرم نشده'} ${r.isPaid ? 'پرداخت شده' : 'پرداخت نشده'}`,
+            renderCell: (p) => <Box sx={{ lineHeight: 1.25 }}>{yes(!!p.row.serviceFormReceived, 'فرم')}{yes(!!p.row.isPaid, 'پرداخت')}</Box>,
         },
-        {
-            field: 'reportedAt',
-            headerName: 'زمان گزارش',
-            width: sizeConverter(150, 'width'),
-            valueGetter: (r) => (r.reportedAt ? dateFn(r.reportedAt) : ''),
-            renderCell: (p) => (
-                <Grid container alignItems="center" justifyContent="center">
-                    <Typography variant="body2">
-                        {p.row.reportedAt ? dateFn(p.row.reportedAt) : ''}
-                    </Typography>
-                </Grid>
-            )
-        },
-        { field: 'isOverdue', headerName: 'دیرکرد', width: sizeConverter(80, 'width'), valueGetter: (r) => (r.isOverdue ? 'دیرکرد' : ''), renderCell: (p) => (p.row.isOverdue ? <Chip size="small" color="error" label="دیرکرد" /> : null) },
-        { field: 'serviceFormReceived', headerName: 'فرم سرویس', width: sizeConverter(90, 'width'), valueGetter: (r) => (r.serviceFormReceived ? 'دریافت شده' : 'نشده') },
-        { field: 'isPaid', headerName: 'پرداخت', width: sizeConverter(90, 'width'), valueGetter: (r) => (r.isPaid ? 'پرداخت شده' : 'نشده') },
         { field: 'reportedIssue', headerName: 'شرح مشکل', width: sizeConverter(240, 'width') },
+        // all the row's buttons in one column, pinned to the left edge so it stays in view when the table scrolls
+        {
+            field: 'actions', headerName: 'عملیات', width: sizeConverter(isCustomer ? 80 : 130, 'width'), sortLock: true,
+            renderCell: (p: { row: Record<string, any> }) => {
+                const canCosts = !isCustomer && canEditTask && !p.row.isLocked && (!isTaskClosed(p.row.state) || canEditClosed)
+                return (
+                    <Grid container alignItems="center" justifyContent="center" wrap="nowrap">
+                        <Tooltip title="مشاهده">
+                            <IconButton size="small" color="primary" onClick={(e) => { e.stopPropagation(); open(p.row.id) }}><OpenInNewIcon fontSize="small" /></IconButton>
+                        </Tooltip>
+                        {canCosts && (
+                            <Tooltip title="تشخیص و هزینه‌ها">
+                                <IconButton size="small" color="primary" onClick={(e) => { e.stopPropagation(); setCostsTaskID(p.row.id) }}><ReceiptLongIcon fontSize="small" /></IconButton>
+                            </Tooltip>
+                        )}
+                        {canPrint && (
+                            <Tooltip title="چاپ فرم">
+                                <span>
+                                    <IconButton size="small" color="primary" disabled={printingID !== null} onClick={(e) => { e.stopPropagation(); printTask(p.row.id) }}>
+                                        {printingID === p.row.id ? <CustomCircularProgress thickness={3} size={18} /> : <PrintIcon fontSize="small" />}
+                                    </IconButton>
+                                </span>
+                            </Tooltip>
+                        )}
+                    </Grid>
+                )
+            },
+        },
     ]
 
     const isLoading = lookups.isLoading || (list.isLoading && !list.data)
@@ -278,9 +264,20 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 // ---------------- desktop: filter bar + server-paged grid ----------------
                 <Box sx={{ width: '100%' }}>
                     <WorkTaskFilterBar value={filter} onChange={changeFilter} customers={lookups.options.customerID} cities={lookups.options.cityID} technicians={lookups.options.assignedToID} isCustomer={isCustomer} />
+                    {selectedTasks.length > 1 && (
+                        <WorkTaskBulkBar
+                            tasks={selectedTasks}
+                            technicians={lookups.options.assignedToID}
+                            contractors={lookups.options.contractorID}
+                            snackbarOpen={snackbarOpen}
+                            onDone={() => list.refetch()}
+                            clearSelection={clearSelection}
+                        />
+                    )}
                     <TelecomDataGrid
                         data={items}
                         height={sizeConverter(500, 'height')}
+                        rowHeight={sizeConverter(46, 'height')}
                         loading={list.isFetching}
                         serverData={{ totalDataCount: total, maxRowInPage: PAGE_SIZE, currentPage: page }}
                         setServerCtrData={setServerCtrl}
@@ -293,9 +290,11 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                                 {canCreate && <DataGridIconProvider toolTipText={'ثبت دستورکار'} Icon={AddIcon} disable={false} clickFunc={() => setAdding(true)} />}
                             </Grid>
                         )}
-                        setRows={(data: any) => data && setSelectedID(data?.[0])}
-                        multiSelect={false}
+                        setRows={(data: any) => data && setSelectedIDs([...data])}
+                        defaultRowSelectionIDs={clearSelectionKey === null ? (null as any) : undefined}
+                        multiSelect={!isCustomer}
                         disableRowSelection={false}
+                        pinnedColumnsProps={{ right: ['actions'] }}
                         columns={columns}
                     />
                 </Box>
