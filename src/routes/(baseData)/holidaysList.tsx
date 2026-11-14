@@ -50,10 +50,10 @@ function HolidaysList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
 
   const columns: TelecomColumnsType[] = [
     {
-      field: 'date', 
-      headerName: 'تاریخ', 
-      width: sizeConverter(120, 'width'), 
-      valueGetter: (r) => (r.date ? convertToShamsi(r.date) : ''), 
+      field: 'date',
+      headerName: 'تاریخ',
+      width: sizeConverter(120, 'width'),
+      valueGetter: (r) => (r.date ? convertToShamsi(r.date) : ''),
       renderCell: (params) => (
         <Grid justifyContent="center" alignItems="center" container>
           <Typography sx={{ textAlign: 'center' }} variant="caption">
@@ -71,42 +71,41 @@ function HolidaysList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
   return (
     <Box sx={{ width: '100%' }}>
       {/* بخش فیلتر سال مینیمال و Curve */}
-      <Grid 
-        container 
-        spacing={2} 
-        sx={{ 
-          p: 2.5, 
-          alignItems: 'center', 
-          bgcolor: 'background.paper', 
-          mb: 2, 
+      <Grid
+        container
+        spacing={2}
+        sx={{
+          p: 2.5,
+          alignItems: 'center',
+          bgcolor: 'background.paper',
+          mb: 2,
           borderRadius: sizeConverter(16, 'radius'),
           boxShadow: '0 4px 20px rgba(0,0,0,0.05)'
         }}
       >
-        <Grid size={{ xs: 12, md: 8 }}>
+        <Grid size={{ xs: 12, md: 2 }}>
           <Autocomplete
             options={yearOptions}
             getOptionLabel={(option) => option.name || ''}
             value={yearOptions.find((opt) => opt.id === selectedYear) || yearOptions[0]}
             onChange={(_, newValue) => setSelectedYear(newValue ? newValue.id : 0)}
             renderInput={(params) => (
-              <StyledTextField 
-                {...params} 
-                label="انتخاب سال" 
-                fullWidth 
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: sizeConverter(12, 'radius') } }}
+              <StyledTextField
+                {...params}
+                label="انتخاب سال"
+                fullWidth
+                sx={{ '& .MuiOutlinedInput-root': { height: 40, borderRadius: sizeConverter(12, 'radius') } }}
               />
             )}
           />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Button 
-            variant="contained" 
-            onClick={handleApplyFilter} 
-            fullWidth 
-            sx={{ 
-              height: '56px', 
+        <Grid size={{ xs: 12, md: 2 }}>
+          <Button
+            variant="contained"
+            onClick={handleApplyFilter}
+            fullWidth
+            sx={{
               borderRadius: sizeConverter(12, 'radius'),
               fontWeight: 'bold',
               boxShadow: 'none',

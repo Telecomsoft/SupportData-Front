@@ -120,7 +120,7 @@ function WorkItemsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
           boxShadow: '0 4px 20px rgba(0,0,0,0.05)'
         }}
       >
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid size={{ xs: 12, md: 2 }}>
           <Autocomplete
             options={categoryOptions}
             getOptionLabel={(option) => option.name || ''}
@@ -131,13 +131,13 @@ function WorkItemsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 {...params}
                 label="دسته‌بندی"
                 fullWidth
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: sizeConverter(12, 'radius') } }}
+                sx={{ '& .MuiOutlinedInput-root': { height:40, borderRadius: sizeConverter(12, 'radius') } }}
               />
             )}
           />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid size={{ xs: 12, md: 2 }}>
           <Autocomplete
             options={activeOptions}
             getOptionLabel={(option) => option.name || ''}
@@ -148,19 +148,19 @@ function WorkItemsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 {...params}
                 label="وضعیت"
                 fullWidth
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: sizeConverter(12, 'radius') } }}
+                sx={{ '& .MuiOutlinedInput-root': { height:40, borderRadius: sizeConverter(12, 'radius') } }}
               />
             )}
           />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid size={{ xs: 12, md: 2 }}>
           <Button
             variant="contained"
             onClick={handleApplyFilter}
             fullWidth
             sx={{
-              height: '56px',
+
               borderRadius: sizeConverter(12, 'radius'),
               fontWeight: 'bold',
               boxShadow: 'none',

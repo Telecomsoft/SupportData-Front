@@ -13,12 +13,12 @@ import { sizeConverter } from '@utility/sizeConverter'
 import { useDevice } from '@hooks/useDevice'
 import { useGetData } from '@hooks/useGetData'
 import JalaliDatePicker from '@components/JalaliDatePicker'
-import { convertToShamsi } from '@utility/dateConverter'
+import { convertToShamsi, dateFn } from '@utility/dateConverter'
 import { VISIT_START_MODES, WARRANTY_START_MODES } from '@src/data/type/lookups'
 import Grid from '@mui/material/Grid2'
 import CircleIcon from '@mui/icons-material/Circle'
 import { useState } from 'react'
-import { Autocomplete, Box, Button } from '@mui/material'
+import { Autocomplete, Box, Button, Typography } from '@mui/material'
 import StyledTextField from '@components/general/input/StyledTextField'
 
 export const Route = createFileRoute('/(customers)/contractsList')({
@@ -106,7 +106,7 @@ function ContractsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     { field: 'contractNo', headerName: 'شماره', width: sizeConverter(110, 'width') },
     { field: 'name', headerName: 'عنوان', width: sizeConverter(180, 'width') },
     { field: 'customerName', headerName: 'مشتری', width: sizeConverter(150, 'width') },
-    { field: 'contractDate', headerName: 'تاریخ قرارداد', width: sizeConverter(110, 'width'), valueGetter: (r) => (r.contractDate ? convertToShamsi(r.contractDate) : '') },
+    { field: 'contractDate', headerName: 'تاریخ قرارداد', width: sizeConverter(110, 'width'), valueGetter: (r) => (r.contractDate ? dateFn(r.contractDate) : ''), renderCell: (p) => <Grid container justifyContent="center"><Typography variant="body2">{p.row.contractDate ? dateFn(p.row.contractDate) : ''}</Typography></Grid> },
     { field: 'warrantyMonths', headerName: 'گارانتی (ماه)', width: sizeConverter(100, 'width') },
     { field: 'responseHoursProvinceCenter', headerName: 'پاسخ مرکز (ساعت)', width: sizeConverter(120, 'width') },
     { field: 'responseHoursOtherCities', headerName: 'پاسخ شهرها (ساعت)', width: sizeConverter(120, 'width') },
@@ -138,7 +138,7 @@ function ContractsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     { field: 'periodicVisitDescription', headerName: 'توضیحات بازدید', width: sizeConverter(150, 'width') },
 
     // SLA
-    { field: 'workDayStart', headerName: 'شروع ساعت کاری', width: sizeConverter(120, 'width') },
+    { field: 'workDayStart', headerName: 'شروع ساعت کاری', width: sizeConverter(120, 'width'), },
     { field: 'workDayEnd', headerName: 'پایان ساعت کاری', width: sizeConverter(120, 'width') },
     { field: 'supportOnHolidays', headerName: 'پشتیبانی در تعطیلات', width: sizeConverter(140, 'width'), valueGetter: (r) => r.supportOnHolidays ? 'بله' : 'خیر' },
 
@@ -166,7 +166,7 @@ function ContractsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
           boxShadow: '0 4px 20px rgba(0,0,0,0.05)'
         }}
       >
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid size={{ xs: 12, md: 2 }}>
           <Autocomplete
             options={categoryOptions}
             getOptionLabel={(option) => option.name || ''}
@@ -177,13 +177,13 @@ function ContractsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 {...params}
                 label="دسته‌بندی"
                 fullWidth
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: sizeConverter(12, 'radius') } }}
+                sx={{ '& .MuiOutlinedInput-root': { height: 40, borderRadius: sizeConverter(12, 'radius') } }}
               />
             )}
           />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid size={{ xs: 12, md: 2 }}>
           <Autocomplete
             options={activeOptions}
             getOptionLabel={(option) => option.name || ''}
@@ -194,19 +194,18 @@ function ContractsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 {...params}
                 label="وضعیت"
                 fullWidth
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: sizeConverter(12, 'radius') } }}
+                sx={{ '& .MuiOutlinedInput-root': { height: 40, borderRadius: sizeConverter(12, 'radius') } }}
               />
             )}
           />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid size={{ xs: 12, md: 2 }}>
           <Button
             variant="contained"
             onClick={handleApplyFilter}
             fullWidth
             sx={{
-              height: '56px',
               borderRadius: sizeConverter(12, 'radius'),
               fontWeight: 'bold',
               boxShadow: 'none',

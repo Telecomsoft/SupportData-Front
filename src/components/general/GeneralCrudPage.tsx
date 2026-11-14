@@ -47,6 +47,7 @@ export type CrudPageProps = {
     /** an extra list the page needs to wait for (e.g. the provinces for the cities page) */
     isLoadingExtra?: boolean
     dialogWidth?: number
+    dataGridHeight?: number
 }
 
 type Mode = 'add' | 'edit' | 'delete' | null
@@ -56,8 +57,8 @@ type Mode = 'add' | 'edit' | 'delete' | null
  * and the add / edit / delete dialogs. Pages that only differ in their fields use this component.
  */
 const GeneralCrudPage = ({
-    title, queryKey, listEndpoint, createEndpoint, updateEndpoint, deleteEndpoint, accessID, columns, dialogArray,
-    autoCompleteOption, addDefaultValue, cardTitle, cardDescription, deleteDescription, snackbarOpen, isLoadingExtra,dialogWidth,
+    title, queryKey, listEndpoint, createEndpoint, updateEndpoint, deleteEndpoint, accessID, columns, dialogArray, dataGridHeight = sizeConverter(500, 'height'),
+    autoCompleteOption, addDefaultValue, cardTitle, cardDescription, deleteDescription, snackbarOpen, isLoadingExtra, dialogWidth,
 }: CrudPageProps) => {
     const list = useGetData<any[]>(listEndpoint, queryKey)
     const { accessCheck } = useAccessCheck()
@@ -118,6 +119,7 @@ const GeneralCrudPage = ({
                 // ---------------- desktop: grid ----------------
                 <TelecomDataGrid
                     data={rows}
+                    height={dataGridHeight}
                     loading={list.isLoading}
                     doubleClickFunc={() => hasWriteAccess && canEdit && setOpenDialog('edit')}
                     CustomToolBar={() =>

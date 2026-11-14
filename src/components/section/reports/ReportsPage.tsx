@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { Box, Paper, Tab, Tabs } from '@mui/material'
 import { snackbarOpenType } from '@type/snackbarOpen'
-import WorkTaskReportTab from '@components/section/reports/WorkTaskReportTab'
 import WarrantyReportTab from '@components/section/reports/WarrantyReportTab'
 import CustomerBillingTab from '@components/section/reports/CustomerBillingTab'
 import { useDevice } from '@hooks/useDevice'
+import WorkTaskReportTab from './WorkTaskReportTab'
 
 /** The three reports in one page. Every one respects the user's scope on the server (a customer user sees only their own data). */
 const ReportsPage = ({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) => {

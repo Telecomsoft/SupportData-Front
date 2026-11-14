@@ -52,6 +52,7 @@ function CitiesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
       deleteEndpoint="api/Location/DeleteCity/"
       accessID={106}
       columns={columns}
+      dataGridHeight={sizeConverter(585, 'height')}
       dialogArray={dialogArray}
       autoCompleteOption={{ provinceID: provinces.data?.value ?? [] }}
       isLoadingExtra={provinces.isLoading}

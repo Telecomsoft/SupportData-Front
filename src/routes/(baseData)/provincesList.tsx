@@ -32,6 +32,7 @@ function ProvincesList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             deleteEndpoint="api/Location/DeleteProvince/"
             accessID={106}
             columns={columns}
+            dataGridHeight={sizeConverter(585, 'height')}
             dialogArray={dialogArray}
             cardTitle={(r) => r.name}
             deleteDescription={(r) => `آیا از حذف استان ${r.name} اطمینان دارید؟`}
