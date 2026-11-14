@@ -19,6 +19,7 @@ import SelectAllIcon from '@mui/icons-material/SelectAll'
 import DeselectIcon from '@mui/icons-material/Deselect'
 import CircleIcon from '@mui/icons-material/Circle'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import { permissionLabel } from '@utility/accessCheck'
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & { children: React.ReactElement },
@@ -205,7 +206,7 @@ export default function MobilePermissionDialog({
                 <Box sx={{ display: 'flex', alignItems: 'center', p: 2 }}>
                   <Box sx={{ flexGrow: 1 }}>
                     <Typography variant="body1" fontWeight="700">
-                      {perm.name}
+                      {permissionLabel(perm.id, perm.name)}
                     </Typography>
                   </Box>
 

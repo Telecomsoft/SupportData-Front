@@ -1,4 +1,4 @@
-import { FC, } from 'react'
+import { FC, useState } from 'react'
 import Grid from '@mui/material/Grid2'
 import LayoutBreadcrumbs from './LayoutBreadcrumbs '
 import { sizeConverter } from '@src/utility/sizeConverter'
@@ -7,7 +7,9 @@ import LogoutIcon from '@mui/icons-material/Logout'
 
 // import SuspendDialog from '@components/general/SuspendDialog'
 import { withSnackbar } from '@components/hoc/withSnackbar.tsx'
-import Cookies from 'js-cookie'
+import { logout } from '@utility/session'
+import LockResetIcon from '@mui/icons-material/LockReset'
+import ChangePasswordDialog from './ChangePasswordDialog'
 import { Button } from '@mui/material'
 // import TextFieldComp from '@components/general/hookFromInputs/TextFieldComp'
 // import CustomPassword from '@components/section/users/CustomPassword'
@@ -32,21 +34,13 @@ import { Button } from '@mui/material'
 //    },
 // ]
 
-const LayoutTopHeader: FC = ({ }: any) => {
+const LayoutTopHeader: FC = ({ snackbarOpen }: any) => {
+   const [passwordOpen, setPasswordOpen] = useState(false)
    // const [openDialog, setOpenDialog] = useState<Record<string, 'add' | 'edit' | null>>({
    //    passwordAdd: null,
    // })
 
-   const handleLogout = () => {
-      Cookies.remove('auth_token')
-      Cookies.remove('userName')
-      Cookies.remove('userImage')
-      Cookies.remove('userId')
-      Cookies.remove('userType')
-      Cookies.remove('customerID')
-      Cookies.remove('personnelID')
-      window.location.href = '/'
-   }
+   const handleLogout = logout
 
    return (
       <Grid
@@ -63,7 +57,12 @@ const LayoutTopHeader: FC = ({ }: any) => {
       >
          <LayoutBreadcrumbs />
          {/* <HeaderLogo /> */}
-         <Grid
+         <Grid container size="auto" alignItems="center" columnGap={sizeConverter(8, 'spaceX')}>
+            <Button variant="main" onClick={() => setPasswordOpen(true)} sx={{ mt: sizeConverter(2, 'spaceY'), gap: 1 }}>
+               <LockResetIcon sx={{ width: sizeConverter(15), height: sizeConverter(15) }} />
+               تغییر رمز عبور
+            </Button>
+            <Grid
             container
             alignItems="center"
             columnGap={sizeConverter(5, 'space')}
@@ -109,6 +108,8 @@ const LayoutTopHeader: FC = ({ }: any) => {
                />
             </Button>
          </Grid>
+         </Grid>
+         <ChangePasswordDialog open={passwordOpen} close={() => setPasswordOpen(false)} snackbarOpen={snackbarOpen} />
 
 
          {/* <Suspense fallback={<SuspendDialog />}>

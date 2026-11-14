@@ -16,6 +16,13 @@ export default defineConfig({
   },
   server: {
     host: "0.0.0.0",
+    // In production the API is on the same origin as the app (config.ts: endpointMode = productionEndpoint).
+    // The dev server does the same: /api and the uploaded files go to the backend, so no CORS setup is needed.
+    // Another backend: VITE_BACKEND_URL=http://host:port npm run dev
+    proxy: {
+      '/api': { target: process.env.VITE_BACKEND_URL ?? 'http://localhost:5276', changeOrigin: true },
+      '/SupportFiles': { target: process.env.VITE_BACKEND_URL ?? 'http://localhost:5276', changeOrigin: true },
+    },
   },
   build: {
     rollupOptions: {

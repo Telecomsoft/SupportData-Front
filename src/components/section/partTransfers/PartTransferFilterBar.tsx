@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react'
+import JalaliFilterDate from '@components/general/JalaliFilterDate'
 import { Autocomplete, Stack } from '@mui/material'
-import DatePicker, { DateObject } from 'react-multi-date-picker'
-import persian from 'react-date-object/calendars/persian'
-import persian_fa from 'react-date-object/locales/persian_fa'
 import StyledTextField from '@components/general/input/StyledTextField'
 
 type Opt = { id: number; name: string }
@@ -31,11 +29,6 @@ type Props = {
     isFieldTechnician: boolean   // a field technician only sees their own movements: no technician filter
 }
 
-const pad = (n: number) => String(n).padStart(2, '0')
-const toIsoDay = (d: DateObject) => {
-    const g = d.toDate()
-    return `${g.getFullYear()}-${pad(g.getMonth() + 1)}-${pad(g.getDate())}T00:00:00`
-}
 
 /** The filter row above the movement list. Every change goes to the server (the list is paged there). */
 const PartTransferFilterBar = ({ value, onChange, kinds, states, deviceModels, technicians, isFieldTechnician }: Props) => {
@@ -60,13 +53,7 @@ const PartTransferFilterBar = ({ value, onChange, kinds, states, deviceModels, t
         />
     )
     const date = (label: string, current: string | null, set: (iso: string | null) => void) => (
-        <DatePicker
-            calendar={persian}
-            locale={persian_fa}
-            value={current ? new Date(current) : ''}
-            onChange={(d: DateObject | null) => set(d instanceof DateObject ? toIsoDay(d) : null)}
-            render={<StyledTextField size="small" label={label} sx={{ width: 140 }} InputLabelProps={{ shrink: !!current || undefined }} />}
-        />
+        <JalaliFilterDate label={label} value={current} onChange={set} />
     )
 
     return (

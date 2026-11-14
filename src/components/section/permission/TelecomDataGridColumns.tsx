@@ -6,6 +6,7 @@ import CircleIcon from '@mui/icons-material/Circle'
 import { Controller, Control } from 'react-hook-form'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import { TelecomColumnsType } from '@type/TelecomDataGridType.ts'
+import { permissionLabel } from '@utility/accessCheck'
 
 type PermissionColumnsProps = {
     control: Control
@@ -24,7 +25,7 @@ const getPermissionColumns = ({ control, handleAccessChange }: PermissionColumns
                 <Grid container alignItems={'center'} justifyContent={'center'} size={12} columnGap={sizeConverter(4, 'spaceX')}>
                     <Grid container alignItems={'center'} justifyContent={'center'} size="grow">
                         <Typography variant="body1" noWrap>
-                            {params.value ?? '-'}
+                            {permissionLabel(params.row.id, params.value)}
                         </Typography>
                     </Grid>
                 </Grid>

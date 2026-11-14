@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import { Box, Typography, IconButton, Stack } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import MobileBottomNav from '@components/mobile/MobileBottomNav';
@@ -7,24 +7,20 @@ import { useTheme } from '@mui/system';
 import LogoutIcon from '@mui/icons-material/Logout'; // آیکون خروج
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'; // آیکون کاربر (اختیاری)
 import Cookies from 'js-cookie';
+import { logout } from '@utility/session';
+import LockResetIcon from '@mui/icons-material/LockReset';
+import ChangePasswordDialog from './ChangePasswordDialog';
+import { withSnackbar } from '@components/hoc/withSnackbar';
 
 type Props = { children: ReactNode };
 
-export function MobileLayout({ children }: Props) {
+function MobileLayoutBase({ children, snackbarOpen }: Props & { snackbarOpen: any }) {
+    const [passwordOpen, setPasswordOpen] = useState(false);
     const theme = useTheme();
     const userName: string | undefined = Cookies.get('userName')
     // این مقادیر رو معمولاً از Context یا Redux می‌گیری
 
-    const handleLogout = () => {
-        Cookies.remove('auth_token')
-        Cookies.remove('userName')
-        Cookies.remove('userImage')
-        Cookies.remove('userId')
-        Cookies.remove('userType')
-        Cookies.remove('customerID')
-        Cookies.remove('personnelID')
-        window.location.href = '/'
-    }
+    const handleLogout = logout
     return (
         <Grid container sx={{
             height: '100dvh',
@@ -57,11 +53,16 @@ export function MobileLayout({ children }: Props) {
                 <Typography sx={{ fontWeight: 'bold', color: theme.palette.white[0] }}>
                     KIOSK SUPPORT INFO
                 </Typography>
+                <Stack direction="row" alignItems="center">
+                    <IconButton onClick={() => setPasswordOpen(true)} aria-label="تغییر رمز عبور" sx={{ color: theme.palette.white[0] }}>
+                        <LockResetIcon fontSize="medium" />
+                    </IconButton>
                 <IconButton onClick={handleLogout} sx={{ color: theme.palette.white[0] }}>
                     <LogoutIcon sx={{
                         transform: "rotate(180deg)"
                     }} fontSize="medium" />
                 </IconButton>
+                </Stack>
             </Grid>
             <Box sx={{
                 position: 'fixed',
@@ -88,6 +89,9 @@ export function MobileLayout({ children }: Props) {
 
             {/* Bottom Navigation */}
             <MobileBottomNav />
+            <ChangePasswordDialog open={passwordOpen} close={() => setPasswordOpen(false)} snackbarOpen={snackbarOpen} />
         </Grid>
     );
 }
+
+export const MobileLayout = withSnackbar(MobileLayoutBase as any) as any;

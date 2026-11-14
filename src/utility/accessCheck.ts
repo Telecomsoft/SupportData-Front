@@ -50,3 +50,42 @@ export const useAccessCheck = () => {
 
    return { accessCheck, canPerform, accessInfo }
 }
+
+// Persian names for the permission list: the backend sends English names (SDConstants.PermissionsList).
+// 101-115 are modules (open a screen); 201 and up are single operations ("may finish a task").
+export const PERMISSION_LABELS: Record<number, string> = {
+   101: 'مدیریت کاربران',
+   102: 'مدیریت نقش ها',
+   103: 'مدیریت بانک ها',
+   104: 'مدیریت قطعات',
+   105: 'مدیریت خطاها',
+   106: 'اطلاعات پایه',
+   107: 'مشتریان',
+   108: 'پرسنل',
+   109: 'قراردادها',
+   110: 'کیوسک ها',
+   111: 'فعالیت ها',
+   112: 'انبار قطعات',
+   113: 'تعمیرات',
+   114: 'صورتحساب ها',
+   115: 'گزارشات',
+   201: 'فعالیت - ثبت',
+   202: 'فعالیت - ویرایش',
+   203: 'فعالیت - ارجاع',
+   204: 'فعالیت - انصراف',
+   205: 'فعالیت - اتمام',
+   206: 'فعالیت - تایید نهایی',
+   207: 'فعالیت - ویرایش فعالیت بسته شده',
+   208: 'فعالیت - تایید دریافت فرم',
+   209: 'فعالیت - مشاهده فعالیت های همه',
+   210: 'فعالیت - اصلاح تاریخ ها',
+   220: 'کیوسک - مشاهده رمزها',
+   230: 'انبار - تایید حواله',
+   240: 'تعمیرات - مشاهده تعمیرات همه',
+   241: 'تعمیرات - بستن تعمیر',
+   250: 'صورتحساب - تایید',
+   251: 'صورتحساب - ثبت پرداخت',
+}
+
+/** The Persian name of a permission; a permission added to the backend and not listed above shows its English name. */
+export const permissionLabel = (id: number, fallback?: string | null) => PERMISSION_LABELS[id] ?? fallback ?? String(id)

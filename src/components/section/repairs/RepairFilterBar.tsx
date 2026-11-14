@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react'
+import JalaliFilterDate from '@components/general/JalaliFilterDate'
 import { Autocomplete, Stack } from '@mui/material'
-import DatePicker, { DateObject } from 'react-multi-date-picker'
-import persian from 'react-date-object/calendars/persian'
-import persian_fa from 'react-date-object/locales/persian_fa'
 import StyledTextField from '@components/general/input/StyledTextField'
 
 type Opt = { id: number; name: string }
@@ -31,12 +29,6 @@ type Props = {
     technicians: Opt[]
 }
 
-const pad = (n: number) => String(n).padStart(2, '0')
-// the picked Jalali day as a local "YYYY-MM-DD" (no timezone shift)
-const toIsoDay = (d: DateObject, end: boolean) => {
-    const g = d.toDate()
-    return `${g.getFullYear()}-${pad(g.getMonth() + 1)}-${pad(g.getDate())}T${end ? '23:59:59' : '00:00:00'}`
-}
 
 /** The filter row above the repair list. Every change goes to the server (the list is paged there). */
 const RepairFilterBar = ({ value, onChange, states, deviceModels, customers, technicians }: Props) => {
@@ -64,13 +56,7 @@ const RepairFilterBar = ({ value, onChange, states, deviceModels, customers, tec
         />
     )
     const date = (label: string, current: string | null, set: (iso: string | null) => void, end: boolean) => (
-        <DatePicker
-            calendar={persian}
-            locale={persian_fa}
-            value={current ? new Date(current) : ''}
-            onChange={(d: DateObject | null) => set(d instanceof DateObject ? toIsoDay(d, end) : null)}
-            render={<StyledTextField size="small" label={label} sx={{ width: 140 }} InputLabelProps={{ shrink: !!current || undefined }} />}
-        />
+        <JalaliFilterDate label={label} value={current} onChange={set} endOfDay={end} />
     )
 
     return (

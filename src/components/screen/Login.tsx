@@ -8,6 +8,8 @@ import Drawer from '@mui/material/Drawer'
 import Box from '@mui/material/Box'
 import { SNACKBAR_SEVERITIES, SnackbarSeverity, withSnackbar } from '@components/hoc/withSnackbar'
 import Cookies from 'js-cookie'
+import { getLandingRoute } from '@utility/landingRoute'
+import { clearSession } from '@utility/session'
 import StyledTextField from '@components/general/input/StyledTextField'
 import CustomCircularProgress from '@components/general/CustomCircularProgress'
 import { sizeConverter } from '@utility/sizeConverter'
@@ -64,7 +66,12 @@ const Login = (props: Partial<LoginProps>) => {
                else 
                   Cookies.remove('personnelID', { path: '/' })
 
-               navigate({ to: '/errorsList' })
+               const landing = getLandingRoute(res.data.value.accessInfo)
+               if (landing) navigate({ to: landing as any })
+               else {
+                  clearSession()
+                  snackbarOpen?.('این کاربر به هیچ بخشی دسترسی ندارد. با مدیر سیستم تماس بگیرید.', SNACKBAR_SEVERITIES.ERROR)
+               }
 
             } else {
                snackbarOpen?.(res.data.error + ' ' + res.data.errorMessage, SNACKBAR_SEVERITIES.ERROR)

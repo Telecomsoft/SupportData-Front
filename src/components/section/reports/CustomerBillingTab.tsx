@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useRef, useState } from 'react'
 import { Alert, Autocomplete, Box, Button, Chip, Paper, Stack, Typography } from '@mui/material'
-import DatePicker, { DateObject } from 'react-multi-date-picker'
-import persian from 'react-date-object/calendars/persian'
-import persian_fa from 'react-date-object/locales/persian_fa'
 import { snackbarOpenType } from '@type/snackbarOpen'
 import { SNACKBAR_SEVERITIES } from '@components/hoc/withSnackbar'
 import CustomCircularProgress from '@components/general/CustomCircularProgress'
@@ -14,14 +11,10 @@ import { usePostQuery } from '@hooks/usePostQuery'
 import { useUserScope } from '@hooks/useUserScope'
 import { day, num, rial } from '@components/section/statements/statementFormat'
 import StyledTextField from '@components/general/input/StyledTextField'
+import JalaliFilterDate from '@components/general/JalaliFilterDate'
 
 type Opt = { id: number; name: string }
 
-const pad = (n: number) => String(n).padStart(2, '0')
-const toIsoDay = (d: DateObject) => {
-    const g = d.toDate()
-    return `${g.getFullYear()}-${pad(g.getMonth() + 1)}-${pad(g.getDate())}T00:00:00`
-}
 
 /**
  * The customer billing report (POST api/Report/CustomerBillingReport): what to invoice a customer for the tasks
@@ -68,11 +61,7 @@ const CustomerBillingTab = ({ snackbarOpen }: { snackbarOpen: snackbarOpenType }
     }
 
     const date = (label: string, current: string | null, set: (v: string | null) => void) => (
-        <DatePicker
-            calendar={persian} locale={persian_fa} value={current ? new Date(current) : ''}
-            onChange={(d: DateObject | null) => set(d instanceof DateObject ? toIsoDay(d) : null)}
-            render={<StyledTextField size="small" label={label} sx={{ width: 150 }} InputLabelProps={{ shrink: !!current || undefined }} />}
-        />
+        <JalaliFilterDate label={label} value={current} onChange={set} />
     )
 
     return (

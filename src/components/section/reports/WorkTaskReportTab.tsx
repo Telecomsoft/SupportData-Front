@@ -5,9 +5,6 @@ import {
     Alert, Autocomplete, Box, Button, Chip, Paper, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow,
     TextField, ToggleButton, ToggleButtonGroup, Typography,
 } from '@mui/material'
-import DatePicker, { DateObject } from 'react-multi-date-picker'
-import persian from 'react-date-object/calendars/persian'
-import persian_fa from 'react-date-object/locales/persian_fa'
 import { snackbarOpenType } from '@type/snackbarOpen'
 import { SNACKBAR_SEVERITIES } from '@components/hoc/withSnackbar'
 import CustomCircularProgress from '@components/general/CustomCircularProgress'
@@ -19,6 +16,7 @@ import { useAccessCheck } from '@utility/accessCheck'
 import { dateFn } from '@utility/dateConverter'
 import { num } from '@components/section/statements/statementFormat'
 import { nameOf } from '@src/data/type/lookups'
+import JalaliFilterDate from '@components/general/JalaliFilterDate'
 
 type Opt = { id: number; name: string }
 type Tri = boolean | null
@@ -63,11 +61,6 @@ const toBody = (d: Draft): Record<string, unknown> => ({
 })
 
 const PAGE_SIZE = 50
-const pad = (n: number) => String(n).padStart(2, '0')
-const toIsoDay = (d: DateObject, end: boolean) => {
-    const g = d.toDate()
-    return `${g.getFullYear()}-${pad(g.getMonth() + 1)}-${pad(g.getDate())}T${end ? '23:59:59' : '00:00:00'}`
-}
 
 /** "all / yes / no" for a filter that is true, false or not used */
 const TriButtons = ({ label, value, onChange }: { label: string; value: Tri; onChange: (v: Tri) => void }) => (
@@ -122,11 +115,7 @@ const WorkTaskReportTab = ({ snackbarOpen }: { snackbarOpen: snackbarOpenType })
         />
     )
     const date = (label: string, current: string | null, onChange: (iso: string | null) => void, end: boolean) => (
-        <DatePicker
-            calendar={persian} locale={persian_fa} value={current ? new Date(current) : ''}
-            onChange={(d: DateObject | null) => onChange(d instanceof DateObject ? toIsoDay(d, end) : null)}
-            render={<TextField size="small" label={label} sx={{ width: 140 }} InputLabelProps={{ shrink: !!current || undefined }} />}
-        />
+        <JalaliFilterDate label={label} value={current} onChange={onChange} endOfDay={end} />
     )
 
     // every matching row, not just the page on screen
