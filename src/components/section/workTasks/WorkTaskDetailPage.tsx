@@ -24,7 +24,7 @@ import WorkTaskPrintDialog from '@components/section/workTasks/WorkTaskPrintDial
 import {
     buildAssignForm, buildChangeStateForm, buildCorrectDatesForm, buildPaymentForm, buildReplacePartForm, buildWorkTaskEditForm,
 } from '@src/data/dialogArrays/workTaskForm'
-import { isTaskClosed, TASK_TRANSITIONS } from '@src/data/type/lookups'
+import { isTaskClosed, TASK_TRANSITIONS, TASK_TYPES, WORK_MODES } from '@src/data/type/lookups'
 import { useWorkTaskLookups } from '@hooks/useWorkTaskLookups'
 import { useGetData } from '@hooks/useGetData'
 import { usePutData } from '@hooks/usePutData'
@@ -247,9 +247,9 @@ const WorkTaskDetailPage = ({ id, snackbarOpen }: { id: number; snackbarOpen: sn
                     '&::-webkit-scrollbar': { width: '6px' }, '&::-webkit-scrollbar-thumb': { backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: '4px' },
                 }}
             >
-                {tab === 'info' && <WorkTaskInfoTab task={t} contractorName={contractorName} workItemNames={workItemNames} workModes={lookups.options.workModes} isCustomer={isCustomer} />}
+                {tab === 'info' && <WorkTaskInfoTab task={t} contractorName={contractorName} workItemNames={workItemNames} isCustomer={isCustomer} />}
                 {tab === 'costs' && !isCustomer && <WorkTaskCostsTab task={t} />}
-                {tab === 'log' && <WorkTaskLogTab taskID={id} refreshKey={refreshKey} states={lookups.options.states} />}
+                {tab === 'log' && <WorkTaskLogTab taskID={id} refreshKey={refreshKey} />}
             </Paper>
 
             {/* ---------------- dialogs ---------------- */}
@@ -261,7 +261,7 @@ const WorkTaskDetailPage = ({ id, snackbarOpen }: { id: number; snackbarOpen: sn
                     close={close}
                     array={editForm}
                     editEndpoint="api/WorkTask/UpdateWorkTask"
-                    autoCompleteOption={{ workTaskType: lookups.options.types, workMode: lookups.options.workModes, errorIDs: errorOptions, workItemIDs: workItemOptions }}
+                    autoCompleteOption={{ workTaskType: TASK_TYPES, workMode: WORK_MODES, errorIDs: errorOptions, workItemIDs: workItemOptions }}
                     defaultValue={{ ...t }}
                     sendFinalData
                     apiValueGetter={((data: any) => {

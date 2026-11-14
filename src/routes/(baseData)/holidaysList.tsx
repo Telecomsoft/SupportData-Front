@@ -17,6 +17,7 @@ import Button from '@mui/material/Button'
 import Autocomplete from '@mui/material/Autocomplete'
 import StyledTextField from '@components/general/input/StyledTextField'
 import { useState } from 'react'
+import jalaali from 'jalaali-js'
 
 export const Route = createFileRoute('/(baseData)/holidaysList')({
   component: withSnackbar(HolidaysList),
@@ -30,15 +31,11 @@ function HolidaysList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
   const [selectedYear, setSelectedYear] = useState<number>(0)
   const [filterYear, setFilterYear] = useState<number>(0)
 
-  // تولید لیست سال‌ها (مثلاً از سال ۱۴۰۳ تا ۱۴۰۸ یا سال جاری شمسی)
-  const currentShamsiYear = 1405 // بر اساس تاریخ جاری سیستم
+  // the Jalali years to filter by: two before the current year to two after it (follows the system clock)
+  const currentShamsiYear = jalaali.toJalaali(new Date()).jy
   const yearOptions = [
     { id: 0, name: 'همه سال‌ها' },
-    { id: 1403, name: '1403' },
-    { id: 1404, name: '1404' },
-    { id: 1405, name: '1405' },
-    { id: 1406, name: '1406' },
-    { id: 1407, name: '1407' },
+    ...Array.from({ length: 5 }, (_, i) => currentShamsiYear - 2 + i).map((y) => ({ id: y, name: String(y) })),
   ]
 
   const handleApplyFilter = () => {
