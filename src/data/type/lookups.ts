@@ -11,12 +11,18 @@ export const USER_TYPES: Option[] = [
 ]
 export const PERSONNEL_TYPES: Option[] = USER_TYPES.map((t) => (t.id === 5 ? { id: 5, name: 'نماینده مشتری' } : t))
 
-// SDConstants._TASKTYPE_*  (2003, 2005, 2006 exist in the old data: add them here once their names are confirmed)
+// SDConstants._TASKTYPE_*
 export const TASK_TYPES: Option[] = [
     { id: 1001, name: 'نصب' },
     { id: 1002, name: 'خرابی' },
     { id: 1003, name: 'بازدید' },
     { id: 2002, name: 'خرابی و بازدید' },
+    { id: 2003, name: 'بروزرسانی' },
+    { id: 2004, name: 'در حال تست' },
+    { id: 2005, name: 'پرستاری' },
+    { id: 2006, name: 'بی مورد' },
+    { id: 2007, name: 'نصب فیزیکی' },
+    { id: 2008, name: 'نظارت بر حمل و جابجایی' },
 ]
 
 // SDConstants._WARRANTYSTART_*
@@ -47,11 +53,16 @@ export const TASK_STATES: Option[] = [
     { id: 7, name: 'اتمام' },
     { id: 8, name: 'تایید نهایی' },
     { id: 3, name: 'انصراف' },
+    // only in the history of tasks migrated from the old app: no task is in these now and none can be moved into them
+    { id: 6, name: 'منتظر آمادگی مشتری' },
+    { id: 9, name: 'مراجعه شده' },
+    { id: 10, name: 'مراجعه شده، منتظر برگه' },
 ]
 
 export const WORK_MODES: Option[] = [
-    { id: 1, name: 'از راه دور' },
-    { id: 2, name: 'حضوری' },
+    { id: 1, name: 'تلفنی' },
+    { id: 2, name: 'مراجعه پیمانکار' },
+    { id: 3, name: 'مراجعه پرسنل' },
 ]
 
 // the customer's own users may only report a fault (the server refuses anything else)
