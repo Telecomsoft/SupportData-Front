@@ -49,7 +49,7 @@ const WorkTaskFilterBar = ({ value, onChange, customers, cities, technicians, is
     const combo = (label: string, options: Opt[], selected: Opt | null, set: (o: Opt | null) => void) => (
         <StyledAutoComplete
             size="small"
-            sx={{ minWidth: 170 }}
+            sx={{ width: 180, '& .MuiOutlinedInput-root': { height: 30 } }}
             options={options}
             value={selected}
             getOptionLabel={(o: any) => o.name}
@@ -62,7 +62,7 @@ const WorkTaskFilterBar = ({ value, onChange, customers, cities, technicians, is
         <StyledAutoComplete
             multiple
             size="small"
-            sx={{ minWidth: 200 }}
+            sx={{ width: 220, '& .MuiOutlinedInput-root': { minHeight: 30, height: 'auto' } }}
             options={options}
             value={selected}
             limitTags={1}
