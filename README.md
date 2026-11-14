@@ -1,3 +1,31 @@
+# SupportData-Front (kiosk support)
+
+React + TypeScript + Vite + MUI. The screens talk to the SupportData backend (`api/...`).
+
+## Run it
+
+1. `npm install`
+2. Copy `config.example.ts` to `config.ts` (it is git-ignored: it holds this machine's server addresses). The default
+   `endpointMode = productionEndpoint` means "the API is on the same address as the app".
+3. Start the backend (SupportData, default `http://localhost:5276`).
+4. `npm run dev`. The dev server forwards `/api` and `/SupportFiles` to the backend, so there is nothing to set up for CORS.
+   Another backend address: `VITE_BACKEND_URL=http://host:port npm run dev`.
+5. Log in. A new database has the user `admin` / `admin123` (change it from the header, "تغییر رمز عبور").
+
+`npm run build` = type check (`tsc -b`) + production build. It must pass before merging.
+
+## Where things are
+
+- `src/routes/` one file per screen (TanStack Router, file based). The sidebar and the access rules are in
+  `src/data/layout-sidebar-data.ts` (`accessID` = the backend's permission id).
+- `src/utility/accessCheck.ts` `useAccessCheck()`: module permissions (101-115) and operation permissions (201 and up).
+  The permission list comes from the login response and lives in localStorage (too big for a cookie).
+- `src/utility/session.ts` / `setupAxios.ts`: logout, and what happens when the server answers 401 (token expired).
+- `src/hooks/use*Data.ts` the request hooks. The server answers business errors with HTTP 200 and `{ error != 0 }`:
+  always check `res.error`. Use `mutateAsync(...).then(...)` (not callbacks of `mutate`) when the component can
+  close or unmount before the reply arrives.
+- `src/components/general/GeneralDialog.tsx` the generic add/edit form, `GeneralCrudPage.tsx` the generic list page.
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

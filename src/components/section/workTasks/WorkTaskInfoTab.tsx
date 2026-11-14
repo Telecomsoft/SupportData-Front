@@ -3,6 +3,7 @@ import Grid from '@mui/material/Grid2'
 import { Box, Divider, Typography } from '@mui/material'
 import { dateFn } from '@utility/dateConverter'
 import { nameOf, WORK_MODES } from '@src/data/type/lookups'
+import { num } from '@components/section/statements/statementFormat'
 
 const date = (d?: string | null) => (d ? dateFn(d) : '-')
 const text = (v?: string | number | null) => (v === null || v === undefined || v === '' ? '-' : String(v))
@@ -31,7 +32,7 @@ const WorkTaskInfoTab = ({ task, contractorName, workItemNames, isCustomer }: Pr
             rows: [
                 ['زمان گزارش', date(task.reportedAt)], ['زمان ثبت', date(task.createdAt)], ['مهلت', date(task.dueAt)],
                 ['زمان اتمام', date(task.finishedAt)], ['زمان تایید', date(task.approvedAt)],
-                ['روز تاخیر', text(task.delayDays)], ['تعداد مراجعه', text(task.numberOfVisits)],
+                ['روز تاخیر', num(task.delayDays)], ['تعداد مراجعه', num(task.numberOfVisits)],
             ],
         },
         { title: 'شرح مشکل', rows: [['', text(task.reportedIssue)]] },
