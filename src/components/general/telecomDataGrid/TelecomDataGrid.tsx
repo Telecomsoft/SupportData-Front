@@ -233,7 +233,15 @@ const TelecomDataGrid = ({
          }
       }
       if (savedPinnedColumns || pinnedColumnsProps) {
-         setPinnedColumns(JSON.parse(savedPinnedColumns) || pinnedColumnsProps)
+         // a page may pin only one side ({ right: ['actions'] }) and old saves may be partial: the pin/unpin code
+         // needs both lists, so a missing or unreadable side becomes []
+         let saved: any = null
+         try { saved = savedPinnedColumns ? JSON.parse(savedPinnedColumns) : null } catch { /* unreadable: ignore */ }
+         const source = saved && typeof saved === 'object' ? saved : pinnedColumnsProps
+         setPinnedColumns({
+            left: Array.isArray(source?.left) ? source.left : [],
+            right: Array.isArray(source?.right) ? source.right : [],
+         })
       }
       if (savedSortDirection || defaultSortColumns) {
          // an older version saved this as an object: only a list is usable, anything else would crash the header
@@ -257,12 +265,13 @@ const TelecomDataGrid = ({
          const newPinned = { ...prev }
          const otherSide = side === 'left' ? 'right' : 'left'
 
-         newPinned[otherSide] = newPinned[otherSide].filter((id) => id !== columnId)
+         newPinned[otherSide] = (newPinned[otherSide] ?? []).filter((id) => id !== columnId)
+         const current = newPinned[side] ?? []
 
-         if (newPinned[side].includes(columnId)) {
-            newPinned[side] = newPinned[side].filter((id) => id !== columnId)
+         if (current.includes(columnId)) {
+            newPinned[side] = current.filter((id) => id !== columnId)
          } else {
-            newPinned[side] = [...newPinned[side], columnId]
+            newPinned[side] = [...current, columnId]
          }
          return newPinned
       })

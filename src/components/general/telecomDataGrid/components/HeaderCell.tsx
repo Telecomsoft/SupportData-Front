@@ -204,8 +204,8 @@ const HeaderCell = ({
             onClick: () => {
                setPinnedColumns((prev) => {
                   const newPinned = { ...prev }
-                  newPinned.left = newPinned.left.filter((id) => id !== column.field)
-                  newPinned.right = newPinned.right.filter((id) => id !== column.field)
+                  newPinned.left = (newPinned.left ?? []).filter((id) => id !== column.field)
+                  newPinned.right = (newPinned.right ?? []).filter((id) => id !== column.field)
                   return newPinned
                })
             },
