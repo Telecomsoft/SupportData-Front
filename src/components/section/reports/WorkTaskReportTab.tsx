@@ -3,7 +3,7 @@ import { useMemo, useState, type ReactNode } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import Grid from '@mui/material/Grid2'
 import {
-    Alert, Box, Button, Chip, Paper, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow,
+    Alert, Box, Button, Chip, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow,
     ToggleButton, ToggleButtonGroup, Typography,
 } from '@mui/material'
 import { snackbarOpenType } from '@type/snackbarOpen'
@@ -19,7 +19,9 @@ import { useAccessCheck } from '@utility/accessCheck'
 import { dateFn } from '@utility/dateConverter'
 import { sizeConverter } from '@utility/sizeConverter'
 import { num } from '@components/section/statements/statementFormat'
-import { nameOf } from '@src/data/type/lookups'
+import { nameOf, TASK_STATE_COLOR } from '@src/data/type/lookups'
+import RankBars from '@components/general/RankBars'
+import WorkTaskStateChip from '@components/section/workTasks/WorkTaskStateChip'
 import JalaliFilterDate from '@components/general/JalaliFilterDate'
 
 type Opt = { id: number; name: string }
@@ -218,32 +220,36 @@ const WorkTaskReportTab = ({ snackbarOpen }: { snackbarOpen: snackbarOpenType })
                 </Stack>
             </Paper>
 
-            {/* ---- the totals: the groups side by side (not under each other), so they take one short band ---- */}
+            {/* ---- the totals: one card with the counts, and (for staff) the busiest technicians as ranked bars ---- */}
             {sum && (
-                <Paper elevation={0} sx={{ p: sizeConverter(12, 'spaceX'), mb: sizeConverter(8, 'spaceY'), borderRadius: 3, border: '1px solid', borderColor: 'divider' }}>
-                    <Grid container spacing={sizeConverter(12, 'spaceX')} alignItems="flex-start">
-                        <Grid size={{ xs: 12, md: 2 }}>
-                            <Typography variant="subtitle1" fontWeight={700}>جمع: {num(sum.total)} فعالیت</Typography>
-                        </Grid>
-                        <Grid size={{ xs: 12, md: isCustomer ? 5 : 4 }}>
+                <Grid container spacing={sizeConverter(8, 'spaceX')} sx={{ mb: sizeConverter(8, 'spaceY') }}>
+                    <Grid size={{ xs: 12, md: isCustomer ? 12 : 5 }}>
+                        <Paper elevation={0} sx={{ p: 2.5, height: '100%', borderRadius: 3, border: '1px solid', borderColor: 'divider' }}>
+                            <Typography variant="body2" color="text.secondary">نتیجه‌ی فیلتر</Typography>
+                            <Typography variant="h4" fontWeight={700} sx={{ mb: 1.5 }}>{num(sum.total)} <Typography component="span" variant="body1" color="text.secondary">فعالیت</Typography></Typography>
                             <ChipGroup title="وضعیت">
-                                {Object.entries(sum.byState ?? {}).map(([id, n]) => <Chip key={`s${id}`} size="small" color="primary" variant="outlined" sx={chipSx} label={`${nameOf(lookups.options.states, Number(id)) || id}: ${num(n as number)}`} />)}
+                                {Object.entries(sum.byState ?? {}).map(([id, n]) => (
+                                    <Chip key={`s${id}`} size="small" color={TASK_STATE_COLOR[Number(id)] ?? 'default'} sx={chipSx} label={`${nameOf(lookups.options.states, Number(id)) || id}: ${num(n as number)}`} />
+                                ))}
                             </ChipGroup>
-                        </Grid>
-                        <Grid size={{ xs: 12, md: isCustomer ? 5 : 3 }}>
-                            <ChipGroup title="نوع">
-                                {Object.entries(sum.byType ?? {}).map(([id, n]) => <Chip key={`t${id}`} size="small" variant="outlined" sx={chipSx} label={`${nameOf(lookups.options.types, Number(id)) || id}: ${num(n as number)}`} />)}
-                            </ChipGroup>
-                        </Grid>
-                        {!isCustomer && (
-                            <Grid size={{ xs: 12, md: 3 }}>
-                                <ChipGroup title="ارجاع‌شده به">
-                                    {(sum.byTechnician ?? []).map((t: any) => <Chip key={t.name} size="small" sx={chipSx} label={`${t.name}: ${num(t.count)}`} />)}
+                            <Box sx={{ mt: 1.5 }}>
+                                <ChipGroup title="نوع">
+                                    {Object.entries(sum.byType ?? {}).map(([id, n]) => <Chip key={`t${id}`} size="small" variant="outlined" sx={chipSx} label={`${nameOf(lookups.options.types, Number(id)) || id}: ${num(n as number)}`} />)}
                                 </ChipGroup>
-                            </Grid>
-                        )}
+                            </Box>
+                        </Paper>
                     </Grid>
-                </Paper>
+                    {!isCustomer && (
+                        <Grid size={{ xs: 12, md: 7 }}>
+                            <RankBars
+                                title="بر اساس ارجاع‌شده به"
+                                subtitle="بیشترین فعالیت در بالا"
+                                limit={6}
+                                data={(sum.byTechnician ?? []).map((t: any) => ({ name: (t.name ?? '').trim().length > 1 ? t.name : 'بدون ارجاع مشخص', count: t.count }))}
+                            />
+                        </Grid>
+                    )}
+                </Grid>
             )}
 
             {/* ---- the rows ---- */}
@@ -251,41 +257,43 @@ const WorkTaskReportTab = ({ snackbarOpen }: { snackbarOpen: snackbarOpenType })
                 : failed ? <Alert severity="error">{rows.data?.errorMessage ?? 'دریافت گزارش انجام نشد'}</Alert>
                 : (
                     <Paper elevation={0} sx={{ borderRadius: 3, border: '1px solid', borderColor: 'divider', overflow: 'hidden' }}>
-                        <Box sx={{ overflowX: 'auto' }}>
-                            {/* tighter cells: more rows on the screen */}
-                            <Table size="small" sx={{ '& .MuiTableCell-root': { py: sizeConverter(4, 'spaceY'), px: sizeConverter(8, 'spaceX') } }}>
+                        {/* related values share a cell, and the header stays in view while the rows scroll */}
+                        <TableContainer sx={{ maxHeight: '68vh' }}>
+                            <Table size="small" stickyHeader sx={{ '& .MuiTableCell-root': { py: sizeConverter(5, 'spaceY'), px: sizeConverter(8, 'spaceX') }, '& .MuiTableCell-head': { fontWeight: 700, bgcolor: 'background.paper' } }}>
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell>شماره</TableCell><TableCell>نوع</TableCell><TableCell>وضعیت</TableCell><TableCell>کیوسک</TableCell>
-                                        <TableCell>شعبه</TableCell><TableCell>شهر</TableCell>{!isCustomer && <TableCell>مشتری</TableCell>}
-                                        {!isCustomer && <TableCell>ارجاع‌شده به</TableCell>}<TableCell>زمان گزارش</TableCell><TableCell>زمان اتمام</TableCell>
-                                        <TableCell>تاخیر</TableCell><TableCell>گارانتی</TableCell><TableCell>مبلغ مشتری</TableCell>
+                                        <TableCell>فعالیت</TableCell><TableCell>وضعیت</TableCell><TableCell>کیوسک</TableCell>
+                                        {!isCustomer && <TableCell>مشتری</TableCell>}
+                                        {!isCustomer && <TableCell>ارجاع‌شده به</TableCell>}
+                                        <TableCell>گزارش</TableCell><TableCell>اتمام</TableCell><TableCell align="center">تاخیر</TableCell>
+                                        <TableCell>گارانتی</TableCell><TableCell align="right">مبلغ مشتری</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {items.map((r) => (
-                                        <TableRow key={r.workTaskID} hover>
+                                        <TableRow key={r.workTaskID} hover onClick={canOpenTask ? () => navigate({ to: `/workTaskDetail/${r.workTaskID}` }) : undefined} sx={{ cursor: canOpenTask ? 'pointer' : 'default' }}>
                                             <TableCell>
-                                                {canOpenTask ? <Button size="small" sx={{ p: 0, minWidth: 0 }} onClick={() => navigate({ to: `/workTaskDetail/${r.workTaskID}` })}>#{r.workTaskID}</Button> : `#${r.workTaskID}`}
+                                                <Typography variant="body2" fontWeight={700} color={canOpenTask ? 'primary' : undefined}>#{r.workTaskID}</Typography>
+                                                <Typography variant="caption" color="text.secondary">{r.typeName ?? '-'}</Typography>
                                             </TableCell>
-                                            <TableCell>{r.typeName ?? '-'}</TableCell>
-                                            <TableCell>{r.stateName ?? '-'}</TableCell>
-                                            <TableCell dir="ltr" sx={{ textAlign: 'right' }}>{r.kioskSerial ?? '-'}</TableCell>
-                                            <TableCell>{r.branchName ?? '-'}</TableCell>
-                                            <TableCell>{r.cityName ?? '-'}</TableCell>
+                                            <TableCell><WorkTaskStateChip task={r} /></TableCell>
+                                            <TableCell>
+                                                <Typography variant="body2" dir="ltr" noWrap sx={{ textAlign: 'start' }}>{r.kioskSerial ?? '-'}</Typography>
+                                                <Typography variant="caption" color="text.secondary">{[r.branchName, r.cityName].filter(Boolean).join(' - ')}</Typography>
+                                            </TableCell>
                                             {!isCustomer && <TableCell>{r.customerName ?? '-'}</TableCell>}
-                                            {!isCustomer && <TableCell>{r.assignedToName ?? '-'}</TableCell>}
+                                            {!isCustomer && <TableCell>{(r.assignedToName ?? '').trim().length > 1 ? r.assignedToName : '-'}</TableCell>}
                                             <TableCell>{r.reportedAt ? dateFn(r.reportedAt) : '-'}</TableCell>
                                             <TableCell>{r.finishedAt ? dateFn(r.finishedAt) : '-'}</TableCell>
-                                            <TableCell>{num(r.delayDays)}</TableCell>
-                                            <TableCell>{r.underWarranty ? <Chip size="small" color="success" label="بله" sx={chipSx} /> : <Chip size="small" label="خیر" sx={chipSx} />}</TableCell>
-                                            <TableCell>{num(r.customerTotal)}</TableCell>
+                                            <TableCell align="center">{r.delayDays > 0 ? <Chip size="small" color="error" variant="outlined" sx={chipSx} label={`${num(r.delayDays)} روز`} /> : '-'}</TableCell>
+                                            <TableCell>{r.underWarranty ? <Chip size="small" color="success" label="تحت گارانتی" sx={chipSx} /> : <Chip size="small" label="خارج از گارانتی" sx={chipSx} />}</TableCell>
+                                            <TableCell align="right">{r.customerTotal ? num(r.customerTotal) : '-'}</TableCell>
                                         </TableRow>
                                     ))}
-                                    {items.length === 0 && <TableRow><TableCell colSpan={13} align="center">موردی پیدا نشد</TableCell></TableRow>}
+                                    {items.length === 0 && <TableRow><TableCell colSpan={10} align="center" sx={{ py: 4, color: 'text.secondary' }}>موردی با این فیلتر پیدا نشد</TableCell></TableRow>}
                                 </TableBody>
                             </Table>
-                        </Box>
+                        </TableContainer>
                         <TablePagination
                             component="div" count={total} page={page} rowsPerPage={PAGE_SIZE} rowsPerPageOptions={[PAGE_SIZE]}
                             onPageChange={(_, p) => setPage(p)} labelRowsPerPage="" labelDisplayedRows={({ from, to, count }) => `${from}–${to} از ${count}`}
