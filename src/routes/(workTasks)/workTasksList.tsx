@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import Grid from '@mui/material/Grid2'
-import { Box, Button, Dialog, DialogContent, Fab, IconButton, TextField, Tooltip, Typography } from '@mui/material'
+import { Box, Button, Dialog, DialogContent, Fab, IconButton, Tooltip, Typography } from '@mui/material'
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
@@ -33,6 +33,7 @@ import { num } from '@components/section/statements/statementFormat'
 import { buildPayload } from '@utility/buildPayload'
 import { useWorkTaskPdf } from '@hooks/useWorkTaskPdf'
 import WorkTaskBulkBar from '@components/section/workTasks/WorkTaskBulkBar'
+import StyledTextField from '@components/general/input/StyledTextField'
 
 export const Route = createFileRoute('/(workTasks)/workTasksList')({
     component: withSnackbar(WorkTasksList),
@@ -249,11 +250,11 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             ) : isMobile ? (
                 // ---------------- mobile: search + cards + "load more" ----------------
                 <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', overflowY: 'auto', pb: 26, gap: 1.5 }}>
-                    <TextField size="small" placeholder="جستجو در شرح مشکل و توضیحات" value={mobileSearch} onChange={(e) => setMobileSearch(e.target.value)} />
+                    <StyledTextField size="small" placeholder="جستجو در شرح مشکل و توضیحات" value={mobileSearch} onChange={(e) => setMobileSearch(e.target.value)} />
                     <WorkTaskFilterBar value={filter} onChange={changeFilter} customers={lookups.options.customerID} cities={lookups.options.cityID} technicians={lookups.options.assignedToID} isCustomer={isCustomer} />
                     {mobileItems.map((t) => <WorkTaskMobileCard key={t.id} task={t} onOpen={() => open(t.id)} />)}
                     {mobileItems.length < total && (
-                        <Button onClick={() => setServerCtrl((prev) => ({ ...prev, currentPage: page + 1 }))} disabled={list.isFetching}>بیشتر</Button>
+                        <Button variant="cancel" onClick={() => setServerCtrl((prev) => ({ ...prev, currentPage: page + 1 }))} disabled={list.isFetching}>بیشتر</Button>
                     )}
                     <Typography variant="caption" textAlign="center">{mobileItems.length} از {total}</Typography>
                     {canCreate && (
@@ -285,7 +286,6 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                         doubleClickFunc={() => selectedID && open(selectedID)}
                         CustomToolBar={() => (
                             <Grid container size={'auto'} spacing={sizeConverter(4, 'spaceX')}>
-                                <DataGridIconProvider toolTipText={'مشاهده'} Icon={OpenInNewIcon} disable={!selectedID} clickFunc={() => selectedID && open(selectedID)} />
                                 {!isCustomer && canEditTask && <DataGridIconProvider toolTipText={'ویرایش'} Icon={EditIcon} disable={!canEditSelected} clickFunc={() => selectedID && setEditingID(selectedID)} />}
                                 {canCreate && <DataGridIconProvider toolTipText={'ثبت دستورکار'} Icon={AddIcon} disable={false} clickFunc={() => setAdding(true)} />}
                             </Grid>

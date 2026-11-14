@@ -45,6 +45,13 @@ import ColumnManagerDialog from './components/ColumnManagerDialog.tsx'
 import { groupByArray } from './utils/groupByArray.ts'
 import { ServerCtrDataType } from './staticData/TelecomDataGridType.ts'
 
+/**
+ * Where a grid keeps its saved layout (column widths, pins, sort, hidden columns) in localStorage.
+ * It used to be the same 'telecom' for every grid, so a layout saved on one screen was applied to all the others
+ * (and a pinned column set in code was overridden). Now each screen has its own: the page address without ids.
+ */
+const defaultGridKey = () => 'telecom-' + window.location.pathname.replace(/\/\d+/g, '')
+
 type TelecomDataGridProps = {
    columns: TelecomColumnsType[]
    data: any
@@ -131,7 +138,7 @@ const TelecomDataGrid = ({
    scrollToView,
    SecondFooter,
    rowLockSelectionCondition,
-   dataGridKey = 'telecom',
+   dataGridKey = defaultGridKey(),
    visibleOrHiddenColumns,
    sortFieldCustom,
    defaultSortColumns,

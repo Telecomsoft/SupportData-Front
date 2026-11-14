@@ -111,7 +111,7 @@ const ChangePasswordDialog = ({ open, close, snackbarOpen }: Props) => {
                     </Stack>
                 </DialogContent>
                 <DialogActions sx={{ px: 3, pb: 2 }}>
-                    <Button onClick={closeAndReset} disabled={change.isPending}>
+                    <Button variant="cancel" onClick={closeAndReset} disabled={change.isPending}>
                         انصراف
                     </Button>
                     <Button type="submit" variant="main" disabled={change.isPending}>

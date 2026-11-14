@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import JalaliFilterDate from '@components/general/JalaliFilterDate'
-import { Autocomplete, Stack, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material'
+import { Stack, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import { TASK_STATES, TASK_TYPES } from '@src/data/type/lookups'
 import StyledTextField from '@components/general/input/StyledTextField'
+import { StyledAutoComplete } from '@components/general/input/StyledAutoComplete'
 
 type Opt = { id: number; name: string }
 
@@ -46,29 +47,29 @@ const WorkTaskFilterBar = ({ value, onChange, customers, cities, technicians, is
     }, [typed])
 
     const combo = (label: string, options: Opt[], selected: Opt | null, set: (o: Opt | null) => void) => (
-        <Autocomplete
+        <StyledAutoComplete
             size="small"
             sx={{ minWidth: 170 }}
             options={options}
             value={selected}
-            getOptionLabel={(o) => o.name}
-            isOptionEqualToValue={(a, b) => a.id === b.id}
-            onChange={(_, o) => set(o)}
-            renderInput={(p) => <StyledTextField{...p} label={label} />}
+            getOptionLabel={(o: any) => o.name}
+            isOptionEqualToValue={(a: any, b: any) => a.id === b.id}
+            onChange={(_, o: any) => set(o)}
+            renderInput={(p) => <StyledTextField {...p} label={label} />}
         />
     )
     const multi = (label: string, options: Opt[], selected: Opt[], set: (o: Opt[]) => void) => (
-        <Autocomplete
+        <StyledAutoComplete
             multiple
             size="small"
             sx={{ minWidth: 200 }}
             options={options}
             value={selected}
             limitTags={1}
-            getOptionLabel={(o) => o.name}
-            isOptionEqualToValue={(a, b) => a.id === b.id}
-            onChange={(_, o) => set(o)}
-            renderInput={(p) => <StyledTextField{...p} label={label} />}
+            getOptionLabel={(o: any) => o.name}
+            isOptionEqualToValue={(a: any, b: any) => a.id === b.id}
+            onChange={(_, o: any) => set(o)}
+            renderInput={(p) => <StyledTextField {...p} label={label} />}
         />
     )
     const date = (label: string, current: string | null, set: (iso: string | null) => void, end: boolean) => (
@@ -82,12 +83,12 @@ const WorkTaskFilterBar = ({ value, onChange, customers, cities, technicians, is
             {!isCustomer && combo('مشتری', customers, value.customer, (customer) => onChange({ ...value, customer }))}
             {combo('شهر', cities, value.city, (city) => onChange({ ...value, city }))}
             {!isCustomer && combo('ارجاع‌شده به', technicians, value.assignedTo, (assignedTo) => onChange({ ...value, assignedTo }))}
-            <TextField size="small" label="سریال کیوسک" value={typed.kioskSerial} onChange={(e) => setTyped((p) => ({ ...p, kioskSerial: e.target.value }))} sx={{ width: 150 }} />
-            <TextField size="small" label="کد شعبه" value={typed.branchCode} onChange={(e) => setTyped((p) => ({ ...p, branchCode: e.target.value }))} sx={{ width: 130 }} />
-            <TextField size="small" label="نام شعبه" value={typed.branchName} onChange={(e) => setTyped((p) => ({ ...p, branchName: e.target.value }))} sx={{ width: 160 }} />
+            <StyledTextField size="small" label="سریال کیوسک" value={typed.kioskSerial} onChange={(e) => setTyped((p) => ({ ...p, kioskSerial: e.target.value }))} sx={{ width: 150 }} />
+            <StyledTextField size="small" label="کد شعبه" value={typed.branchCode} onChange={(e) => setTyped((p) => ({ ...p, branchCode: e.target.value }))} sx={{ width: 130 }} />
+            <StyledTextField size="small" label="نام شعبه" value={typed.branchName} onChange={(e) => setTyped((p) => ({ ...p, branchName: e.target.value }))} sx={{ width: 160 }} />
             {date('گزارش از', value.from, (from) => onChange({ ...value, from }), false)}
             {date('گزارش تا', value.to, (to) => onChange({ ...value, to }), true)}
-            <ToggleButtonGroup size="small" exclusive value={value.overdueOnly ? 'overdue' : 'all'} onChange={(_, v) => v && onChange({ ...value, overdueOnly: v === 'overdue' })}>
+            <ToggleButtonGroup size="small" exclusive value={value.overdueOnly ? 'overdue' : 'all'} onChange={(_, v: any) => v && onChange({ ...value, overdueOnly: v === 'overdue' })}>
                 <ToggleButton value="all">همه</ToggleButton>
                 <ToggleButton value="overdue">فقط دیرکردها</ToggleButton>
             </ToggleButtonGroup>

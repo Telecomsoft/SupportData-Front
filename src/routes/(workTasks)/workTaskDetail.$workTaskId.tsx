@@ -166,36 +166,36 @@ function WorkTaskDetail({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                         {transitions.map((tr) => (
                             <Button
                                 key={`${tr.from}-${tr.to}`}
-                                variant={tr.to === 3 ? 'outlined' : 'contained'}
+                                variant={tr.to === 3 ? 'cancel' : 'main'}
                                 color={tr.to === 3 ? 'error' : 'primary'}
                                 onClick={() => setDialog({ kind: 'state', transition: tr })}
-                                sx={{ borderRadius: 2, boxShadow: 'none' }}
-                            >
+                                
+>
                                 {tr.label}
                             </Button>
                         ))}
                         {canAssign && (
-                            <Button startIcon={<PersonAddIcon />} variant="outlined" onClick={() => setDialog({ kind: 'assign' })} sx={{ borderRadius: 2 }}>
+                            <Button startIcon={<PersonAddIcon />} variant="cancel" onClick={() => setDialog({ kind: 'assign' })}>
                                 {t.assignedToID ? 'ارجاع مجدد' : 'ارجاع'}
                             </Button>
                         )}
                         {canReplacePart && (
-                            <Button startIcon={<SwapHorizIcon />} variant="outlined" color="warning" onClick={() => pick('part')} sx={{ borderRadius: 2 }}>تعویض قطعه</Button>
+                            <Button startIcon={<SwapHorizIcon />} variant="cancel" onClick={() => pick('part')}>تعویض قطعه</Button>
                         )}
                         {canConfirmForm && (
-                            <Button startIcon={<AssignmentTurnedInIcon />} variant="outlined" color="success" onClick={() => pick('form')} sx={{ borderRadius: 2 }}>تایید دریافت فرم سرویس</Button>
+                            <Button startIcon={<AssignmentTurnedInIcon />} variant="cancel" onClick={() => pick('form')}>تایید دریافت فرم سرویس</Button>
                         )}
                         {canPay && (
-                            <Button startIcon={<PaymentsIcon />} variant="outlined" color="info" onClick={() => pick('payment')} sx={{ borderRadius: 2 }}>ثبت پرداخت</Button>
+                            <Button startIcon={<PaymentsIcon />} variant="cancel" onClick={() => pick('payment')}>ثبت پرداخت</Button>
                         )}
                         {canCorrectDates && (
-                            <Button startIcon={<EditCalendarIcon />} variant="outlined" color="secondary" onClick={() => pick('dates')} sx={{ borderRadius: 2 }}>تصحیح تاریخ‌ها</Button>
+                            <Button startIcon={<EditCalendarIcon />} variant="cancel" onClick={() => pick('dates')}>تصحیح تاریخ‌ها</Button>
                         )}
                         {canEdit && (
-                            <Button startIcon={<ReceiptLongIcon />} variant="outlined" onClick={() => setDialog({ kind: 'details' })} sx={{ borderRadius: 2 }}>تشخیص و هزینه‌ها</Button>
+                            <Button startIcon={<ReceiptLongIcon />} variant="cancel" onClick={() => setDialog({ kind: 'details' })}>تشخیص و هزینه‌ها</Button>
                         )}
                         {canEdit && (
-                            <Button startIcon={<EditIcon />} variant="outlined" onClick={() => setDialog({ kind: 'edit' })} sx={{ borderRadius: 2 }}>ویرایش</Button>
+                            <Button startIcon={<EditIcon />} variant="cancel" onClick={() => setDialog({ kind: 'edit' })}>ویرایش</Button>
                         )}
                     </Stack>
                 </Stack>

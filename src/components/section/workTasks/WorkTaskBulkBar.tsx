@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo, useState } from 'react'
 import axios from 'axios'
-import {
-    Alert, Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, LinearProgress, Menu, MenuItem, Paper, Stack, TextField, Typography,
-} from '@mui/material'
+import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, LinearProgress, Menu, MenuItem, Paper, Stack, Typography } from '@mui/material'
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd'
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz'
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn'
@@ -15,6 +13,8 @@ import { useGetAuthorizationConfig } from '@hooks/useGetAuthorizationConfig'
 import { useAccessCheck } from '@utility/accessCheck'
 import getEndpoint from '@utility/getEndPoint'
 import { num } from '@components/section/statements/statementFormat'
+import StyledTextField from '@components/general/input/StyledTextField'
+import { StyledAutoComplete } from '@components/general/input/StyledAutoComplete'
 
 type Opt = { id: number; name: string }
 type Outcome = { id: number; ok: boolean; message?: string }
@@ -108,10 +108,10 @@ const WorkTaskBulkBar = ({ tasks, technicians, contractors, snackbarOpen, onDone
         <>
             <Paper elevation={0} sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap', p: 1.25, mb: 1, borderRadius: 2, border: '1px solid', borderColor: 'primary.main', bgcolor: 'action.hover' }}>
                 <Typography fontWeight="bold">{num(tasks.length)} دستورکار انتخاب شده</Typography>
-                <Button size="small" variant="contained" startIcon={<AssignmentIndIcon />} disabled={!canAssign || !!running} onClick={() => setDialog({ kind: 'assign' })} sx={{ borderRadius: 2, boxShadow: 'none' }}>
+                <Button variant="main" startIcon={<AssignmentIndIcon />} disabled={!canAssign || !!running} onClick={() => setDialog({ kind: 'assign' })}>
                     ارجاع ({num(assignable.length)})
                 </Button>
-                <Button size="small" variant="contained" startIcon={<SwapHorizIcon />} disabled={stateTargets.length === 0 || !!running} onClick={(e) => setMenu(e.currentTarget)} sx={{ borderRadius: 2, boxShadow: 'none' }}>
+                <Button variant="main" startIcon={<SwapHorizIcon />} disabled={stateTargets.length === 0 || !!running} onClick={(e) => setMenu(e.currentTarget)}>
                     تغییر وضعیت
                 </Button>
                 <Menu anchorEl={menu} open={!!menu} onClose={() => setMenu(null)}>
@@ -121,10 +121,10 @@ const WorkTaskBulkBar = ({ tasks, technicians, contractors, snackbarOpen, onDone
                         </MenuItem>
                     ))}
                 </Menu>
-                <Button size="small" variant="contained" startIcon={<AssignmentTurnedInIcon />} disabled={!canConfirm || !!running} onClick={() => setDialog({ kind: 'form' })} sx={{ borderRadius: 2, boxShadow: 'none' }}>
+                <Button variant="main" startIcon={<AssignmentTurnedInIcon />} disabled={!canConfirm || !!running} onClick={() => setDialog({ kind: 'form' })}>
                     تایید دریافت فرم ({num(formPending.length)})
                 </Button>
-                <Button size="small" startIcon={<ClearIcon />} onClick={clearSelection} disabled={!!running}>لغو انتخاب</Button>
+                <Button variant="cancel" startIcon={<ClearIcon />} onClick={clearSelection} disabled={!!running}>لغو انتخاب</Button>
                 {running && (
                     <Stack sx={{ flexGrow: 1, minWidth: 160 }}>
                         <Typography variant="caption">{num(running.done)} از {num(running.total)}</Typography>
@@ -139,14 +139,14 @@ const WorkTaskBulkBar = ({ tasks, technicians, contractors, snackbarOpen, onDone
                     <DialogContent>
                         <Stack gap={2} sx={{ pt: 1 }}>
                             {tasks.length > assignable.length && <Alert severity="info">{num(tasks.length - assignable.length)} دستورکار بسته یا قفل است و ارجاع نمی‌شود.</Alert>}
-                            <Autocomplete options={technicians} value={assignee} getOptionLabel={(o) => o.name} isOptionEqualToValue={(a, b) => a.id === b.id} onChange={(_, v) => setAssignee(v)} renderInput={(p) => <TextField {...p} label="ارجاع به" />} />
-                            <Autocomplete options={contractors} value={contractor} getOptionLabel={(o) => o.name} isOptionEqualToValue={(a, b) => a.id === b.id} onChange={(_, v) => setContractor(v)} renderInput={(p) => <TextField {...p} label="پیمانکار (خالی = شرکت پیمانکاری خود تکنسین)" />} />
-                            <TextField label="توضیح" value={note} onChange={(e) => setNote(e.target.value)} multiline maxRows={3} />
+                            <StyledAutoComplete options={technicians} value={assignee} getOptionLabel={(o: any) => o.name} isOptionEqualToValue={(a: any, b: any) => a.id === b.id} onChange={(_, v: any) => setAssignee(v)} renderInput={(p) => <StyledTextField {...p} label="ارجاع به" />} />
+                            <StyledAutoComplete options={contractors} value={contractor} getOptionLabel={(o: any) => o.name} isOptionEqualToValue={(a: any, b: any) => a.id === b.id} onChange={(_, v: any) => setContractor(v)} renderInput={(p) => <StyledTextField {...p} label="پیمانکار (خالی = شرکت پیمانکاری خود تکنسین)" />} />
+                            <StyledTextField label="توضیح" value={note} onChange={(e) => setNote(e.target.value)} multiline maxRows={3} />
                         </Stack>
                     </DialogContent>
                     <DialogActions sx={{ px: 3, pb: 2 }}>
-                        <Button onClick={close}>انصراف</Button>
-                        <Button variant="contained" disabled={!assignee} onClick={doAssign}>ارجاع</Button>
+                        <Button variant="cancel" onClick={close}>انصراف</Button>
+                        <Button variant="main" disabled={!assignee} onClick={doAssign}>ارجاع</Button>
                     </DialogActions>
                 </Dialog>
             )}
@@ -162,12 +162,12 @@ const WorkTaskBulkBar = ({ tasks, technicians, contractors, snackbarOpen, onDone
                             {tasks.length > (dialog.transition as any).tasks.length && (
                                 <Alert severity="info">{num(tasks.length - (dialog.transition as any).tasks.length)} دستورکار انتخاب‌شده در وضعیتی است که این تغییر را ندارد و رد می‌شود.</Alert>
                             )}
-                            <TextField label="توضیح" value={note} onChange={(e) => setNote(e.target.value)} multiline maxRows={3} />
+                            <StyledTextField label="توضیح" value={note} onChange={(e) => setNote(e.target.value)} multiline maxRows={3} />
                         </Stack>
                     </DialogContent>
                     <DialogActions sx={{ px: 3, pb: 2 }}>
-                        <Button onClick={close}>انصراف</Button>
-                        <Button variant="contained" onClick={() => doState(dialog.transition as any)}>تایید</Button>
+                        <Button variant="cancel" onClick={close}>انصراف</Button>
+                        <Button variant="main" onClick={() => doState(dialog.transition as any)}>تایید</Button>
                     </DialogActions>
                 </Dialog>
             )}
@@ -179,8 +179,8 @@ const WorkTaskBulkBar = ({ tasks, technicians, contractors, snackbarOpen, onDone
                         <Typography sx={{ pt: 1 }}>دریافت فرم امضاشده برای {num(formPending.length)} دستورکار ثبت شود؟</Typography>
                     </DialogContent>
                     <DialogActions sx={{ px: 3, pb: 2 }}>
-                        <Button onClick={close}>انصراف</Button>
-                        <Button variant="contained" onClick={doForm}>تایید</Button>
+                        <Button variant="cancel" onClick={close}>انصراف</Button>
+                        <Button variant="main" onClick={doForm}>تایید</Button>
                     </DialogActions>
                 </Dialog>
             )}
@@ -201,7 +201,7 @@ const WorkTaskBulkBar = ({ tasks, technicians, contractors, snackbarOpen, onDone
                         </Stack>
                     </DialogContent>
                     <DialogActions sx={{ px: 3, pb: 2 }}>
-                        <Button variant="contained" onClick={() => setResult(null)}>بستن</Button>
+                        <Button variant="main" onClick={() => setResult(null)}>بستن</Button>
                     </DialogActions>
                 </Dialog>
             )}

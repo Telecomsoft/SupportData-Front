@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
-import {
-    Alert, Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, LinearProgress, Paper, Stack, Tooltip, Typography,
-} from '@mui/material'
+import { Alert, Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, LinearProgress, Paper, Stack, Tooltip, Typography } from '@mui/material'
 import UploadFileIcon from '@mui/icons-material/UploadFile'
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
@@ -140,7 +138,7 @@ const WorkTaskAttachmentsTab = ({ task, canAttach, canConfirmForm, canPrint, ref
                     فرم چاپ‌شده را بعد از تکمیل و مهر و امضای شعبه اسکن کنید و اینجا پیوست کنید. سایر مدارک (عکس، نامه) را هم می‌شود پیوست کرد.
                 </Typography>
                 {canPrint && (
-                    <Button variant="outlined" startIcon={<PrintIcon />} disabled={printingID !== null} onClick={() => print(task.id)} sx={{ borderRadius: 2 }}>
+                    <Button variant="cancel" startIcon={<PrintIcon />} disabled={printingID !== null} onClick={() => print(task.id)}>
                         چاپ فرم دستورکار
                     </Button>
                 )}
@@ -149,7 +147,7 @@ const WorkTaskAttachmentsTab = ({ task, canAttach, canConfirmForm, canPrint, ref
             {task.isLocked && <Alert severity="info">این دستورکار در صورت‌حساب تایید‌شده قفل است؛ پیوست جدید ثبت یا حذف نمی‌شود.</Alert>}
 
             {canConfirmForm && files.length > 0 && (
-                <Alert severity="info" action={<Button color="inherit" size="small" onClick={confirm} disabled={confirmForm.isPending}>تایید دریافت فرم</Button>}>
+                <Alert severity="info" action={<Button variant="cancel" onClick={confirm} disabled={confirmForm.isPending}>تایید دریافت فرم</Button>}>
                     فایل پیوست شده است. اگر این، فرم امضاشده‌ی شعبه است، دریافت فرم سرویس را تایید کنید.
                 </Alert>
             )}
@@ -227,8 +225,8 @@ const WorkTaskAttachmentsTab = ({ task, canAttach, canConfirmForm, canPrint, ref
                     <DialogContentText>این پیوست از دستورکار برداشته می‌شود و در تاریخچه ثبت می‌شود. فایل روی سرور باقی می‌ماند. ادامه می‌دهید؟</DialogContentText>
                 </DialogContent>
                 <DialogActions sx={{ px: 3, pb: 2 }}>
-                    <Button onClick={() => setToRemove(null)}>انصراف</Button>
-                    <Button color="error" variant="contained" onClick={() => toRemove && remove(toRemove)}>حذف</Button>
+                    <Button variant="cancel" onClick={() => setToRemove(null)}>انصراف</Button>
+                    <Button variant="main" onClick={() => toRemove && remove(toRemove)}>حذف</Button>
                 </DialogActions>
             </Dialog>
         </Stack>
