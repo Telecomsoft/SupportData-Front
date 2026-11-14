@@ -229,7 +229,10 @@ const TelecomDataGrid = ({
          setPinnedColumns(JSON.parse(savedPinnedColumns) || pinnedColumnsProps)
       }
       if (savedSortDirection || defaultSortColumns) {
-         setSortDirection(JSON.parse(savedSortDirection) || defaultSortColumns)
+         // an older version saved this as an object: only a list is usable, anything else would crash the header
+         let saved: unknown = null
+         try { saved = savedSortDirection ? JSON.parse(savedSortDirection) : null } catch { /* unreadable: ignore */ }
+         setSortDirection(Array.isArray(saved) ? saved : defaultSortColumns || [])
       }
       if (savedVisibleColumns || visibleOrHiddenColumns) {
          setVisibleColumns(JSON.parse(savedVisibleColumns) || visibleOrHiddenColumns)
