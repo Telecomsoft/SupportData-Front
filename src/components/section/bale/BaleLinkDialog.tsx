@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Alert, Box, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Link, Stack, Typography } from '@mui/material'
 import Button from '@mui/material/Button'
+import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import { QRCodeSVG } from 'qrcode.react'
 import CustomCircularProgress from '@components/general/CustomCircularProgress'
 import { SNACKBAR_SEVERITIES } from '@components/hoc/withSnackbar'
@@ -19,6 +20,8 @@ type Props = {
     userID?: number
     userName?: string
 }
+
+const btnSx = { height: 'auto', minHeight: 38, px: 2.5, py: 1, fontSize: 14, whiteSpace: 'nowrap', gap: 0.5 } as const
 
 type LinkInfo = { code: string; link: string; expiresAt: string }
 
@@ -65,6 +68,31 @@ const BaleLinkDialog = ({ open, close, snackbarOpen, userID, userName }: Props) 
             else snackbarOpen(res.errorMessage || 'ساخت کد انجام نشد', SNACKBAR_SEVERITIES.ERROR)
         }).catch((e: Error) => snackbarOpen(e.message, SNACKBAR_SEVERITIES.ERROR))
 
+    // the link can be sent to the person (message, e-mail). The clipboard API needs a secure page and may be refused, so the older
+    // "select and copy" way (inside the dialog, which keeps the focus) is the second try, and a failure says so instead of staying silent
+    const copy = (e: React.MouseEvent<HTMLElement>) => {
+        if (!info) return
+        const ok = () => snackbarOpen('لینک کپی شد', SNACKBAR_SEVERITIES.SUCCESS)
+        const fail = () => snackbarOpen('کپی انجام نشد. لینک را از «باز کردن در بله» با کلیک راست کپی کنید.', SNACKBAR_SEVERITIES.ERROR)
+        // the event's target is gone once the handler returns, so the dialog element is taken now
+        const host = (e.currentTarget.closest('[role="dialog"]') as HTMLElement | null) ?? document.body
+        const old = () => {
+            const t = document.createElement('textarea')
+            t.value = info.link
+            t.style.position = 'fixed'
+            t.style.opacity = '0'
+            host.appendChild(t)
+            t.focus()
+            t.select()
+            let done = false
+            try { done = document.execCommand('copy') } catch { done = false }
+            host.removeChild(t)
+            if (done) ok(); else fail()
+        }
+        if (navigator.clipboard?.writeText) navigator.clipboard.writeText(info.link).then(ok, old)
+        else old()
+    }
+
     const cut = () =>
         unlink.mutateAsync({ userID }).then((res) => {
             if (res.error === 0) { snackbarOpen('ارتباط قطع شد', SNACKBAR_SEVERITIES.SUCCESS); setInfo(null); refetch() }
@@ -76,7 +104,7 @@ const BaleLinkDialog = ({ open, close, snackbarOpen, userID, userName }: Props) 
     const mmss = `${num(Math.floor(secondsLeft / 60))}:${String(secondsLeft % 60).padStart(2, '0').replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[Number(d)])}`
 
     return (
-        <Dialog open={open} onClose={closeAll} fullWidth maxWidth="xs">
+        <Dialog open={open} onClose={closeAll} fullWidth maxWidth="sm">
             <DialogTitle>ارتباط با بله{userName ? ` - ${userName}` : ''}</DialogTitle>
             <DialogContent>
                 {loading ? (
@@ -101,7 +129,13 @@ const BaleLinkDialog = ({ open, close, snackbarOpen, userID, userName }: Props) 
                                 <Typography variant="body2" color={secondsLeft > 0 ? 'text.secondary' : 'error'}>
                                     {secondsLeft > 0 ? `اعتبار کد: ${mmss}` : 'کد منقضی شد. دوباره بسازید.'}
                                 </Typography>
-                                <Link href={info.link} target="_blank" rel="noopener" variant="body2">باز کردن در بله (روی همین دستگاه)</Link>
+                                <Stack direction="row" gap={2} alignItems="center" flexWrap="wrap" justifyContent="center">
+                                    <Link href={info.link} target="_blank" rel="noopener" variant="body2">باز کردن در بله (روی همین دستگاه)</Link>
+                                    <Button variant="cancel" size="small" onClick={copy} startIcon={<ContentCopyIcon fontSize="small" />} sx={btnSx} disabled={secondsLeft === 0}>کپی لینک</Button>
+                                </Stack>
+                                <Typography variant="caption" color="text.secondary" align="center">
+                                    لینک را فقط برای خودِ این کاربر بفرستید؛ هر کس اول باز کند به همین حساب وصل می‌شود.
+                                </Typography>
                             </>
                         ) : (
                             <Typography variant="body2" color="text.secondary" align="center">
@@ -113,11 +147,11 @@ const BaleLinkDialog = ({ open, close, snackbarOpen, userID, userName }: Props) 
                     </Stack>
                 )}
             </DialogContent>
-            <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
-                <Button variant="cancel" onClick={closeAll}>بستن</Button>
-                {enabled && linked && <Button variant="cancel" onClick={cut} disabled={unlink.isPending}>قطع ارتباط</Button>}
+            <DialogActions sx={{ px: 3, pb: 2, gap: 1, flexWrap: 'wrap', justifyContent: 'flex-start' }}>
+                <Button variant="cancel" onClick={closeAll} sx={btnSx}>بستن</Button>
+                {enabled && linked && <Button variant="cancel" onClick={cut} disabled={unlink.isPending} sx={btnSx}>قطع ارتباط</Button>}
                 {enabled && (
-                    <Button variant="main" onClick={make} disabled={create.isPending || loading}>
+                    <Button variant="main" onClick={make} disabled={create.isPending || loading} sx={btnSx}>
                         {create.isPending ? <CustomCircularProgress size={18} color="white.0" /> : info ? 'ساخت کد تازه' : linked ? 'اتصال به گفتگوی دیگر' : 'ساخت کد QR'}
                     </Button>
                 )}
