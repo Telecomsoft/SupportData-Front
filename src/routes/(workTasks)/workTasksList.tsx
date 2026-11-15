@@ -32,6 +32,7 @@ import { num } from '@components/section/statements/statementFormat'
 import { buildPayload } from '@utility/buildPayload'
 import { useWorkTaskPdf } from '@hooks/useWorkTaskPdf'
 import WorkTaskBulkBar from '@components/section/workTasks/WorkTaskBulkBar'
+import WorkTaskStepButton from '@components/section/workTasks/WorkTaskStepButton'
 import StyledTextField from '@components/general/input/StyledTextField'
 import WorkTaskFilterBar, { EMPTY_WORKTASK_FILTER, WorkTaskFilterState } from '@components/section/workTasks/WorkTaskFilterBar'
 
@@ -150,7 +151,7 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
 
     const open = (id: number) => navigate({ to: `/workTaskDetail/${id}` })
 
-    const { print: printTask, printingID } = useWorkTaskPdf(snackbarOpen)
+    const { print: printTask, printingID, printMany, printingMany } = useWorkTaskPdf(snackbarOpen)
 
     // same rule as the edit button on the task page (the server checks again)
     const selectedRow = selectedID !== undefined ? rowCache.current.get(selectedID) : undefined
@@ -217,11 +218,12 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
         { field: 'reportedIssue', headerName: 'شرح مشکل', width: sizeConverter(240, 'width') },
         // all the row's buttons in one column, pinned to the left edge so it stays in view when the table scrolls
         {
-            field: 'actions', headerName: 'عملیات', width: sizeConverter(isCustomer ? 80 : 130, 'width'), sortLock: true,
+            field: 'actions', headerName: 'عملیات', width: sizeConverter(isCustomer ? 80 : 230, 'width'), sortLock: true,
             renderCell: (p: { row: Record<string, any> }) => {
                 const canCosts = !isCustomer && canEditTask && !p.row.isLocked && (!isTaskClosed(p.row.state) || canEditClosed)
                 return (
-                    <Grid container alignItems="center" justifyContent="center" wrap="nowrap">
+                    <Grid container alignItems="center" justifyContent="center" wrap="nowrap" gap={0.25}>
+                        {!isCustomer && <WorkTaskStepButton task={p.row} snackbarOpen={snackbarOpen} onDone={() => list.refetch()} />}
                         <Tooltip title="مشاهده">
                             <IconButton size="small" color="primary" onClick={(e) => { e.stopPropagation(); open(p.row.id) }}><OpenInNewIcon fontSize="small" /></IconButton>
                         </Tooltip>
@@ -277,6 +279,8 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                             snackbarOpen={snackbarOpen}
                             onDone={() => list.refetch()}
                             clearSelection={clearSelection}
+                            onPrint={canPrint ? printMany : undefined}
+                            printing={printingMany}
                         />
                     )}
                     <TelecomDataGrid
