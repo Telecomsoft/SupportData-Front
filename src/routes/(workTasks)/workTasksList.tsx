@@ -194,7 +194,11 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             valueGetter: (r) => `${r.kioskSerial ?? ''} ${r.customerName ?? ''} ${r.branchName ?? ''}`,
             renderCell: (p) => two(p.row.kioskSerial ?? '-', isCustomer ? p.row.branchName : p.row.customerName, true),
         },
-        ...(isCustomer ? [] : [{ field: 'assignedToName', headerName: 'ارجاع‌شده به', width: sizeConverter(130, 'width') } as TelecomColumnsType]),
+        ...(isCustomer ? [] : [{
+            field: 'assignedToName', headerName: 'ارجاع‌شده به / پیمانکار', width: sizeConverter(170, 'width'),
+            valueGetter: (r) => `${r.assignedToName ?? ''} ${r.contractorName ?? ''}`,
+            renderCell: (p) => two(p.row.assignedToName ?? '-', p.row.contractorName ? `پیمانکار: ${p.row.contractorName}` : ''),
+        } as TelecomColumnsType]),
         {
             field: 'reportedAt', headerName: 'گزارش / مهلت', width: sizeConverter(160, 'width'),
             valueGetter: (r) => `${r.reportedAt ? dateFn(r.reportedAt) : ''} ${r.dueAt ? dateFn(r.dueAt) : ''}`,
