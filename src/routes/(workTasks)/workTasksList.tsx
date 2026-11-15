@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import Grid from '@mui/material/Grid2'
 import { Box, Button, Dialog, DialogContent, Fab, IconButton, Tooltip, Typography } from '@mui/material'
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
@@ -79,7 +79,6 @@ const EditTaskDialog = ({ taskID, close, onSaved, snackbarOpen, lookups, isMobil
 }
 
 function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
-    const navigate = useNavigate()
     const { isMobile } = useDevice()
     const { canPerform } = useAccessCheck()
     const { isCustomer } = useUserScope()
@@ -148,7 +147,8 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [list.data, isMobile])
 
-    const open = (id: number) => navigate({ to: `/workTaskDetail/${id}` })
+    const open = (id: number) => window.open(`/workTaskDetail/${id}`, '_blank',)
+
 
     const { print: printTask, printingID } = useWorkTaskPdf(snackbarOpen)
 
@@ -297,7 +297,7 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                         pinnedColumnsProps={{ right: ['actions'] }}
                         columns={columns}
                     />
-                </Box>  
+                </Box>
             )}
 
             {editingID !== null && (
