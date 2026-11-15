@@ -10,12 +10,15 @@ import Cookies from 'js-cookie';
 import { logout } from '@utility/session';
 import LockResetIcon from '@mui/icons-material/LockReset';
 import ChangePasswordDialog from './ChangePasswordDialog';
+import BaleLinkDialog from '@components/section/bale/BaleLinkDialog';
+import SmartToyIcon from '@mui/icons-material/SmartToyOutlined';
 import { withSnackbar } from '@components/hoc/withSnackbar';
 
 type Props = { children: ReactNode };
 
 function MobileLayoutBase({ children, snackbarOpen }: Props & { snackbarOpen: any }) {
     const [passwordOpen, setPasswordOpen] = useState(false);
+    const [baleOpen, setBaleOpen] = useState(false);
     const theme = useTheme();
     const userName: string | undefined = Cookies.get('userName')
     // این مقادیر رو معمولاً از Context یا Redux می‌گیری
@@ -54,6 +57,9 @@ function MobileLayoutBase({ children, snackbarOpen }: Props & { snackbarOpen: an
                     KIOSK SUPPORT INFO
                 </Typography>
                 <Stack direction="row" alignItems="center">
+                    <IconButton onClick={() => setBaleOpen(true)} aria-label="ارتباط با بله" sx={{ color: theme.palette.white[0] }}>
+                        <SmartToyIcon />
+                    </IconButton>
                     <IconButton onClick={() => setPasswordOpen(true)} aria-label="تغییر رمز عبور" sx={{ color: theme.palette.white[0] }}>
                         <LockResetIcon fontSize="medium" />
                     </IconButton>
@@ -90,6 +96,7 @@ function MobileLayoutBase({ children, snackbarOpen }: Props & { snackbarOpen: an
             {/* Bottom Navigation */}
             <MobileBottomNav />
             <ChangePasswordDialog open={passwordOpen} close={() => setPasswordOpen(false)} snackbarOpen={snackbarOpen} />
+            <BaleLinkDialog open={baleOpen} close={() => setBaleOpen(false)} snackbarOpen={snackbarOpen} />
         </Grid>
     );
 }

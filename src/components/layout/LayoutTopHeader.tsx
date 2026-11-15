@@ -8,8 +8,10 @@ import LogoutIcon from '@mui/icons-material/Logout'
 // import SuspendDialog from '@components/general/SuspendDialog'
 import { withSnackbar } from '@components/hoc/withSnackbar.tsx'
 import { logout } from '@utility/session'
+import SmartToyIcon from '@mui/icons-material/SmartToyOutlined'
 import LockResetIcon from '@mui/icons-material/LockReset'
 import ChangePasswordDialog from './ChangePasswordDialog'
+import BaleLinkDialog from '@components/section/bale/BaleLinkDialog'
 import { Button } from '@mui/material'
 // import TextFieldComp from '@components/general/hookFromInputs/TextFieldComp'
 // import CustomPassword from '@components/section/users/CustomPassword'
@@ -36,6 +38,7 @@ import { Button } from '@mui/material'
 
 const LayoutTopHeader: FC = ({ snackbarOpen }: any) => {
    const [passwordOpen, setPasswordOpen] = useState(false)
+   const [baleOpen, setBaleOpen] = useState(false)
    // const [openDialog, setOpenDialog] = useState<Record<string, 'add' | 'edit' | null>>({
    //    passwordAdd: null,
    // })
@@ -58,6 +61,10 @@ const LayoutTopHeader: FC = ({ snackbarOpen }: any) => {
          <LayoutBreadcrumbs />
          {/* <HeaderLogo /> */}
          <Grid container size="auto" alignItems="center" columnGap={sizeConverter(8, 'spaceX')}>
+            <Button variant="main" onClick={() => setBaleOpen(true)} sx={{ mt: sizeConverter(2, 'spaceY'), gap: 1 }}>
+               <SmartToyIcon sx={{ width: sizeConverter(15), height: sizeConverter(15) }} />
+               ارتباط با بله
+            </Button>
             <Button variant="main" onClick={() => setPasswordOpen(true)} sx={{ mt: sizeConverter(2, 'spaceY'), gap: 1 }}>
                <LockResetIcon sx={{ width: sizeConverter(15), height: sizeConverter(15) }} />
                تغییر رمز عبور
@@ -110,6 +117,7 @@ const LayoutTopHeader: FC = ({ snackbarOpen }: any) => {
          </Grid>
          </Grid>
          <ChangePasswordDialog open={passwordOpen} close={() => setPasswordOpen(false)} snackbarOpen={snackbarOpen} />
+         <BaleLinkDialog open={baleOpen} close={() => setBaleOpen(false)} snackbarOpen={snackbarOpen} />
 
 
          {/* <Suspense fallback={<SuspendDialog />}>
