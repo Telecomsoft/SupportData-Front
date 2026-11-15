@@ -62,7 +62,7 @@ const StatCard = ({ label, value, hint, icon, tone = 'primary', to }: { label: s
 }
 
 const SkeletonPage = () => (
-    <Box sx={{ p: { xs: 2, md: 3 } }}>
+    <Box sx={{ width: '100%', p: { xs: 2, md: 3 } }}>
         <Skeleton width={140} height={36} sx={{ mb: 2 }} />
         <Grid container spacing={2} sx={{ mb: 2 }}>
             {Array.from({ length: 4 }).map((_, i) => <Grid key={i} size={{ xs: 12, sm: 6, lg: 3 }}><Skeleton variant="rounded" height={92} /></Grid>)}
@@ -114,7 +114,7 @@ const DashboardPage = () => {
     const updated = new Date(dashboard.dataUpdatedAt).toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' })
 
     return (
-        <Box sx={{ p: { xs: 2, md: 3 }, pb: 10 }}>
+        <Box sx={{ width: '100%', p: { xs: 2, md: 3 }, pb: 10 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2.5 }}>
                 <Box>
                     <Typography variant="h6" fontWeight={700}>داشبورد</Typography>
@@ -129,51 +129,34 @@ const DashboardPage = () => {
                 </Tooltip>
             </Box>
 
-            {/* what needs attention */}
-            <Grid container spacing={2} sx={{ mb: 2 }}>
-                <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-                    <StatCard label="فعالیت‌های باز" value={num(openTotal)} icon={<AssignmentIcon />} tone="primary" to={link(111, '/workTasksList')} />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-                    <StatCard
-                        label="فعالیت‌های دیرکرد"
-                        value={num(d.overdueTasks)}
-                        hint={d.overdueTasks > 0 ? 'نیاز به پیگیری' : 'همه در مهلت'}
-                        icon={d.overdueTasks > 0 ? <WarningIcon /> : <CheckIcon />}
-                        tone={d.overdueTasks > 0 ? 'error' : 'success'}
-                        to={link(111, '/workTasksList')}
-                    />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-                    <StatCard label="میانگین زمان تا اتمام" value={`${num(d.avgHoursToFinishLast30Days)} ساعت`} hint="۳۰ روز اخیر" icon={<TimerIcon />} tone="info" />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-                    <StatCard
-                        label="گارانتی در حال اتمام"
-                        value={num(d.kiosksWarrantyEndingIn30Days)}
-                        hint="۳۰ روز آینده"
-                        icon={<EventBusyIcon />}
-                        tone={d.kiosksWarrantyEndingIn30Days > 0 ? 'warning' : 'success'}
-                    />
-                </Grid>
-            </Grid>
-
-            {/* the rest of the numbers */}
-            <Grid container spacing={2} sx={{ mb: 2.5 }}>
-                <Grid size={{ xs: 12, sm: isCustomer ? 12 : 4 }}>
-                    <StatCard label="کیوسک‌های تحت گارانتی" value={num(d.kiosksUnderWarranty)} icon={<VerifiedIcon />} tone="success" to={link(110, '/kiosksList')} />
-                </Grid>
-                {!isCustomer && (
-                    <Grid size={{ xs: 12, sm: 4 }}>
-                        <StatCard label="انتقال‌های قطعه در انتظار" value={num(d.partTransfersPending)} icon={<SwapIcon />} tone="info" to={link(112, '/partTransfersList')} />
-                    </Grid>
-                )}
-                {!isCustomer && (
-                    <Grid size={{ xs: 12, sm: 4 }}>
-                        <StatCard label="تعمیرات باز" value={num(d.repairsOpen)} icon={<BuildIcon />} tone="primary" to={link(113, '/repairsList')} />
-                    </Grid>
-                )}
-            </Grid>
+            {/* every number is the same size; the row wraps by the width of the screen */}
+            <Box sx={{
+                display: 'grid', gap: 2, mb: 2.5, gridTemplateColumns: 'repeat(12, 1fr)',
+                '& > *': { gridColumn: { xs: 'span 12', sm: 'span 6', lg: 'span 3' } },
+                // the second row of three (a customer has one card there) shares the width evenly
+                '& > *:nth-of-type(n+5)': { gridColumn: { xs: 'span 12', sm: 'span 6', lg: isCustomer ? 'span 12' : 'span 4' } },
+            }}>
+                <StatCard label="فعالیت‌های باز" value={num(openTotal)} icon={<AssignmentIcon />} tone="primary" to={link(111, '/workTasksList')} />
+                <StatCard
+                    label="فعالیت‌های دیرکرد"
+                    value={num(d.overdueTasks)}
+                    hint={d.overdueTasks > 0 ? 'نیاز به پیگیری' : 'همه در مهلت'}
+                    icon={d.overdueTasks > 0 ? <WarningIcon /> : <CheckIcon />}
+                    tone={d.overdueTasks > 0 ? 'error' : 'success'}
+                    to={link(111, '/workTasksList')}
+                />
+                <StatCard label="میانگین زمان تا اتمام" value={`${num(d.avgHoursToFinishLast30Days)} ساعت`} hint="۳۰ روز اخیر" icon={<TimerIcon />} tone="info" />
+                <StatCard
+                    label="گارانتی در حال اتمام"
+                    value={num(d.kiosksWarrantyEndingIn30Days)}
+                    hint="۳۰ روز آینده"
+                    icon={<EventBusyIcon />}
+                    tone={d.kiosksWarrantyEndingIn30Days > 0 ? 'warning' : 'success'}
+                />
+                <StatCard label="کیوسک‌های تحت گارانتی" value={num(d.kiosksUnderWarranty)} icon={<VerifiedIcon />} tone="success" to={link(110, '/kiosksList')} />
+                {!isCustomer && <StatCard label="انتقال‌های قطعه در انتظار" value={num(d.partTransfersPending)} icon={<SwapIcon />} tone="info" to={link(112, '/partTransfersList')} />}
+                {!isCustomer && <StatCard label="تعمیرات باز" value={num(d.repairsOpen)} icon={<BuildIcon />} tone="primary" to={link(113, '/repairsList')} />}
+            </Box>
 
             <Grid container spacing={2}>
                 <Grid size={{ xs: 12, md: 6 }}><RankBars title="فعالیت‌های باز بر اساس وضعیت" data={byState} /></Grid>
