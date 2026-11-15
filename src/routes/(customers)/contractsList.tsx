@@ -85,6 +85,8 @@ function ContractsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     { label: 'فاصله‌ی بازدیدها (روز)', value: 'periodicVisitDays', type: 'natural', kind: 'textField', size: 3.9, component: TextFieldComp, showWhen: visitOn },
     { label: 'شروع بازدیدها', value: 'periodicVisitStartMode', kind: 'combo', type: 'choice', emptyValue: 1, size: 3.9, component: AutoCompleteComp, showWhen: visitOn },
     { label: 'تاریخ شروع', value: 'periodicVisitStartDate', type: 'date', kind: 'textField', size: 3.9, component: JalaliDatePicker, showWhen: (v: any) => visitOn(v) && v.periodicVisitStartMode?.id === 2 },
+    { label: 'ساخت خودکار فعالیت (روز قبل از موعد)', value: 'periodicVisitCreateDaysBefore', type: 'natural', kind: 'textField', size: 5.9, component: TextFieldComp, showWhen: visitOn },
+    { label: 'مهلت انجام بازدید (روز از ساخت فعالیت)', value: 'periodicVisitDeadlineDays', type: 'natural', kind: 'textField', size: 5.9, component: TextFieldComp, showWhen: visitOn },
     { label: 'توضیحات بازدید', value: 'periodicVisitDescription', kind: 'textField', size: 12, component: TextFieldComp, showWhen: visitOn },
 
     { label: 'زمان پاسخگویی (محاسبه‌ی مهلت تسک)', value: '_sla', kind: 'custom', noValue: true, component: SectionTitle },
@@ -159,6 +161,8 @@ function ContractsList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     { field: 'periodicVisitDays', headerName: 'فاصله بازدیدها (روز)', width: sizeConverter(140, 'width') },
     { field: 'periodicVisitStartMode', headerName: 'شروع بازدیدها', width: sizeConverter(130, 'width') },
     { field: 'periodicVisitStartDate', headerName: 'تاریخ شروع بازدید', width: sizeConverter(130, 'width'), valueGetter: (r) => (r.periodicVisitStartDate ? dateFn(r.periodicVisitStartDate, false) : ''), renderCell: (p) => <Grid container justifyContent="center"><Typography variant="body2">{p.row.periodicVisitStartDate ? dateFn(p.row.periodicVisitStartDate, false) : ''}</Typography></Grid> },
+    { field: 'periodicVisitCreateDaysBefore', headerName: 'ساخت فعالیت (روز قبل)', width: sizeConverter(140, 'width') },
+    { field: 'periodicVisitDeadlineDays', headerName: 'مهلت انجام (روز)', width: sizeConverter(120, 'width') },
     { field: 'periodicVisitDescription', headerName: 'توضیحات بازدید', width: sizeConverter(150, 'width') },
 
     // SLA

@@ -27,6 +27,7 @@ import Inventory2Icon from '@mui/icons-material/Inventory2'
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import AssessmentIcon from '@mui/icons-material/Assessment'
+import EventRepeatIcon from '@mui/icons-material/EventRepeatOutlined'
 
 export type DataType = {
    name: string
@@ -49,6 +50,7 @@ export const LAYOUT_SIDEBAR_DATA: (DataType & { children?: DataType[] })[] = [
    },
 
    { name: 'فعالیت ها', value: 'workTasksList', link: '/workTasksList', icon: AssignmentIcon, accessID: 111 },
+   { name: 'بازدیدهای دوره‌ای', value: 'periodicVisits', link: '/periodicVisits', icon: EventRepeatIcon, accessID: 270 },
 
    { name: 'کیوسک‌ها', value: 'kiosksList', link: '/kiosksList', icon: AtmIcon, accessID: 110 },
    { name: 'تعمیرات', value: 'repairsList', link: '/repairsList', icon: HandymanIcon, accessID: 113 },
