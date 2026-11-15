@@ -14,12 +14,11 @@ export const useWorkTaskPdf = (snackbarOpen: snackbarOpenType) => {
     const authConfig = useGetAuthorizationConfig()
     const [printingID, setPrintingID] = useState<number | null>(null)
 
-    const print = async (id: number) => {
-        if (printingID !== null) return
-        setPrintingID(id)
+    // one PDF in a new tab. The tab is opened inside the click so the browser does not block it.
+    const show = async (request: () => Promise<{ data: Blob; headers: Record<string, any> }>, fileName: string, failure: string, onSkipped?: (ids: string) => void) => {
         const tab = window.open('', '_blank')
         try {
-            const res = await axios.get(getEndpoint() + `api/Report/WorkTaskPdf/${id}`, { ...authConfig, responseType: 'blob' })
+            const res = await request()
             const blob: Blob = res.data
             if (!blob.type.includes('application/pdf')) {
                 const result = JSON.parse(await blob.text())
@@ -30,17 +29,38 @@ export const useWorkTaskPdf = (snackbarOpen: snackbarOpenType) => {
             else {                                  // the browser blocked the new tab: download the file instead
                 const a = document.createElement('a')
                 a.href = url
-                a.download = `WorkTask-${id}.pdf`
+                a.download = fileName
                 a.click()
             }
             setTimeout(() => URL.revokeObjectURL(url), 60_000)
+            const skipped = res.headers?.['x-skipped-ids']
+            if (skipped && onSkipped) onSkipped(String(skipped))
         } catch (e) {
             tab?.close()
-            snackbarOpen(`چاپ دستورکار #${id} انجام نشد. ${e instanceof Error ? e.message : ''}`.trim(), SNACKBAR_SEVERITIES.ERROR)
-        } finally {
-            setPrintingID(null)
+            snackbarOpen(`${failure}. ${e instanceof Error ? e.message : ''}`.trim(), SNACKBAR_SEVERITIES.ERROR)
         }
     }
 
-    return { print, printingID }
+    const print = async (id: number) => {
+        if (printingID !== null) return
+        setPrintingID(id)
+        await show(() => axios.get(getEndpoint() + `api/Report/WorkTaskPdf/${id}`, { ...authConfig, responseType: 'blob' }), `WorkTask-${id}.pdf`, `چاپ دستورکار #${id} انجام نشد`)
+        setPrintingID(null)
+    }
+
+    // many forms in ONE pdf (POST api/Report/WorkTasksPdf): one tab, one print dialog
+    const [printingMany, setPrintingMany] = useState(false)
+    const printMany = async (ids: number[]) => {
+        if (printingMany || ids.length === 0) return
+        setPrintingMany(true)
+        await show(
+            () => axios.post(getEndpoint() + 'api/Report/WorkTasksPdf', { ids }, { ...authConfig, responseType: 'blob' }),
+            `WorkTasks-${ids.length}.pdf`,
+            'چاپ دستورکارها انجام نشد',
+            (skipped) => snackbarOpen(`این دستورکارها چاپ نشد: ${skipped}`, SNACKBAR_SEVERITIES.WARNING),
+        )
+        setPrintingMany(false)
+    }
+
+    return { print, printingID, printMany, printingMany }
 }

@@ -6,6 +6,7 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd'
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz'
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn'
 import ClearIcon from '@mui/icons-material/Clear'
+import PrintIcon from '@mui/icons-material/Print'
 import { SNACKBAR_SEVERITIES } from '@components/hoc/withSnackbar'
 import { snackbarOpenType } from '@type/snackbarOpen'
 import { isTaskClosed, TASK_TRANSITIONS } from '@src/data/type/lookups'
@@ -29,7 +30,12 @@ type Props = {
     /** called after the actions ran: refresh the list */
     onDone: () => void
     clearSelection: () => void
+    /** bulk print: gets the ids of the selected tasks; leave it out to hide the button (no permission) */
+    onPrint?: (ids: number[]) => void
+    printing?: boolean
 }
+
+const MAX_PRINT = 100   // the server's limit for one merged PDF
 
 /**
  * What can be done to many selected tasks at once: assign, change state, confirm the signed form came back.
@@ -37,7 +43,7 @@ type Props = {
  * and history entry is exactly the same. A task the action does not fit (closed, locked, wrong state) is skipped
  * and counted; a task the server refuses is listed with the server's reason. Nothing is all-or-nothing.
  */
-const WorkTaskBulkBar = ({ tasks, technicians, contractors, snackbarOpen, onDone, clearSelection }: Props) => {
+const WorkTaskBulkBar = ({ tasks, technicians, contractors, snackbarOpen, onDone, clearSelection, onPrint, printing }: Props) => {
     const { canPerform } = useAccessCheck()
     const authConfig = useGetAuthorizationConfig()
     const [menu, setMenu] = useState<HTMLElement | null>(null)
@@ -124,6 +130,11 @@ const WorkTaskBulkBar = ({ tasks, technicians, contractors, snackbarOpen, onDone
                 <Button variant="main" startIcon={<AssignmentTurnedInIcon />} disabled={!canConfirm || !!running} onClick={() => setDialog({ kind: 'form' })}>
                     تایید دریافت فرم ({num(formPending.length)})
                 </Button>
+                {onPrint && (
+                    <Button variant="main" startIcon={<PrintIcon />} disabled={!!running || printing || tasks.length > MAX_PRINT} onClick={() => onPrint(tasks.map((t) => t.id))}>
+                        {tasks.length > MAX_PRINT ? `چاپ (حداکثر ${num(MAX_PRINT)})` : `چاپ فرم‌ها (${num(tasks.length)})`}
+                    </Button>
+                )}
                 <Button variant="cancel" startIcon={<ClearIcon />} onClick={clearSelection} disabled={!!running}>لغو انتخاب</Button>
                 {running && (
                     <Stack sx={{ flexGrow: 1, minWidth: 160 }}>
