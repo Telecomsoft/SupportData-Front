@@ -61,7 +61,12 @@ export default function HelpdeskDrafts({ review, version, show, setShow }: { rev
     const active = status.data?.state === 'Active'
     const statusLabel = status.isLoading ? 'در حال بررسی اتصال…' : status.isError ? 'وضعیت اتصال نامشخص'
         : active ? 'متصل' : 'نیاز به ورود'
-    const problem = status.isError ? 'بررسی وضعیت اتصال ممکن نشد.'
+    const responseCode = axios.isAxiosError(status.error) ? status.error.response?.status : undefined
+    const statusError = responseCode === 401 ? 'نشست سامانه پشتیبانی معتبر نیست. دوباره وارد سامانه شوید.'
+        : responseCode === 403 ? 'دسترسی به میز خدمت مجاز نیست. دسترسی حساب و تنظیمات اتصال را بررسی کنید.'
+        : responseCode ? `دریافت وضعیت میز خدمت با خطای سرور (${responseCode}) روبه‌رو شد.`
+        : 'ارتباط با سرور پشتیبانی برقرار نشد.'
+    const problem = status.isError ? statusError
         : status.data && !status.data.configured ? 'تنظیمات اتصال به بانک تکمیل نشده است.'
         : !active && status.data && !window.isSecureContext && !status.data.allowHttp ? 'برای ورود به بانک، سامانه را با HTTPS باز کنید.' : ''
     const lastPoll = status.data?.lastPoll
