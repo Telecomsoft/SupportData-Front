@@ -10,7 +10,7 @@ export type BankDraft = {
     departmentInfo?: { name: string; branchCode: number }; reportedAt?: string; pvCreateDate?: string
     reportedIssue: string; description: string
 }
-type Status = { configured: boolean; state: string; lastPoll?: string }
+type Status = { allowHttp: boolean; configured: boolean; state: string; lastPoll?: string }
 type Challenge = { attemptId: string; captcha: string }
 const api = () => getEndPoint() + 'api/helpdesk/'
 
@@ -55,7 +55,7 @@ export default function HelpdeskDrafts({ review, version }: { review: (draft: Ba
         <Button onClick={() => { setPage(0); setShow(true) }}>پیش‌نویس‌های بانک پاسارگاد</Button>
         <Typography variant="caption">{status.isError ? 'وضعیت اتصال نامشخص' : active ? 'بانک متصل است' : 'نیاز به اتصال بانک'}
             {status.data?.lastPoll && ' • ' + new Date(status.data.lastPoll).toLocaleString('fa-IR')}</Typography>
-        {!active && <Button disabled={!status.data?.configured || !window.isSecureContext} onClick={start}>ورود به بانک</Button>}
+        {!active && <Button disabled={!status.data?.configured || (!window.isSecureContext && !status.data.allowHttp)} onClick={start}>ورود به بانک</Button>}
         <Dialog open={show} onClose={() => setShow(false)} fullWidth maxWidth="md">
             <DialogTitle>پیش‌نویس‌های بانک پاسارگاد</DialogTitle><DialogContent><Stack spacing={2}>
             {drafts.isLoading && 'در حال دریافت…'}
