@@ -97,6 +97,7 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     const selectedID = selectedIDs.length === 1 ? selectedIDs[0] : undefined   // view / edit work on exactly one row
     const rowCache = useRef(new Map<number, any>())                            // every row seen, so a selected row from another page is still known
     const [draft, setDraft] = useState<BankDraft>()
+    const [showDrafts, setShowDrafts] = useState(false)
     const [draftVersion, setDraftVersion] = useState(0)
     const [adding, setAdding] = useState(false)
     const [editingID, setEditingID] = useState<number | null>(null)   // the task whose edit dialog is open
@@ -254,7 +255,7 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
 
     return (
         <Grid container size={12} sx={{ position: 'relative', height: isMobile ? '100dvh' : 'auto', overflow: isMobile ? 'hidden' : 'visible' }}>
-            {canCreate && canPerform(111) && !isCustomer && !isContractor && <Grid size={12}><HelpdeskDrafts version={draftVersion} review={d => { setDraft(d); setAdding(true) }} /></Grid>}
+            {canCreate && canPerform(111) && !isCustomer && !isContractor && <Grid size={12}><HelpdeskDrafts show={showDrafts} setShow={setShowDrafts} version={draftVersion} review={d => { setDraft(d); setAdding(true) }} /></Grid>}
             {isLoading ? (
                 <Grid sx={{ m: 'auto', mt: isMobile ? '50%' : '20%' }}><CustomCircularProgress thickness={2} size={60} /></Grid>
             ) : isMobile ? (
@@ -325,7 +326,7 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                     open="add"
                     title={draft ? `بررسی درخواست ${draft.ticketCode}` : "ثبت دستورکار"}
                     width={sizeConverter(680, 'width')}
-                    close={() => { setAdding(false); setDraft(undefined) }}
+                    close={() => { setAdding(false); if (draft) setShowDrafts(true); setDraft(undefined) }}
                     array={createForm}
                     createEndpoint={draft ? `api/WorkTask/AddWorkTask?helpdeskDraftId=${draft.id}` : "api/WorkTask/AddWorkTask"}
                     autoCompleteOption={{
@@ -344,7 +345,7 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                         if (!payload.reportedAt) delete payload.reportedAt
                         return payload
                     }) as any}
-                    wrapperFunc={(created) => { if (draft) setDraftVersion(v => v + 1); list.refetch(); if (created?.id) open(created.id) }}
+                    wrapperFunc={(created) => { if (draft) { setShowDrafts(false); setDraftVersion(v => v + 1) }; list.refetch(); if (created?.id) open(created.id) }}
                     snackbarOpen={snackbarOpen}
                 />
             )}
