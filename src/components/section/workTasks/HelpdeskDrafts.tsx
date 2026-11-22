@@ -7,13 +7,14 @@ import Close from '@mui/icons-material/Close'
 import Refresh from '@mui/icons-material/Refresh'
 import InboxOutlined from '@mui/icons-material/InboxOutlined'
 import { useDevice } from '@hooks/useDevice'
+import type { KioskSearchItem } from './KioskSearchField'
 import getEndPoint from '@utility/getEndPoint'
 import { useGetAuthorizationConfig } from '@hooks/useGetAuthorizationConfig'
 
 export type BankDraft = {
     id: number; ticketCode: string; subject: string; plaqueNo: string; state: string
     departmentInfo?: { name: string; branchCode: number }; reportedAt?: string; pvCreateDate?: string
-    reportedIssue: string; description: string
+    kiosks?: KioskSearchItem[]; reportedIssue: string; description: string
 }
 type Status = { allowHttp: boolean; configured: boolean; state: string; lastPoll?: string }
 type Challenge = { attemptId: string; captcha: string }

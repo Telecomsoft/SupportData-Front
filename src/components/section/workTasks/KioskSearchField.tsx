@@ -34,6 +34,8 @@ export type KioskSearchItem = {
     isActive?: boolean
 }
 
+export const BranchKiosksContext = createContext<KioskSearchItem[] | undefined>(undefined)
+
 const MAX_RESULTS = 50
 const DEBOUNCE_MS = 350
 
@@ -153,6 +155,8 @@ const ResultsPaper = ({ children, ...props }: HTMLAttributes<HTMLElement>) => {
  * The form value is the chosen kiosk object (or null).
  */
 const KioskSearchField = ({ value, label, control, size = 12, helperText, validators, disabled, placeholder }: any) => {
+    const candidates = useContext(BranchKiosksContext)
+    const scoped = !!candidates?.length
     const search = usePostData<{ text: string; number: number }, any>('api/WorkTask/SearchKiosks', 'search-kiosks')
     const [inputValue, setInputValue] = useState('')
     const [options, setOptions] = useState<KioskSearchItem[]>([])
@@ -162,12 +166,13 @@ const KioskSearchField = ({ value, label, control, size = 12, helperText, valida
     const reqId = useRef(0)
     const term = toLatinDigits(inputValue.trim())
     // derived, so there's no frame between typing and the effect where the list says "not found"
-    const loading = !!term && term !== searchedTerm
+    const loading = !scoped && !!term && term !== searchedTerm
 
     // the search runs once the typing stops; only the newest request may fill the list
     const searchRef = useRef(search)
     searchRef.current = search
     useEffect(() => {
+        if (scoped) return
         if (!term) { reqId.current++; setOptions([]); setTotal(0); setSearchedTerm(''); setFailed(false); return }
         const id = ++reqId.current
         const timer = setTimeout(() => {
@@ -181,7 +186,7 @@ const KioskSearchField = ({ value, label, control, size = 12, helperText, valida
                 .finally(() => { if (id === reqId.current) setSearchedTerm(term) })
         }, DEBOUNCE_MS)
         return () => clearTimeout(timer)
-    }, [term])
+    }, [term, scoped])
 
     const Auto = StyledAutoComplete as any
 
@@ -196,12 +201,13 @@ const KioskSearchField = ({ value, label, control, size = 12, helperText, valida
                         <ResultsInfoContext.Provider value={{ shown: options.length, total, visible: !!term && !loading && options.length > 0 }}>
                             <Auto
                                 disabled={disabled}
-                                options={options}
+                                options={scoped ? candidates.filter(k => !term || toLatinDigits(k.serial).toLowerCase().includes(term.toLowerCase())) : options}
                                 value={selected ?? null}
-                                inputValue={inputValue}
+                                inputValue={scoped && selected && !inputValue ? selected.serial : inputValue}
                                 loading={loading}
                                 autoHighlight                                                    // Enter picks the first result
-                                forcePopupIcon={false}                                           // a search, not a dropdown to browse
+                                openOnFocus={scoped}
+                                forcePopupIcon={scoped}                                           // a search, not a dropdown to browse
                                 loadingText={
                                     <Stack direction="row" alignItems="center" gap={1}>
                                         <CircularProgress size={14} thickness={5} /> در حال جستجو...
@@ -218,7 +224,7 @@ const KioskSearchField = ({ value, label, control, size = 12, helperText, valida
                                 }}
                                 onChange={(_: unknown, newValue: KioskSearchItem | null) => {
                                     onChange(newValue)
-                                    setInputValue(newValue?.serial ?? '')
+                                    setInputValue(scoped ? '' : newValue?.serial ?? '')
                                 }}
                                 PaperComponent={ResultsPaper}
                                 slotProps={{
@@ -246,7 +252,7 @@ const KioskSearchField = ({ value, label, control, size = 12, helperText, valida
                                         label={label}
                                         placeholder={placeholder ?? 'سریال، شعبه، شهر، مشتری...'}
                                         error={!!error}
-                                        helperText={error ? error.message : helperText}
+                                        helperText={error ? error.message : candidates === undefined ? helperText : candidates.length === 1 ? 'کیوسک فعال این شعبه انتخاب شده است.' : scoped ? 'چند کیوسک فعال در این شعبه وجود دارد. کیوسک مورد نظر را انتخاب کنید.' : 'کیوسک فعالی برای این بانک و کد شعبه پیدا نشد. کیوسک را جستجو کنید.'}
                                         InputLabelProps={{ ...params.InputLabelProps, shrink: !!selected || !!inputValue || undefined }}
                                         InputProps={{
                                             ...params.InputProps,

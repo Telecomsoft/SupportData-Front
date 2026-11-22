@@ -3,6 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import Grid from '@mui/material/Grid2'
 import { Box, Button, Dialog, DialogContent, Fab, IconButton, Tooltip, Typography } from '@mui/material'
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import { BranchKiosksContext } from '@components/section/workTasks/KioskSearchField'
 import HelpdeskDrafts, { type BankDraft } from '@components/section/workTasks/HelpdeskDrafts'
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
@@ -321,7 +322,7 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                 <WorkTaskDetailsDialog taskID={costsTaskID} close={() => setCostsTaskID(null)} onSaved={() => list.refetch()} snackbarOpen={snackbarOpen} />
             )}
 
-            {adding && (
+            {adding && (<BranchKiosksContext.Provider value={draft?.kiosks}>
                 <GeneralDialog
                     open="add"
                     title={draft ? `بررسی درخواست ${draft.ticketCode}` : "ثبت دستورکار"}
@@ -334,7 +335,7 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                         customerID: lookups.options.customerID,
                         assignedToID: lookups.options.assignedToID,
                     }}
-                    addDefaultValue={{ ...(draft ? { reportedIssue: draft.reportedIssue, description: draft.description, reportedAt: draft.reportedAt } : {}), workTaskType: taskTypeOptions.find((o) => o.id === 1002) }}
+                    addDefaultValue={{ ...(draft ? { kiosk: draft.kiosks?.length === 1 ? draft.kiosks[0] : null, reportedIssue: draft.reportedIssue, description: draft.description, reportedAt: draft.reportedAt } : {}), workTaskType: taskTypeOptions.find((o) => o.id === 1002) }}
                     sendFinalData
                     apiValueGetter={((data: any) => {
                         const payload: Record<string, unknown> = buildPayload(createForm, data, {})
@@ -348,6 +349,7 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                     wrapperFunc={(created) => { if (draft) { setShowDrafts(false); setDraftVersion(v => v + 1) }; list.refetch(); if (created?.id) open(created.id) }}
                     snackbarOpen={snackbarOpen}
                 />
+                </BranchKiosksContext.Provider>
             )}
         </Grid>
     )
