@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Autocomplete, Stack, ToggleButton, ToggleButtonGroup } from '@mui/material'
+import { Stack, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import StyledTextField from '@components/general/input/StyledTextField';
+
+import { StyledAutoComplete } from '@components/general/input/StyledAutoComplete'
+import { sizeConverter } from '@src/utility/sizeConverter'
 
 type Opt = { id: number; name: string }
 
@@ -32,14 +35,14 @@ const KioskFilterBar = ({ value, onChange, customers, cities, models }: Props) =
     }, [branch])
 
     const combo = (label: string, options: Opt[], selected: Opt | null, set: (o: Opt | null) => void) => (
-        <Autocomplete
+        <StyledAutoComplete
             size="small"
-            sx={{ minWidth: 180 }}
+            sx={{ width: sizeConverter(180, 'width'), minWidth: '9rem', maxWidth: '100%' }}
             options={options}
             value={selected}
-            getOptionLabel={(o) => o.name}
-            isOptionEqualToValue={(a, b) => a.id === b.id}
-            onChange={(_, o) => set(o)}
+            getOptionLabel={(o) => (o as Opt).name}
+            isOptionEqualToValue={(a, b) => (a as Opt).id === (b as Opt).id}
+            onChange={(_, o) => set(o as Opt | null)}
             renderInput={(p) => <StyledTextField {...p} label={label} />}
         />
     )
@@ -49,7 +52,7 @@ const KioskFilterBar = ({ value, onChange, customers, cities, models }: Props) =
             {combo('مشتری', customers, value.customer, (o) => onChange({ ...value, customer: o }))}
             {combo('شهر', cities, value.city, (o) => onChange({ ...value, city: o }))}
             {combo('مدل', models, value.model, (o) => onChange({ ...value, model: o }))}
-            <StyledTextField size="small" label="کد شعبه" value={branch} onChange={(e) => setBranch(e.target.value)} sx={{ width: 120 }} />
+            <StyledTextField size="small" label="کد شعبه" value={branch} onChange={(e) => setBranch(e.target.value)} sx={{ width: sizeConverter(120, 'width'), minWidth: '6rem' }} />
             <ToggleButtonGroup
                 size="small"
                 exclusive

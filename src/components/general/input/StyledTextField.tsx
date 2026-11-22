@@ -1,199 +1,60 @@
-import { styled, Theme } from '@mui/system'
 import TextField from '@mui/material/TextField'
-import { sizeConverter } from '@utility/sizeConverter'
+import { alpha, styled } from '@mui/material/styles'
 
-type StyledTextFieldProps = {
-    theme?: Theme
-}
+import { sizeConverter } from '@src/utility/sizeConverter'
 
-// const StyledTextField = styled(TextField)<StyledTextFieldProps>(({ theme }) => ({
-//     width: '100%',
-//     borderRadius: sizeConverter(25, 'radius'),
-//     '& .MuiOutlinedInput-input': {
-//         padding: `0px ${sizeConverter(6)}px`,
-//         color: '#000',
-//         fontSize: sizeConverter(12),
-//         borderRadius: sizeConverter(25, 'radius'),
-//         minHeight: sizeConverter(30, 'height'),
-
-//         '&[type="number"]': {
-//             MozAppearance: 'textfield',
-//             '&::-webkit-outer-spin-button': {
-//                 WebkitAppearance: 'none',
-//                 margin: 0,
-//             },
-//             '&::-webkit-inner-spin-button': {
-//                 WebkitAppearance: 'none',
-//                 margin: 0,
-//             },
-//         },
-//     },
-//     '& label': {
-//         color: theme.palette.black['1'],
-//         fontSize: sizeConverter(12),
-//         lineHeight: 1.2,
-//         marginTop: sizeConverter(-28,'spaceY'),
-//     },
-//     '& .MuiInputLabel-shrink': {
-//         transform: `translate(${sizeConverter(13)}px, ${sizeConverter(-3)}px) scale(0.75)`,
-//         // Add other styles as needed
-//     },
-//     '& label.Mui-focused': {
-//         color: theme.palette.black['1'],
-//     },
-//     '& .MuiIconButton-root': {
-//         backgroundColor: '#fff',
-//     },
-//     '& .Mui-error-root': {
-//         color: theme.palette.black['1'],
-//     },
-//     '& .MuiFormHelperText-root': {
-//         color: theme.palette.black['1'],
-//     },
-//     '& .MuiFormLabel-root.Mui-error': {
-//         color: theme.palette.black['1'],
-//         borderColor: '#f5f5f5 !important',
-//     },
-//     '& .MuiOutlinedInput-root': {
-//         borderRadius: sizeConverter(25, 'radius'),
-//         minHeight: sizeConverter(30, 'height'),
-//         '& fieldset': {
-//             border: `${sizeConverter(1)}px solid`,
-//             borderColor: theme.palette.black['7'],
-//         },
-//         '&:hover fieldset': {
-//             borderColor: theme.palette.black['4'],
-//         },
-//         '&.Mui-focused fieldset': {
-//             borderColor: theme.palette.black['2'],
-//         },
-//     },
-// }))
-
-// export default StyledTextField
-
-const StyledTextField = styled(TextField)<StyledTextFieldProps>(({ theme }) => ({
+const StyledTextField = styled(TextField)(({ theme }) => ({
     width: '100%',
-    borderRadius: sizeConverter(25, 'radius'),
-
-    '& .MuiOutlinedInput-input': {
-        // استفاده از رنگ متن اصلی تم به جای #000
-        color: theme.palette.text.primary,
-        fontSize: sizeConverter(12),
-        borderRadius: sizeConverter(25, 'radius'),
-        // minHeight: sizeConverter(30, 'height'),
-
-        '&[type="number"]': {
-            MozAppearance: 'textfield',
-            '&::-webkit-outer-spin-button': {
-                WebkitAppearance: 'none',
-                margin: 0,
-            },
-            '&::-webkit-inner-spin-button': {
-                WebkitAppearance: 'none',
-                margin: 0,
-            },
-        },
-    },
-
-    '& label': {
-        color: theme.palette.black?.['1'] || theme.palette.text.secondary,
-        fontSize: sizeConverter(12),
-        lineHeight: 1.2,
-        marginTop: sizeConverter(-28, 'spaceY'),
-    },
-
-    '& .MuiInputLabel-shrink': {
-        transform: `translate(${sizeConverter(13)}px, ${sizeConverter(-3)}px) scale(0.75)`,
-    },
-
-    '& label.Mui-focused': {
-        color: theme.palette.primary.main, // معمولاً در فوکوس از رنگ اصلی استفاده می‌شود
-    },
-
-    '& .MuiIconButton-root': {
-        // استفاده از رنگ پس‌زمینه کاغذ/سطح به جای #fff
-        backgroundColor: theme.palette.background.paper,
-    },
-
-    '& .Mui-error-root': {
-        color: theme.palette.error.main, // استفاده از رنگ خطای تم
-    },
-
-    '& .MuiFormHelperText-root': {
-        color: theme.palette.error.main, // هماهنگی متن راهنما با وضعیت خطا
-    },
-
-    '& .MuiFormLabel-root.Mui-error': {
-        color: theme.palette.error.main,
-        // جایگزینی #f5f5f5 با رنگ خاکستری بسیار روشن از تم یا شفافیت
-        borderColor: `${theme.palette.action.hover} !important`,
-    },
-
+    minWidth: 0,
+    '--field-height': `max(2.75rem, ${sizeConverter(44, 'height')}px)`,
+    '&:has(.MuiInputBase-sizeSmall)': { '--field-height': `max(2.25rem, ${sizeConverter(36, 'height')}px)` },
     '& .MuiOutlinedInput-root': {
-        borderRadius: sizeConverter(25, 'radius'),
-        minHeight: sizeConverter(30, 'height'),
-
-        '& fieldset': {
-            border: `${sizeConverter(1)}px solid`,
-            borderColor: theme.palette.black?.['7'] || theme.palette.divider,
+        minHeight: 'var(--field-height)',
+        borderRadius: sizeConverter(10),
+        fontSize: '0.9375rem',
+        lineHeight: '1.5rem',
+        backgroundColor: theme.palette.background.paper,
+        '& .MuiOutlinedInput-notchedOutline': {
+            borderColor: alpha(theme.palette.text.primary, 0.32),
+            transition: theme.transitions.create('border-color', { duration: 120 }),
         },
-
-        '&:hover fieldset': {
-            borderColor: theme.palette.black?.['4'] || theme.palette.primary.light,
+        '&:hover:not(.Mui-disabled):not(.Mui-error) .MuiOutlinedInput-notchedOutline': {
+            borderColor: theme.palette.text.secondary,
         },
-
-        '&.Mui-focused fieldset': {
-            borderColor: theme.palette.black?.['2'] || theme.palette.primary.main,
+        '&.Mui-focused:not(.Mui-error) .MuiOutlinedInput-notchedOutline': {
+            borderColor: theme.palette.primary.main,
         },
-
-        // اصلاح استایل فیلدست در حالت خطا
-        '&.Mui-error fieldset': {
-            borderColor: theme.palette.error.main,
+        '&.Mui-error .MuiOutlinedInput-notchedOutline': { borderColor: theme.palette.error.main },
+        '&.Mui-disabled': { backgroundColor: theme.palette.action.disabledBackground },
+        '&.Mui-disabled .MuiOutlinedInput-notchedOutline': { borderColor: theme.palette.divider },
+    },
+    '& .MuiOutlinedInput-input:not(.MuiAutocomplete-input)': {
+        paddingBlock: 'calc((var(--field-height) - 1.5rem) / 2)',
+        paddingInline: sizeConverter(14, 'width'),
+        '&:not(textarea)': { height: '1.5rem' },
+        '&[type=number]': {
+            MozAppearance: 'textfield',
+            '&::-webkit-inner-spin-button, &::-webkit-outer-spin-button': { WebkitAppearance: 'none' },
         },
     },
-
-    // ================= MOBILE =================
-    [theme.breakpoints.down('md')]: {
-        margin: theme.spacing(1.5, 0), // استفاده از spacing تم به جای 12px
-        padding: theme.spacing(0, 1.25), // استفاده از spacing تم به جای 10px
-
-        '& .MuiOutlinedInput-input': {
-            padding: '14px 16px',
-            fontSize: '1.05rem',
-        },
-
-        '& label': {
-            fontSize: '1rem',
-            marginTop: '-8px',
-        },
-
-        '& .MuiInputLabel-shrink': {
-            transform: 'translate(14px, -6px) scale(0.8)',
-        },
-
-        '& .MuiFormHelperText-root': {
-            fontSize: '0.9rem',
-            marginTop: '4px',
-        },
-
-        '& .MuiOutlinedInput-root': {
-            borderRadius: '12px',
-
-            '& fieldset': {
-                borderWidth: '1.5px',
-            },
-
-            '&.Mui-focused fieldset': {
-                borderWidth: '2px',
-                borderColor: theme.palette.primary.main,
-            },
-
-            '&:hover fieldset': {
-                borderColor: theme.palette.primary.main,
-            },
-        },
+    '& .MuiInputBase-adornedStart .MuiOutlinedInput-input': { paddingInlineStart: 0 },
+    '& .MuiInputBase-adornedEnd .MuiOutlinedInput-input': { paddingInlineEnd: 0 },
+    '& .MuiInputBase-multiline': {
+        paddingBlock: sizeConverter(10, 'height'),
+        paddingInline: sizeConverter(14, 'width'),
+        '& textarea.MuiOutlinedInput-input': { padding: 0 },
     },
+    '& .MuiInputLabel-outlined': {
+        insetInlineStart: sizeConverter(14, 'width'),
+        insetInlineEnd: 'auto',
+        transformOrigin: theme.direction === 'rtl' ? '100% 0' : '0% 0',
+        '&:not(.MuiInputLabel-shrink)': {
+            transform: 'translateY(calc((var(--field-height) - 1.5rem) / 2))',
+            lineHeight: '1.5rem',
+        },
+        '&.MuiInputLabel-shrink': { transform: 'translateY(-50%) scale(0.75)' },
+    },
+    '& .MuiFormHelperText-root': { marginInline: sizeConverter(14, 'width'), marginTop: sizeConverter(4, 'height') },
 }))
 
 export default StyledTextField
