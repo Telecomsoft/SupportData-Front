@@ -110,7 +110,7 @@ const GeneralDialog = ({
       reset,
       handleSubmit,
       formState: { errors },
-   } = useForm({})
+   } = useForm<Record<string, any>>({ defaultValues: open === 'add' ? addDefaultValue : undefined })
 
    const createItem = usePostData(createEndpoint ? createEndpoint : '')
    const editItem = usePutData(editEndpoint ? editEndpoint : '')

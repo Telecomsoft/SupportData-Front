@@ -3,6 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import Grid from '@mui/material/Grid2'
 import { Box, Button, Dialog, DialogContent, Fab, IconButton, Tooltip, Typography } from '@mui/material'
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import HelpdeskDrafts, { type BankDraft } from '@components/section/workTasks/HelpdeskDrafts'
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
@@ -82,7 +83,7 @@ const EditTaskDialog = ({ taskID, close, onSaved, snackbarOpen, lookups, isMobil
 function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     const { isMobile } = useDevice()
     const { canPerform } = useAccessCheck()
-    const { isCustomer } = useUserScope()
+    const { isCustomer, isContractor } = useUserScope()
     const lookups = useWorkTaskLookups()
     const canCreate = canPerform(201)                 // "Task - Create"; the server also checks the customer rules
     const canEditTask = canPerform(202)               // "Task - Edit"
@@ -95,6 +96,8 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
     const [clearSelectionKey, setClearSelectionKey] = useState<null | undefined>(undefined)
     const selectedID = selectedIDs.length === 1 ? selectedIDs[0] : undefined   // view / edit work on exactly one row
     const rowCache = useRef(new Map<number, any>())                            // every row seen, so a selected row from another page is still known
+    const [draft, setDraft] = useState<BankDraft>()
+    const [draftVersion, setDraftVersion] = useState(0)
     const [adding, setAdding] = useState(false)
     const [editingID, setEditingID] = useState<number | null>(null)   // the task whose edit dialog is open
     const [costsTaskID, setCostsTaskID] = useState<number | null>(null)   // the task whose diagnosis / costs dialog is open
@@ -251,6 +254,7 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
 
     return (
         <Grid container size={12} sx={{ position: 'relative', height: isMobile ? '100dvh' : 'auto', overflow: isMobile ? 'hidden' : 'visible' }}>
+            {canCreate && canPerform(111) && !isCustomer && !isContractor && <Grid size={12}><HelpdeskDrafts version={draftVersion} review={d => { setDraft(d); setAdding(true) }} /></Grid>}
             {isLoading ? (
                 <Grid sx={{ m: 'auto', mt: isMobile ? '50%' : '20%' }}><CustomCircularProgress thickness={2} size={60} /></Grid>
             ) : isMobile ? (
@@ -319,17 +323,17 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
             {adding && (
                 <GeneralDialog
                     open="add"
-                    title="ثبت دستورکار"
+                    title={draft ? `بررسی درخواست ${draft.ticketCode}` : "ثبت دستورکار"}
                     width={sizeConverter(680, 'width')}
-                    close={() => setAdding(false)}
+                    close={() => { setAdding(false); setDraft(undefined) }}
                     array={createForm}
-                    createEndpoint="api/WorkTask/AddWorkTask"
+                    createEndpoint={draft ? `api/WorkTask/AddWorkTask?helpdeskDraftId=${draft.id}` : "api/WorkTask/AddWorkTask"}
                     autoCompleteOption={{
                         workTaskType: taskTypeOptions,
                         customerID: lookups.options.customerID,
                         assignedToID: lookups.options.assignedToID,
                     }}
-                    addDefaultValue={{ workTaskType: taskTypeOptions.find((o) => o.id === 1002) }}
+                    addDefaultValue={{ ...(draft ? { reportedIssue: draft.reportedIssue, description: draft.description, reportedAt: draft.reportedAt } : {}), workTaskType: taskTypeOptions.find((o) => o.id === 1002) }}
                     sendFinalData
                     apiValueGetter={((data: any) => {
                         const payload: Record<string, unknown> = buildPayload(createForm, data, {})
@@ -340,7 +344,7 @@ function WorkTasksList({ snackbarOpen }: { snackbarOpen: snackbarOpenType }) {
                         if (!payload.reportedAt) delete payload.reportedAt
                         return payload
                     }) as any}
-                    wrapperFunc={(created) => { list.refetch(); if (created?.id) open(created.id) }}
+                    wrapperFunc={(created) => { if (draft) setDraftVersion(v => v + 1); list.refetch(); if (created?.id) open(created.id) }}
                     snackbarOpen={snackbarOpen}
                 />
             )}
