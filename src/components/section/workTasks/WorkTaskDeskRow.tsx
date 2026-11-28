@@ -1,16 +1,18 @@
 import { memo, useState, type KeyboardEvent, type MouseEvent } from 'react'
 import {
-    Box, Button, Checkbox, Chip, IconButton, Menu, MenuItem, Paper, Stack, Tooltip, Typography,
+    alpha, Box, Button, Chip, IconButton, Menu, MenuItem, Paper, Stack, Tooltip, Typography,
 } from '@mui/material'
 import AssignmentIndOutlinedIcon from '@mui/icons-material/AssignmentIndOutlined'
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined'
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined'
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
+import EngineeringOutlinedIcon from '@mui/icons-material/EngineeringOutlined'
 import FiberNewOutlinedIcon from '@mui/icons-material/FiberNewOutlined'
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
+import ScheduleOutlinedIcon from '@mui/icons-material/ScheduleOutlined'
 import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined'
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded'
 import WorkTaskStepButton from '@components/section/workTasks/WorkTaskStepButton'
@@ -20,7 +22,6 @@ import { TASK_STATE_COLOR } from '@src/data/type/lookups'
 import { WORK_TASK_DESK_TEXT as text } from '@src/data/type/workTaskDesk'
 import type { snackbarOpenType } from '@type/snackbarOpen'
 
-// TODO: add a priority indicator only when WorkTask exposes a persisted priority field.
 export type WorkTaskDeskTask = {
     id: number
     state: number
@@ -43,7 +44,6 @@ export type WorkTaskDeskTask = {
 type Props = {
     task: WorkTaskDeskTask
     selected: boolean
-    density: 'compact' | 'comfortable'
     snackbarOpen: snackbarOpenType
     printing: boolean
     onToggle: (id: number) => void
@@ -54,6 +54,7 @@ type Props = {
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000
+const ICON = 14
 
 const cleanLabel = (value?: string | null) => {
     const label = value?.trim()
@@ -70,6 +71,7 @@ const deadlineInfo = (value?: string, overdueFromServer = false) => {
     const days = Math.round((dueDay.getTime() - today.getTime()) / DAY_MS)
     const overdue = overdueFromServer || days < 0
     return {
+        days,
         absolute: dateFn(value, false),
         relative: days === 0
             ? overdue ? text.overdueToday : text.today
@@ -78,23 +80,32 @@ const deadlineInfo = (value?: string, overdueFromServer = false) => {
     }
 }
 
+const typeTone = (name?: string): 'error' | 'info' | 'secondary' | 'default' => {
+    const label = cleanLabel(name)
+    if (label.includes('خرابی')) return 'error'
+    if (label.includes('نصب')) return 'info'
+    if (label.includes('بازدید')) return 'secondary'
+    return 'default'
+}
+
 const StateIcon = ({ state }: { state: number }) => {
+    const sx = { fontSize: `${ICON}px !important` }
     switch (state) {
-        case 1: return <FiberNewOutlinedIcon fontSize="small" />
-        case 2: return <AssignmentIndOutlinedIcon fontSize="small" />
-        case 3: return <BlockOutlinedIcon fontSize="small" />
-        case 4: return <AutorenewOutlinedIcon fontSize="small" />
-        case 5: return <Inventory2OutlinedIcon fontSize="small" />
-        case 7: return <TaskAltOutlinedIcon fontSize="small" />
-        case 8: return <CheckCircleOutlineIcon fontSize="small" />
-        default: return <AssignmentOutlinedIcon fontSize="small" />
+        case 1: return <FiberNewOutlinedIcon sx={sx} />
+        case 2: return <AssignmentIndOutlinedIcon sx={sx} />
+        case 3: return <BlockOutlinedIcon sx={sx} />
+        case 4: return <AutorenewOutlinedIcon sx={sx} />
+        case 5: return <Inventory2OutlinedIcon sx={sx} />
+        case 7: return <TaskAltOutlinedIcon sx={sx} />
+        case 8: return <CheckCircleOutlineIcon sx={sx} />
+        default: return <AssignmentOutlinedIcon sx={sx} />
     }
 }
 
 const stop = (event: MouseEvent) => event.stopPropagation()
 
 const WorkTaskDeskRow = memo(({
-    task, selected, density, snackbarOpen, printing, onToggle, onOpen, onAssign, onPrint, onStepDone,
+    task, selected, snackbarOpen, printing, onToggle, onOpen, onAssign, onPrint, onStepDone,
 }: Props) => {
     const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null)
     const assignee = cleanLabel(task.assignedToName)
@@ -104,7 +115,8 @@ const WorkTaskDeskRow = memo(({
     const overdue = Boolean(task.isOverdue || deadline?.overdue)
     const chipColor = TASK_STATE_COLOR[task.state] ?? 'default'
     const rowLabel = text.taskLabel(num(task.id), task.stateName ?? '', cleanLabel(task.kioskSerial))
-    const verticalPadding = density === 'compact' ? 1 : 1.75
+    const kind = cleanLabel(task.typeName)
+    const issue = cleanLabel(task.reportedIssue)
 
     const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
         if (event.target !== event.currentTarget) return
@@ -120,106 +132,203 @@ const WorkTaskDeskRow = memo(({
     return (
         <Paper
             component="article"
-            variant="outlined"
+            elevation={0}
             role="group"
             tabIndex={0}
             aria-label={rowLabel}
             onClick={() => onOpen(task.id)}
             onKeyDown={handleKeyDown}
-            sx={{
-                display: 'grid',
-                gridTemplateColumns: { xs: '40px minmax(0, 1fr) auto', md: '40px minmax(115px, .7fr) minmax(190px, 1.35fr) minmax(100px, .7fr) minmax(125px, .8fr) minmax(145px, .9fr) auto' },
-                alignItems: 'center',
-                gap: { xs: 1, md: 1.5 },
-                p: verticalPadding,
-                borderRadius: 1.5,
-                borderInlineStart: overdue ? '3px solid' : undefined,
-                borderInlineStartColor: overdue ? 'error.main' : undefined,
+            sx={(theme) => ({
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 0.75,
+                minWidth: 0,
+                p: 1.2,
+                borderRadius: 3,
+                border: '1px solid',
+                borderColor: selected
+                    ? alpha(theme.palette.primary.main, 0.5)
+                    : overdue
+                        ? alpha(theme.palette.error.main, 0.25)
+                        : alpha(theme.palette.divider, 0.6),
+                bgcolor: selected ? alpha(theme.palette.primary.main, 0.04) : 'background.paper',
+                boxShadow: '0 2px 8px -2px rgba(15, 23, 42, 0.025)',
                 cursor: 'pointer',
-                transition: 'border-color .15s ease, box-shadow .15s ease, background-color .15s ease',
-                '&:hover': { borderColor: overdue ? 'error.light' : 'primary.light', bgcolor: 'action.hover' },
-                '&:focus-visible': { outline: '3px solid', outlineColor: 'primary.main', outlineOffset: 2 },
-            }}
+                transition: 'all .16s ease',
+                '&:hover': {
+                    transform: 'translateY(-1px)',
+                    borderColor: overdue ? alpha(theme.palette.error.main, 0.45) : alpha(theme.palette.primary.main, 0.4),
+                    boxShadow: '0 6px 16px -4px rgba(15, 23, 42, 0.07)',
+                },
+                '&:focus-visible': { outline: '2px solid', outlineColor: 'primary.main', outlineOffset: 2 },
+            })}
         >
-            <Checkbox
-                size="small"
-                checked={selected}
-                onClick={stop}
-                onChange={() => onToggle(task.id)}
-                inputProps={{ 'aria-label': `${text.selectTask} ${num(task.id)}` }}
-            />
-            <Box sx={{ minWidth: 0 }}>
-                <Typography fontWeight={800} variant={density === 'compact' ? 'body2' : 'subtitle1'} sx={{ fontVariantNumeric: 'tabular-nums' }}>
+            {/* 1. شماره، نوع کار و وضعیت */}
+            <Stack direction="row" alignItems="center" gap={0.6} sx={{ minWidth: 0 }}>
+                <Typography sx={{ fontSize: 12, fontWeight: 800, lineHeight: 1.3, fontVariantNumeric: 'tabular-nums', flexShrink: 0 }}>
                     <bdi dir="ltr">#{num(task.id)}</bdi>
                 </Typography>
-                <Typography variant="caption" color="text.secondary" noWrap>{task.typeName || '—'}</Typography>
-            </Box>
-            <Box sx={{ minWidth: 0, gridColumn: { xs: '2 / -1', md: 'auto' } }}>
-                <Typography variant="body2" fontWeight={700} noWrap>
-                    {text.kiosk} <bdi dir="ltr" style={{ fontVariantNumeric: 'tabular-nums' }}>{cleanLabel(task.kioskSerial) || '—'}</bdi>
-                </Typography>
-                <Typography variant="caption" color="text.secondary" noWrap>
-                    {locationParts.length ? locationParts.join(' · ') : '—'}
-                </Typography>
-            </Box>
-            <Stack direction="row" gap={0.75} alignItems="center" flexWrap="wrap" sx={{ gridColumn: { xs: '2 / -1', md: 'auto' } }}>
+                {kind && (
+                    <Chip
+                        size="small"
+                        variant="outlined"
+                        color={typeTone(kind)}
+                        label={kind}
+                        sx={{
+                            height: 18,
+                            fontSize: 10,
+                            fontWeight: 700,
+                            borderRadius: 999,
+                            '& .MuiChip-label': { px: 0.75 },
+                        }}
+                    />
+                )}
                 <Chip
                     size="small"
                     color={chipColor}
                     icon={<StateIcon state={task.state} />}
                     label={task.stateName || '—'}
-                    sx={{ borderRadius: 1.25, '& .MuiChip-icon': { marginInlineStart: 0.75 } }}
+                    sx={(theme) => ({
+                        marginInlineStart: 'auto',
+                        height: 20,
+                        fontSize: 10,
+                        fontWeight: 700,
+                        borderRadius: 999,
+                        flexShrink: 0,
+                        ...(chipColor !== 'default' && {
+                            bgcolor: alpha(theme.palette[chipColor].main, 0.12),
+                            color: theme.palette[chipColor].dark,
+                            '& .MuiChip-icon': { color: theme.palette[chipColor].main },
+                        }),
+                        '& .MuiChip-label': { px: 0.75 },
+                    })}
                 />
-                {overdue && (
-                    <Chip
-                        size="small"
-                        color="error"
-                        icon={<WarningAmberRoundedIcon fontSize="small" />}
-                        label={deadline?.overdue ? deadline.relative : text.overdue}
-                        sx={{ borderRadius: 1.25 }}
-                    />
-                )}
             </Stack>
-            <Box sx={{ minWidth: 0, gridColumn: { xs: '2 / -1', md: 'auto' } }}>
-                <Typography variant="caption" color="text.secondary" display="block">{text.assignee}</Typography>
+
+            {/* 2. ددلاین یا تاخیر (فشرده) */}
+            {(overdue || deadline) && (
+                <Stack
+                    direction="row"
+                    alignItems="center"
+                    gap={0.5}
+                    sx={(theme) => ({
+                        px: overdue ? 0.85 : 0.25,
+                        py: overdue ? 0.25 : 0,
+                        borderRadius: 1.75,
+                        color: overdue ? 'error.main' : deadline!.days <= 1 ? 'warning.main' : 'text.secondary',
+                        bgcolor: overdue ? alpha(theme.palette.error.main, 0.08) : 'transparent',
+                    })}
+                >
+                    {overdue ? <WarningAmberRoundedIcon sx={{ fontSize: ICON }} /> : <ScheduleOutlinedIcon sx={{ fontSize: ICON }} />}
+                    <Typography noWrap sx={{ fontSize: 10.5, fontWeight: 700, lineHeight: 1.3 }}>
+                        {overdue ? (deadline?.overdue ? deadline.relative : text.overdue) : deadline!.relative}
+                    </Typography>
+                    {deadline && (
+                        <Typography noWrap sx={{ fontSize: 9.5, marginInlineStart: 'auto', opacity: 0.8 }}>
+                            {deadline.absolute}
+                        </Typography>
+                    )}
+                </Stack>
+            )}
+
+            {/* 3. کیوسک و موقعیت در یک بلوک جمع‌وجور */}
+            <Box sx={{ minWidth: 0 }}>
+                <Typography noWrap sx={{ fontSize: 12, fontWeight: 700, lineHeight: 1.35 }}>
+                    {text.kiosk} <bdi dir="ltr" style={{ fontVariantNumeric: 'tabular-nums' }}>{cleanLabel(task.kioskSerial) || '—'}</bdi>
+                </Typography>
+                <Typography noWrap color="text.secondary" sx={{ fontSize: 10.5, lineHeight: 1.35 }}>
+                    {locationParts.length ? locationParts.join(' · ') : '—'}
+                </Typography>
+            </Box>
+
+            {/* 4. شرح مشکل (بدون فضای خالی اضافه) */}
+            <Tooltip title={issue} placement="top" disableHoverListener={!issue}>
+                <Typography
+                    color={issue ? 'text.secondary' : 'text.disabled'}
+                    sx={{
+                        fontSize: 11,
+                        lineHeight: 1.4,
+                        display: '-webkit-box',
+                        overflow: 'hidden',
+                        WebkitBoxOrient: 'vertical',
+                        WebkitLineClamp: 1,
+                        overflowWrap: 'anywhere',
+                    }}
+                >
+                    {issue || text.noDescription}
+                </Typography>
+            </Tooltip>
+
+            {/* 5. مسئول انجام */}
+            <Stack direction="row" alignItems="center" gap={0.5} sx={{ minWidth: 0 }}>
+                <EngineeringOutlinedIcon sx={{ fontSize: ICON, flexShrink: 0, color: assignee || contractor ? 'text.secondary' : 'warning.main' }} />
                 {assignee || contractor ? (
-                    <Typography variant="body2" noWrap>{[assignee, contractor].filter(Boolean).join(' · ')}</Typography>
+                    <Typography noWrap color="text.secondary" sx={{ fontSize: 10.5, fontWeight: 500, lineHeight: 1.35 }}>
+                        {[assignee, contractor].filter(Boolean).join(' · ')}
+                    </Typography>
                 ) : (
-                    <Stack direction="row" alignItems="center" gap={0.75}>
-                        <Typography variant="body2" color="text.secondary">{text.noAssignee}</Typography>
+                    <>
+                        <Typography noWrap sx={{ fontSize: 10.5, color: 'warning.main', fontWeight: 700 }}>{text.noAssignee}</Typography>
                         <Button
                             size="small"
                             color="warning"
                             onClick={(event) => { stop(event); onAssign(task.id) }}
-                            sx={{ minWidth: 0, p: 0, justifyContent: 'flex-start', fontWeight: 700 }}
+                            sx={{ minWidth: 0, px: 0.6, py: 0, fontSize: 10.5, fontWeight: 800, borderRadius: 99, lineHeight: 1.3 }}
                         >
                             {text.assign}
                         </Button>
-                    </Stack>
+                    </>
                 )}
-            </Box>
-            <Box sx={{ minWidth: 0, gridColumn: { xs: '2 / -1', md: 'auto' } }}>
-                <Typography variant="caption" color="text.secondary" display="block">
-                    {task.reportedAt ? `${text.reported}: ${dateFn(task.reportedAt, false)}` : text.deadline}
-                </Typography>
-                {deadline ? (
-                    <Tooltip title={`${text.deadline}: ${deadline.absolute}`}>
-                        <Typography variant="body2" color={overdue ? 'error.main' : 'text.primary'} fontWeight={700} noWrap>
-                            {deadline.relative} <Typography component="span" variant="caption" color="text.secondary">/ {deadline.absolute}</Typography>
-                        </Typography>
-                    </Tooltip>
-                ) : <Typography variant="body2" color="text.secondary">—</Typography>}
-            </Box>
-            <Stack direction="row" alignItems="center" justifyContent={{ xs: 'flex-start', md: 'flex-end' }} gap={0.5} sx={{ gridColumn: { xs: '2 / -1', md: 'auto' } }}>
-                <WorkTaskStepButton task={task} snackbarOpen={snackbarOpen} onDone={onStepDone} variant="contained" />
+                {task.reportedAt && (
+                    <Typography color="text.disabled" sx={{ fontSize: 9.5, marginInlineStart: 'auto', whiteSpace: 'nowrap' }}>
+                        {dateFn(task.reportedAt, false)}
+                    </Typography>
+                )}
+            </Stack>
+
+            {/* 6. دکمه‌های اقدام */}
+            <Stack
+                direction="row"
+                alignItems="center"
+                gap={0.4}
+                sx={(theme) => ({
+                    mt: 'auto',
+                    pt: 0.75,
+                    borderTop: '1px solid',
+                    borderColor: alpha(theme.palette.divider, 0.45),
+                })}
+            >
+                <Box
+                    sx={{
+                        '& .MuiButton-root': {
+                            fontSize: 11,
+                            fontWeight: 700,
+                            py: 0.2,
+                            px: 1.25,
+                            minHeight: 24,
+                            minWidth: 0,
+                            borderRadius: 999,
+                            boxShadow: 'none',
+                        },
+                    }}
+                    onClick={stop}
+                >
+                    <WorkTaskStepButton task={task} snackbarOpen={snackbarOpen} onDone={onStepDone} variant="contained" />
+                </Box>
+                <Box sx={{ flex: 1 }} />
                 <Tooltip title={text.viewDetails}>
                     <IconButton
                         size="small"
                         color="primary"
                         aria-label={`${text.viewDetails} ${num(task.id)}`}
                         onClick={(event) => { stop(event); onOpen(task.id) }}
+                        sx={(theme) => ({
+                            p: 0.5,
+                            bgcolor: alpha(theme.palette.primary.main, 0.06),
+                            '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.14) },
+                        })}
                     >
-                        <OpenInNewIcon fontSize="small" />
+                        <OpenInNewIcon sx={{ fontSize: ICON }} />
                     </IconButton>
                 </Tooltip>
                 <Tooltip title={text.moreActions}>
@@ -227,8 +336,9 @@ const WorkTaskDeskRow = memo(({
                         size="small"
                         aria-label={text.moreActions}
                         onClick={(event) => { stop(event); setMenuAnchor(event.currentTarget) }}
+                        sx={{ p: 0.5 }}
                     >
-                        <MoreVertIcon fontSize="small" />
+                        <MoreVertIcon sx={{ fontSize: ICON }} />
                     </IconButton>
                 </Tooltip>
                 <Menu
@@ -236,28 +346,21 @@ const WorkTaskDeskRow = memo(({
                     open={Boolean(menuAnchor)}
                     onClose={() => setMenuAnchor(null)}
                     onClick={stop}
+                    slotProps={{
+                        paper: {
+                            sx: {
+                                borderRadius: 2.5,
+                                mt: 0.5,
+                                boxShadow: '0 8px 24px rgba(15, 23, 42, 0.12)',
+                                '& .MuiMenuItem-root': { fontSize: 12, minHeight: 32, borderRadius: 1.5, mx: 0.5 },
+                            },
+                        },
+                    }}
                 >
                     <MenuItem onClick={() => { setMenuAnchor(null); onOpen(task.id) }}>{text.viewDetails}</MenuItem>
                     {onPrint && <MenuItem disabled={printing} onClick={() => { setMenuAnchor(null); onPrint(task.id) }}>{text.print}</MenuItem>}
                 </Menu>
             </Stack>
-            <Box sx={{ gridColumn: { xs: '2 / -1', md: '3 / 5' }, minWidth: 0 }}>
-                <Tooltip title={cleanLabel(task.reportedIssue) || ''} placement="top">
-                    <Typography
-                        variant="caption"
-                        color={task.reportedIssue ? 'text.secondary' : 'text.disabled'}
-                        sx={{
-                            display: '-webkit-box',
-                            overflow: 'hidden',
-                            WebkitBoxOrient: 'vertical',
-                            WebkitLineClamp: density === 'compact' ? 1 : 2,
-                            overflowWrap: 'anywhere',
-                        }}
-                    >
-                        {cleanLabel(task.reportedIssue) || text.noDescription}
-                    </Typography>
-                </Tooltip>
-            </Box>
         </Paper>
     )
 })
