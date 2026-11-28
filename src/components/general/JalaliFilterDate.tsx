@@ -10,7 +10,7 @@ type Props = {
     onChange: (iso: string | null) => void
     /** true for a "to" date: the day is sent as 23:59:59 instead of 00:00:00 */
     endOfDay?: boolean
-    width?: number
+    width?: number | string
 }
 
 const pad = (n: number) => String(n).padStart(2, '0')

@@ -30,13 +30,13 @@ export const useNextStep = () => {
     }
 }
 
-type Props = { task: any; snackbarOpen: snackbarOpenType; onDone: () => void }
+type Props = { task: any; snackbarOpen: snackbarOpenType; onDone: () => void; variant?: 'outlined' | 'contained' }
 
 /**
  * The next-step button of a list row ("تایید نهایی" for a finished task, "شروع کار" for an assigned one...).
  * A click asks for confirmation (with an optional note), then calls the same endpoint as the task page.
  */
-const WorkTaskStepButton = ({ task, snackbarOpen, onDone }: Props) => {
+const WorkTaskStepButton = ({ task, snackbarOpen, onDone, variant = 'outlined' }: Props) => {
     const nextStep = useNextStep()
     const authConfig = useGetAuthorizationConfig()
     const [open, setOpen] = useState(false)
@@ -67,7 +67,7 @@ const WorkTaskStepButton = ({ task, snackbarOpen, onDone }: Props) => {
     return (
         <>
             <Button
-                size="small" variant="outlined" color={step.color}
+                size="small" variant={variant} color={step.color}
                 sx={{ whiteSpace: 'nowrap', minWidth: 0, px: 1, py: 0.25, fontSize: 12, lineHeight: 1.4 }}
                 onClick={(e) => { e.stopPropagation(); setOpen(true) }}
                 onDoubleClick={(e) => e.stopPropagation()}

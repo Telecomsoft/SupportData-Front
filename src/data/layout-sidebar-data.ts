@@ -49,6 +49,7 @@ export const LAYOUT_SIDEBAR_DATA: (DataType & { children?: DataType[] })[] = [
    },
 
    { name: 'فعالیت ها', value: 'workTasksList', link: '/workTasksList', icon: AssignmentIcon, accessID: 111 },
+   { name: 'میز کار دستورکارها', value: 'workTasksDesk', link: '/workTasksDesk', icon: DashboardIcon, accessID: 111 },
 
    { name: 'کیوسک‌ها', value: 'kiosksList', link: '/kiosksList', icon: AtmIcon, accessID: 110 },
    { name: 'تعمیرات', value: 'repairsList', link: '/repairsList', icon: HandymanIcon, accessID: 113 },

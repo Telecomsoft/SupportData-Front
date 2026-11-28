@@ -41,7 +41,6 @@ export const formatDateString = (date: string): string => {
 
 export const dateFn = (value?: string | null, withTime: boolean = true) => {
    if (!value) return '-'
-console.log('withTime',withTime)
    return new Date(value).toLocaleDateString('fa-IR', {
       year: 'numeric',
       month: 'short',

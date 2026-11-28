@@ -13,6 +13,7 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
 import { Route as workTasksWorkTasksListImport } from './routes/(workTasks)/workTasksList'
+import { Route as workTasksWorkTasksDeskImport } from './routes/(workTasks)/workTasksDesk'
 import { Route as systemManagementUsersImport } from './routes/(systemManagement)/users'
 import { Route as systemManagementPermissionsImport } from './routes/(systemManagement)/permissions'
 import { Route as systemManagementMobileListSystemManagementImport } from './routes/(systemManagement)/mobileListSystemManagement'
@@ -55,6 +56,12 @@ const IndexRoute = IndexImport.update({
 const workTasksWorkTasksListRoute = workTasksWorkTasksListImport.update({
   id: '/(workTasks)/workTasksList',
   path: '/workTasksList',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const workTasksWorkTasksDeskRoute = workTasksWorkTasksDeskImport.update({
+  id: '/(workTasks)/workTasksDesk',
+  path: '/workTasksDesk',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -436,6 +443,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof systemManagementUsersImport
       parentRoute: typeof rootRoute
     }
+    '/(workTasks)/workTasksDesk': {
+      id: '/(workTasks)/workTasksDesk'
+      path: '/workTasksDesk'
+      fullPath: '/workTasksDesk'
+      preLoaderRoute: typeof workTasksWorkTasksDeskImport
+      parentRoute: typeof rootRoute
+    }
     '/(workTasks)/workTasksList': {
       id: '/(workTasks)/workTasksList'
       path: '/workTasksList'
@@ -510,6 +524,7 @@ export interface FileRoutesByFullPath {
   '/mobileListSystemManagement': typeof systemManagementMobileListSystemManagementRoute
   '/permissions': typeof systemManagementPermissionsRoute
   '/users': typeof systemManagementUsersRoute
+  '/workTasksDesk': typeof workTasksWorkTasksDeskRoute
   '/workTasksList': typeof workTasksWorkTasksListRoute
   '/kioskDetail/$kioskId': typeof kiosksKioskDetailKioskIdRoute
   '/partTransferDetail/$partTransferId': typeof partTransfersPartTransferDetailPartTransferIdRoute
@@ -545,6 +560,7 @@ export interface FileRoutesByTo {
   '/mobileListSystemManagement': typeof systemManagementMobileListSystemManagementRoute
   '/permissions': typeof systemManagementPermissionsRoute
   '/users': typeof systemManagementUsersRoute
+  '/workTasksDesk': typeof workTasksWorkTasksDeskRoute
   '/workTasksList': typeof workTasksWorkTasksListRoute
   '/kioskDetail/$kioskId': typeof kiosksKioskDetailKioskIdRoute
   '/partTransferDetail/$partTransferId': typeof partTransfersPartTransferDetailPartTransferIdRoute
@@ -581,6 +597,7 @@ export interface FileRoutesById {
   '/(systemManagement)/mobileListSystemManagement': typeof systemManagementMobileListSystemManagementRoute
   '/(systemManagement)/permissions': typeof systemManagementPermissionsRoute
   '/(systemManagement)/users': typeof systemManagementUsersRoute
+  '/(workTasks)/workTasksDesk': typeof workTasksWorkTasksDeskRoute
   '/(workTasks)/workTasksList': typeof workTasksWorkTasksListRoute
   '/(kiosks)/kioskDetail/$kioskId': typeof kiosksKioskDetailKioskIdRoute
   '/(partTransfers)/partTransferDetail/$partTransferId': typeof partTransfersPartTransferDetailPartTransferIdRoute
@@ -618,6 +635,7 @@ export interface FileRouteTypes {
     | '/mobileListSystemManagement'
     | '/permissions'
     | '/users'
+    | '/workTasksDesk'
     | '/workTasksList'
     | '/kioskDetail/$kioskId'
     | '/partTransferDetail/$partTransferId'
@@ -652,6 +670,7 @@ export interface FileRouteTypes {
     | '/mobileListSystemManagement'
     | '/permissions'
     | '/users'
+    | '/workTasksDesk'
     | '/workTasksList'
     | '/kioskDetail/$kioskId'
     | '/partTransferDetail/$partTransferId'
@@ -686,6 +705,7 @@ export interface FileRouteTypes {
     | '/(systemManagement)/mobileListSystemManagement'
     | '/(systemManagement)/permissions'
     | '/(systemManagement)/users'
+    | '/(workTasks)/workTasksDesk'
     | '/(workTasks)/workTasksList'
     | '/(kiosks)/kioskDetail/$kioskId'
     | '/(partTransfers)/partTransferDetail/$partTransferId'
@@ -722,6 +742,7 @@ export interface RootRouteChildren {
   systemManagementMobileListSystemManagementRoute: typeof systemManagementMobileListSystemManagementRoute
   systemManagementPermissionsRoute: typeof systemManagementPermissionsRoute
   systemManagementUsersRoute: typeof systemManagementUsersRoute
+  workTasksWorkTasksDeskRoute: typeof workTasksWorkTasksDeskRoute
   workTasksWorkTasksListRoute: typeof workTasksWorkTasksListRoute
   kiosksKioskDetailKioskIdRoute: typeof kiosksKioskDetailKioskIdRoute
   partTransfersPartTransferDetailPartTransferIdRoute: typeof partTransfersPartTransferDetailPartTransferIdRoute
@@ -758,6 +779,7 @@ const rootRouteChildren: RootRouteChildren = {
     systemManagementMobileListSystemManagementRoute,
   systemManagementPermissionsRoute: systemManagementPermissionsRoute,
   systemManagementUsersRoute: systemManagementUsersRoute,
+  workTasksWorkTasksDeskRoute: workTasksWorkTasksDeskRoute,
   workTasksWorkTasksListRoute: workTasksWorkTasksListRoute,
   kiosksKioskDetailKioskIdRoute: kiosksKioskDetailKioskIdRoute,
   partTransfersPartTransferDetailPartTransferIdRoute:
@@ -807,6 +829,7 @@ export const routeTree = rootRoute
         "/(systemManagement)/mobileListSystemManagement",
         "/(systemManagement)/permissions",
         "/(systemManagement)/users",
+        "/(workTasks)/workTasksDesk",
         "/(workTasks)/workTasksList",
         "/(kiosks)/kioskDetail/$kioskId",
         "/(partTransfers)/partTransferDetail/$partTransferId",
@@ -892,6 +915,9 @@ export const routeTree = rootRoute
     },
     "/(systemManagement)/users": {
       "filePath": "(systemManagement)/users.tsx"
+    },
+    "/(workTasks)/workTasksDesk": {
+      "filePath": "(workTasks)/workTasksDesk.tsx"
     },
     "/(workTasks)/workTasksList": {
       "filePath": "(workTasks)/workTasksList.tsx"

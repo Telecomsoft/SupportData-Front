@@ -9,7 +9,7 @@ export type QueryResult<T> = { error?: number; errorMessage?: string; value: T }
  * Like useGetData, but for the server's "search" endpoints, which are POST (a filter in the body).
  * The query re-runs whenever the body changes; the previous page stays on screen while the next one loads.
  */
-export const usePostQuery = <T,>(endpoint: string, queryKey: string, body: unknown, options?: { enabled?: boolean }) => {
+export const usePostQuery = <T,>(endpoint: string, queryKey: string, body: unknown, options?: { enabled?: boolean; refetchInterval?: number | false }) => {
     const config = useGetAuthorizationConfig()
     return useQuery<QueryResult<T>, Error>({
         queryKey: [queryKey, body],
@@ -17,5 +17,6 @@ export const usePostQuery = <T,>(endpoint: string, queryKey: string, body: unkno
         placeholderData: keepPreviousData,
         refetchOnWindowFocus: false,
         enabled: options?.enabled ?? true,
+        refetchInterval: options?.refetchInterval,
     })
 }
